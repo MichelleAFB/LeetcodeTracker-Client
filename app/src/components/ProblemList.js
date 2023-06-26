@@ -432,7 +432,7 @@ const handleSearchByDataStructure = (e) => {
       }}>
       </button>
    
-      <input type="text" class="p-3 w-full m-2 rounded-md"onFocus={()=>{
+      <input type="text" class="p-3 w-full  rounded-md"onFocus={()=>{
         setSearch(true)
       }} onChange={(e)=>{
         if(e.currentTarget.value!=null){
@@ -560,7 +560,7 @@ const handleSearchByDataStructure = (e) => {
         
       </div>
       {!search&& !searchByCategory && searchByDataStructure&& !searchByDate&&filtered!=null?
-         <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
+         <div class="h-[60vh] overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3 ">
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.dataStructure==dataStructure){
@@ -572,7 +572,7 @@ const handleSearchByDataStructure = (e) => {
 
       }
         {!search&& !searchByCategory && !searchByDataStructure&& searchByDate&&filtered!=null?
-         <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
+         <div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3">
          { filtered.map((p)=>{
           console.log(p)
           const cDate=new Date()
@@ -586,7 +586,7 @@ const handleSearchByDataStructure = (e) => {
 
       }
       {!search&& searchByCategory && !searchByDataStructure&&!searchByDate&& filtered!=null?
-         <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
+         <div class="overflow-y-scroll overflow-hidden h-[55vh] p-4 ">
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.category==category){
@@ -598,7 +598,7 @@ const handleSearchByDataStructure = (e) => {
 
       }
       {search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null?
-       <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
+       <div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
        { filtered.map((p)=>{
         console.log(p)
          return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
