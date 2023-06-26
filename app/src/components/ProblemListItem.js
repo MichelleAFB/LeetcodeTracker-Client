@@ -15,7 +15,7 @@ import { useDispatch } from 'react-redux'
 import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editProblem-actions'
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase'
-function ProblemListItem({problem}) {
+function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
 
 
   const[isLoading,setIsLoading]=useState(true)
@@ -24,6 +24,7 @@ function ProblemListItem({problem}) {
   const[daysSince,setDaysSince]=useState()
   const[useDaysSince,setUseDaysSince,Since]=useState()
   const[edit,setEdit]=useState(false)
+  const[halt,setHalt]=useState(true)
   
   const dispatch=useDispatch(false)
   const[reload,setReload]=useState()
@@ -124,6 +125,24 @@ function ProblemListItem({problem}) {
   if(problem.problem.title=="Minimum Size Subarray Sum"){
     console.log(problem)
   }
+
+  function handleGreen(){
+    setGreen(green+1)
+    console.log("green:"+green) 
+    setHalt(false)
+   }
+
+   function handleOrange(){
+    setOrange(orange+1)
+    console.log(orange)
+    setHalt(false)
+   }
+
+   function handleRed(){
+    setRed(red+1)
+    console.log(orange)
+    setHalt(false)
+   }
   if(!isLoading ){
     
 
@@ -154,9 +173,14 @@ function ProblemListItem({problem}) {
       
       index++
    }
-    
+    console.log("orange:"+orange+" red:"+red+ " green:"+green)
     
     if(index<7 && problem.problem.no_attempts!=0){
+      if(halt){
+        handleGreen()
+      }
+     
+      
       return (
         <div className='p-5 bg-white rounded shadow m-3'>
         <div className="flex  items-center mb-4">
@@ -237,7 +261,12 @@ function ProblemListItem({problem}) {
         }
    
   
-if(index>7 && index<14 || problem.problem.no_attempts==0){
+if(index>7 && index<14){
+  
+  if(halt){
+    console.log("orange:"+orange)
+    setOrange()
+  }
   return (
     <div className='p-5 bg-orange-400 rounded shadow m-3'>
     <div className="flex  items-center mb-4">
@@ -317,6 +346,9 @@ if(index>7 && index<14 || problem.problem.no_attempts==0){
     }
       
 if(index>14 || problem.problem.no_attempts==0){
+  if(halt){
+    setRed()
+  }
   return (
     <div className='p-5 bg-red-400 rounded shadow m-3'>
     <div className="flex  items-center mb-4">

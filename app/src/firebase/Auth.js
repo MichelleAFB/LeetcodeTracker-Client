@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useState } from 'react'
 
+//outside
+import axios from 'axios'
 //firebase
 import {auth, googleProvider} from './firebase'
 import { createUserWithEmailAndPassword,signInWithPopup,signOut} from 'firebase/auth'
@@ -32,7 +34,8 @@ function Auth() {
       axios.get("https://leetcodetracker.onrender.com").then((response)=>{
         console.log(response.data)
           sessionStorage.removeItem("user")
-      sessionStorage.removeItem("signInType")
+          sessionStorage.removeItem("signInType")
+          
       resolve()
       })
     

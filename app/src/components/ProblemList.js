@@ -14,6 +14,7 @@ import ProblemListItem from './ProblemListItem'
 
 //outside
 import axios from 'axios'
+
 function ProblemList() {
 
   const[problems,setProblems]=useState()
@@ -27,6 +28,9 @@ function ProblemList() {
   const[searchByDate,setSearchByDate]=useState(false)
   const[problemBad,setProblemBad]=useState()
   const problemsListCollectionRef=collection(db,"problems")
+  const[green,setGreen]=useState(0)
+  const[orange,setOrange]=useState(0)
+  const[red,setRed]=useState(0)
 
   useEffect(()=>{
 
@@ -45,10 +49,6 @@ function ProblemList() {
           
         
           if(doc.data().userId==user.userId){
-           
-          console.log(doc.data().title)
-          console.log("prompt:"+doc.data().prompt)
-         console.log(doc.data().examples)
           
             dataArr.push({problem:doc.data(),id:doc.id})
           } 
@@ -256,10 +256,11 @@ const handleSearchByDataStructure = (e) => {
     console.log(problem2.attempts)
   }
 
-
   if(!isLoading && problems!=null){
-    
+    console.log("green:"+green)
    if(problems==null){
+    console.log("orange:"+orange)
+
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
 
@@ -277,12 +278,12 @@ const handleSearchByDataStructure = (e) => {
         <div class="m-2 flex">
           <div class="bg-orange-400 w-[10px] p-3">
            </div>
-          <p class="font-bold"> -practiced more than a week ago </p>
+          <p class="font-bold"> -practiced more than a week ago {orange} </p>
         </div>
         <div class="m-2 flex">
           <div class="bg-red-600 w-[10px] p-3">
            </div>
-          <p class="font-bold"> -practiced more than 2 week ago </p>
+          <p class="font-bold"> -practiced more than 2 week ago {red}</p>
         </div>
       </div>
       
@@ -516,7 +517,7 @@ const handleSearchByDataStructure = (e) => {
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.category==category){
-           return(<ProblemListItem problem={p}/>)
+           return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
           }
            })
          }
@@ -527,7 +528,7 @@ const handleSearchByDataStructure = (e) => {
        <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
        { filtered.map((p)=>{
         console.log(p)
-         return(<ProblemListItem problem={p}/>)
+         return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
          })
        }
     </div>:
@@ -537,7 +538,7 @@ const handleSearchByDataStructure = (e) => {
         !search && !searchByCategory && !searchByDataStructure?
         <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
         {filtered.map((p)=>{
-         return(<ProblemListItem problem={p}/>)
+         return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
         })}
      </div>:
      <div></div> 

@@ -81,7 +81,10 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
     })
 
   },[])
-
+  const p=JSON.parse(sessionStorage.getItem("currentProblem"))
+  console.log(p.id)
+  console.log(problemData)
+  console.log(ourProblem)
 
   if(visibility && !isLoading){ 
     const problemsListCollectionRef=collection(db,"problems")
@@ -232,9 +235,11 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                      
                     }).then((response)=>{
                       alert("SUCCESS:ADDED LEETCODE PROBLEM "+ourProblem.id + d.id )
-                      axios.post("http://localhost:3022/set-firebase-id/"+ourProblem.id,{pid:d.id}).then((response)=>{
+                    
+                      axios.post("https://leetcodetracker.onrender.com/set-firebase-id/"+problemData.id,{title:ourProblem.title}).then((response)=>{
                         console.log(response)
                       })
+                    
                       console.log(response)
                       console.log("success")
                      // setIsLoading(true)
@@ -291,6 +296,9 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                      
                     }).then((response)=>{
                       alert("SUCCESS:ADDED LEETCODE PROBLEM " )
+                   
+                  
+                      
                       
                       console.log(response)
                       console.log("success")
