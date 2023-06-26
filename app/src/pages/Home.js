@@ -24,8 +24,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
   return (
     <div>
       <Header/>
-    <div class="flex flex-col p-10">gets all the faces then links them to other people who may have photos
-      <p>App idea: wllows users to upload videos and images, ai </p>
+    <div class="flex flex-col p-10">
       {visibility?
         <EditProblemModal2/>:<div></div>}
       

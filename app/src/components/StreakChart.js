@@ -21,15 +21,10 @@ function StreakChart() {
     const data=await getDocs(problemsListCollectionRef)
     data.docs.map((doc)=>{
       
-    
       if(doc.data().userId==user.userId){
-       
       console.log(doc.data().title)
-     
-      
         dataArr.push({problem:doc.data(),id:doc.id})
       } 
-  
     })
     resolve(dataArr)
 
@@ -131,20 +126,6 @@ function StreakChart() {
   console.log(months)
   return (
     <div>
-      <button class="bg-green-400 p-3" onClick={()=>{
-        
-      const prom1=new Promise((resolve1,reject1)=>{
-        generate()
-   
-
-  })
-
-  prom1.then(()=>{
-
-  })
-      }}>
-        <p>Click</p>
-      </button>
       {months==true ?
       <div>
         {
