@@ -269,6 +269,9 @@ const handleSearchByDataStructure = (e) => {
     console.log("search by category"+searchByCategory)
   return (
     <div class="bg-gray-400  p-3 rounded-md m-5">
+      <p class="text-xl text-center font-bold">
+        Your Questions
+      </p>
       <div class="flex flex-col w-full justify-center "><p class="text-xl text-center font-bold">{problems.length}</p></div>
       <div class="flex p-3 m-3 justify-center">
         <div class="m-2 flex">
