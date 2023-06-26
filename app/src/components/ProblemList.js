@@ -33,10 +33,14 @@ function ProblemList() {
   const[red,setRed]=useState(0)
 
   useEffect(()=>{
-
+    sessionStorage.setItem("green",0)
+    sessionStorage.setItem("red",0)
+    sessionStorage.setItem("orange",0)
     const dataArr=[]
     const prom=new Promise((resolve,reject)=>{
-
+    var RED=0
+    var ORANGE=0
+    var GREEN=0
       const getProblemsList=async()=>{
 
         //READ DATA
@@ -49,6 +53,49 @@ function ProblemList() {
           
         
           if(doc.data().userId==user.userId){
+            RED=0;
+            ORANGE=0
+            GREEN=0
+            var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+            "Aug","Sep","Oct","Nov","Dec"];
+            var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
+            var cDate=new Date()
+            var index=1
+            var st=doc.data().lastPracticed.split(" ")
+          
+           
+          const currDate=cDate.toString().substring(0,15)
+            const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
+            var nextDate=new Date(startDate);
+            var nextnext=nextDate.setDate(nextDate.getDate()+1)
+            nextDate=new Date(nextnext)
+            var index=1;
+           
+            while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
+              var nextnext=nextDate.setDate(nextDate.getDate()+1)
+              nextDate=new Date(nextnext)
+              index++
+           }
+           setTimeout(()=>{
+            if(index<7){
+              GREEN=GREEN+1
+              sessionStorage.setItem("green",GREEN)
+
+            }
+            if(index>7 && index<14){
+              ORANGE=ORANGE+1
+              sessionStorage.setItem("orange",ORANGE)
+
+            }
+            if(index>14){
+              RED=RED+1
+              sessionStorage.setItem("red",RED)
+
+            }
+            console.log("RED"+RED+" ORANGE:"+ORANGE+" GREEN:"+GREEN)
+           },50)
+         
+         
           
             dataArr.push({problem:doc.data(),id:doc.id})
           } 
@@ -59,13 +106,24 @@ function ProblemList() {
       }
   
       getProblemsList().then(()=>{
-        resolve()
+   
+       // resolve()
+        setTimeout(()=>{
+          resolve()
+        },300)
       })
       
     })
 
     prom.then(()=>{
-      
+      const r=JSON.parse(sessionStorage.getItem("red"))
+      const g=JSON.parse(sessionStorage.getItem("green"))
+      const o=JSON.parse(sessionStorage.getItem("orange"))
+      console.log(o+" "+g+" "+r)
+      setGreen(g)
+      setRed(r)
+      setOrange(o)
+
      const prom1=new Promise((resolve1,reject1)=>{
       console.log(dataArr)
       sessionStorage.setItem("problems",JSON.stringify(dataArr))
@@ -75,7 +133,10 @@ function ProblemList() {
      })
 
      prom1.then(()=>{
-      setIsLoading(false)
+     
+      setTimeout(()=>{
+        setIsLoading(false)
+      },500)
 
      })
     })
@@ -264,28 +325,40 @@ const handleSearchByDataStructure = (e) => {
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
 
-    console.log("search:"+search)
-    console.log(filtered)
-    console.log("search by DS"+searchByDataStructure)
-    console.log("search by category"+searchByCategory)
+
   return (
     <div class="bg-gray-400  p-3 rounded-md m-5">
       <p class="text-xl text-center font-bold">
-        Your Questions
+        Your Questions ({problems.length})
       </p>
-      <div class="flex flex-col w-full justify-center "><p class="text-xl text-center font-bold">{problems.length}</p></div>
-      <div class="flex p-3 m-3 justify-center">
+      <p class="text-center font-bold text-md mt-2"> last practiced:</p>
+      <div class="flex  justify-around">
         <div class="m-2 flex">
-          <div class="bg-orange-400 w-[10px] p-3">
+        <div class="m-2 flex">
+          <div class="bg-white  p-3 mr-3 h-1/3">
+           <p class="font-bold text-sm">{green}</p>
            </div>
-          <p class="font-bold"> -practiced more than a week ago {orange} </p>
+
+          <p class="font-bold text-xs"> in the past 7 days </p>
+        </div>
+        <div class="flex m-2 w-1/3">
+          <div class="bg-orange-400 p-3 mr-3 h-1/3">
+          <p class="font-bold text-sm">{orange}</p>
+           </div>
+          <p class="font-bold text-xs"> - more than a week ago</p>
+          </div>
         </div>
         <div class="m-2 flex">
-          <div class="bg-red-600 w-[10px] p-3">
+          <div class="m-2 flex w-1/3">
+          <div class="bg-red-600  p-3 mr-3 h-1/3">
+          <p class="font-bold text-sm">{red}</p>
            </div>
-          <p class="font-bold"> -practiced more than 2 week ago {red}</p>
+          <p class="font-bold text-xs">-more than 2 week ago</p>
+          </div>
         </div>
+       
       </div>
+   
       
      
       <button class="" onClick={()=>{

@@ -391,10 +391,7 @@ function PracticePage() {
 
 
 
-     console.log(problem)
-     console.log("prompt:"+prompt)
-     console.log(examples)
-     console.log(problem.problem.boilerCode)
+    console.log(prompt)
 
      console.log("code:"+code)
    
@@ -443,7 +440,7 @@ function PracticePage() {
           </p> 
         </a>
  
-      { problem.problem.prompt!=null &&showAllPrompts?
+      { problem.problem.prompt!=null || problem.problem.prompt!="" &&showAllPrompts?
        <div class="p-3">
          <p class="whitespace-pre-wrap font-bold m-3 text-white">
               {problem.problem.prompt.replace(/\n\n\n/g,"\n ")}
@@ -455,7 +452,7 @@ function PracticePage() {
       :
       <div class="p-3">
         <p class="whitespace-pre-wrap font-bold m-3 text-white">
-             {problem.problem.prompt.replace(/\n\n\n/g,"\n ").substring(0,700)}
+             {prompt.replace(/\n\n\n/g,"\n ").substring(0,700)}
         </p>
         <p class="whitespace-pre-wrap font-semibold m-3 text-gray-400" onClick={()=>{
           setShowAllPrompt(!showAllPrompts)

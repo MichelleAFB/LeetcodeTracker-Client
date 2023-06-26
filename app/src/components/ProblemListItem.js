@@ -122,28 +122,37 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
     });
   }
 
-  if(problem.problem.title=="Minimum Size Subarray Sum"){
-    console.log(problem)
-  }
+ 
 
   function handleGreen(){
     setGreen(green+1)
+    const count=JSON.parse(sessionStorage.getItem("green"))
+    console.log("green storage:"+count)
     console.log("green:"+green) 
+    sessionStorage.setItem("green",count+1)
     setHalt(false)
    }
 
    function handleOrange(){
     setOrange(orange+1)
-    console.log(orange)
+    const count=JSON.parse(sessionStorage.getItem("orange"))
+    console.log("gorange storage:"+count)
+    console.log("orange:"+orange)
+    sessionStorage.setItem("orange",count+1)
+
     setHalt(false)
    }
 
    function handleRed(){
     setRed(red+1)
-    console.log(orange)
+    const count=JSON.parse(sessionStorage.getItem("red"))
+ 
+    sessionStorage.setItem("red",count+1)
+    console.log("red:"+red)
     setHalt(false)
    }
   if(!isLoading ){
+
     
 
     var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
@@ -173,12 +182,10 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
       
       index++
    }
-    console.log("orange:"+orange+" red:"+red+ " green:"+green)
+   
     
     if(index<7 && problem.problem.no_attempts!=0){
-      if(halt){
-        handleGreen()
-      }
+    
      
       
       return (
@@ -263,10 +270,7 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
   
 if(index>7 && index<14){
   
-  if(halt){
-    console.log("orange:"+orange)
-    setOrange()
-  }
+ 
   return (
     <div className='p-5 bg-orange-400 rounded shadow m-3'>
     <div className="flex  items-center mb-4">
@@ -346,9 +350,8 @@ if(index>7 && index<14){
     }
       
 if(index>14 || problem.problem.no_attempts==0){
-  if(halt){
-    setRed()
-  }
+ 
+  
   return (
     <div className='p-5 bg-red-400 rounded shadow m-3'>
     <div className="flex  items-center mb-4">
