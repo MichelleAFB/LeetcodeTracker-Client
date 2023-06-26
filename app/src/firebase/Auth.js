@@ -29,10 +29,13 @@ function Auth() {
   useEffect(()=>{
 
     const prom=new Promise((resolve,reject)=>{
-      
-      sessionStorage.removeItem("user")
+      axios.get("https://leetcodetracker.onrender.com").then((response)=>{
+        console.log(response.data)
+          sessionStorage.removeItem("user")
       sessionStorage.removeItem("signInType")
       resolve()
+      })
+    
     })
 
     prom.then(()=>{
