@@ -38,13 +38,13 @@ function StreakChart() {
     console.log(typeof(user.userId))
     console.log(typeof(parseInt(user.userId)))
   const prom1=new Promise((resolve1,reject1)=>{
-    axios.get("https://leetcodetracker.onrender.comcurrent-streak/"+user.userId,{userId:parseInt(user.userId)}).then(async(response)=>{
+    axios.get("https://leetcodetracker.onrender.com/current-streak/"+user.userId,{userId:parseInt(user.userId)}).then(async(response)=>{
       const data=await response.data
       console.log(data)
       console.log(response.data.streaks)
       console.log(response.data)
       
-      axios.get("https://leetcodetracker.onrender.comsort-streaks/"+user.userId,{message:"hi",userId:parseInt(user.userId)}).then((response1)=>{
+      axios.get("https://leetcodetracker.onrender.com/sort-streaks/"+user.userId,{message:"hi",userId:parseInt(user.userId)}).then((response1)=>{
         setAllStreaks(response1.data.streaks)
         const str=response.data.streaks 
         setStreaks(response.data.streaks)
