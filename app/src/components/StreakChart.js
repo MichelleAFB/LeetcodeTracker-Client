@@ -133,14 +133,6 @@ function StreakChart() {
 
   }
 
-  ChartJS.register(
-    CategoryScale,
-    LinearScale,
-    BarElement,
-    Title,
-    Tooltip,
-    Legend
-  );
 
   const options = {
     maintainAspectRatio: false,
@@ -152,7 +144,7 @@ function StreakChart() {
       },
       title: {
         display: true,
-        text: "Chart.js Bar Chart",
+        text: "Daily Solved Problems",
       }, 
     },
   };
