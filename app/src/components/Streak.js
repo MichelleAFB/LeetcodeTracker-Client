@@ -78,18 +78,6 @@ function Streak({streaks}) {
       }
 }
 
-/**
- *  {
-        streak.map((s)=>{
-          console.log(s)
-          return(
-            <div class="bg-cyan-400 p-2 flex m-2 rounded">
-             <Bar option={options} data={streak} height="400px"width="300px"/>
-            
-            </div>
-          )
-        })
-      }
- */
+
 
 export default Streak
