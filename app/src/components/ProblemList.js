@@ -327,7 +327,7 @@ const handleSearchByDataStructure = (e) => {
 
 
   return (
-    <div class="bg-gray-400  p-3 rounded-md m-5">
+    <div class="bg-gray-400 w-full  p-3 ">
       <p class="text-xl text-center font-bold">
         Your Questions ({problems.length})
       </p>
@@ -335,25 +335,25 @@ const handleSearchByDataStructure = (e) => {
       <div class="flex  justify-around">
         <div class="m-2 flex">
         <div class="m-2 flex">
-          <div class="bg-white  p-3 mr-3 h-1/3">
+          <div class="bg-white  p-3 mr-3 ">
            <p class="font-bold text-sm">{green}</p>
            </div>
 
-          <p class="font-bold text-xs"> in the past 7 days </p>
+          <p class="font-bold text-xs">{"< 7 days "}</p>
         </div>
         <div class="flex m-2 w-1/3">
-          <div class="bg-orange-400 p-3 mr-3 h-1/3">
+          <div class="bg-orange-400 p-3 mr-3 ">
           <p class="font-bold text-sm">{orange}</p>
            </div>
-          <p class="font-bold text-xs"> - more than a week ago</p>
+          <p class="font-bold text-xs">{"> 7 days"}</p>
           </div>
         </div>
         <div class="m-2 flex">
           <div class="m-2 flex w-1/3">
-          <div class="bg-red-600  p-3 mr-3 h-1/3">
+          <div class="bg-red-600  p-3 mr-3 ">
           <p class="font-bold text-sm">{red}</p>
            </div>
-          <p class="font-bold text-xs">-more than 2 week ago</p>
+          <p class="font-bold text-xs">- > 2 weeks</p>
           </div>
         </div>
        
@@ -560,7 +560,7 @@ const handleSearchByDataStructure = (e) => {
         
       </div>
       {!search&& !searchByCategory && searchByDataStructure&& !searchByDate&&filtered!=null?
-         <div class="h-[60vh] overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3 ">
+         <div class="h-screen overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3 ">
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.dataStructure==dataStructure){
@@ -572,7 +572,7 @@ const handleSearchByDataStructure = (e) => {
 
       }
         {!search&& !searchByCategory && !searchByDataStructure&& searchByDate&&filtered!=null?
-         <div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3">
+         <div class="h-screen overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3">
          { filtered.map((p)=>{
           console.log(p)
           const cDate=new Date()
@@ -586,7 +586,7 @@ const handleSearchByDataStructure = (e) => {
 
       }
       {!search&& searchByCategory && !searchByDataStructure&&!searchByDate&& filtered!=null?
-         <div class="overflow-y-scroll overflow-hidden h-[55vh] p-4 ">
+         <div class="overflow-y-scroll h-[60vh] overflow-hidden h-screen p-4 ">
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.category==category){

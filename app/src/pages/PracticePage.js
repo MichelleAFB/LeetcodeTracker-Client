@@ -636,7 +636,11 @@ function PracticePage() {
                   
                  }).then((response)=>{
                    console.log(response)
+                   const user=JSON.parse(sessionStorage.getItem("user"))
                    alert("success!!!")
+                   axios.post("https://leetcodetracker.onrender.comadd-to-streak",{problem:problem.problem,userId:Number(user.userId)}).then((response)=>{
+                    console.log(response.data)
+                   })
                    const total=JSON.parse(Cookies.get("total_questions_today")).total
                  
                    Cookies.set("total_questions_today",JSON.stringify({total:total+1,userId:problem.problem.userId}),{expires:1/24})
@@ -676,6 +680,9 @@ function PracticePage() {
                   }).then((response)=>{
                     console.log(response)
                     alert("success++++++")
+                    axios.post("https://leetcodetracker.onrender.comadd-to-streak",{problem:problem.problem}).then((response)=>{
+                      console.log(response.data)
+                     })
                     setReload(!reload)
 
                   });

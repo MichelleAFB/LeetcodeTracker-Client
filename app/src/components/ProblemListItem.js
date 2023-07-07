@@ -193,7 +193,7 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
         <div className="flex  items-center mb-4">
         
           <div className="flex w-full">
-            <p class="font-bold text-2xl">{problem.problem.title.toUpperCase()}</p>
+            <p class="font-bold text-xl">{problem.problem.title.toUpperCase()}</p>
            
           </div>
           
@@ -202,9 +202,7 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
             className="m-2 flex justify-center items-center bg-blue-lighter rounded-full w-8 h-8"
             role="img"
           >
-            <span role="img" aria-label="Ninja-Cat">
-              🐱‍👤
-            </span>
+           
           </div>
           <div class="flex justify-end w-full">
             <button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
@@ -275,7 +273,7 @@ if(index>7 && index<14){
     <div className='p-5 bg-orange-400 rounded shadow m-3'>
     <div className="flex  items-center mb-4">
       <div className="flex w-full">
-        <p class="font-bold text-2xl">{problem.problem.title.toUpperCase()}</p>
+        <p class="font-bold text-xl">{problem.problem.title.toUpperCase()}</p>
        
       </div>
       
@@ -284,9 +282,7 @@ if(index>7 && index<14){
         className="m-2 flex justify-center items-center bg-blue-lighter rounded-full w-8 h-8"
         role="img"
       >
-        <span role="img" aria-label="Ninja-Cat">
-          🐱‍👤
-        </span>
+        
       </div>
       <div class="flex justify-end w-full">
       <button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
@@ -356,7 +352,7 @@ if(index>14 || problem.problem.no_attempts==0){
     <div className='p-5 bg-red-400 rounded shadow m-3'>
     <div className="flex  items-center mb-4">
       <div className="flex w-full">
-        <p class="font-bold text-2xl">{problem.problem.title.toUpperCase()}</p>
+        <p class="font-bold text-xl">{problem.problem.title.toUpperCase()}</p>
        
       </div>
       
@@ -365,9 +361,7 @@ if(index>14 || problem.problem.no_attempts==0){
         className="m-2 flex justify-center items-center bg-blue-lighter rounded-full w-8 h-8"
         role="img"
       >
-        <span role="img" aria-label="Ninja-Cat">
-          🐱‍👤
-        </span>
+        
       </div>
       <div class="flex justify-end w-full">
       <button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{

@@ -24,13 +24,13 @@ function Header() {
 
   },[])
 
-  if(!isLoading){
+  if(!isLoading && user!=null){
     console.log(user)
   return (
     <div class="mt-0 mr-0 ml-0 flex p-4 justify-between align-center bg-[#B5B4A7]">
       <div class="flex w-full">
         <div class="flex w-1/2">
-
+          <p class="text-purple-800 text-4xl">LeetcodeTracker</p>
         </div>
         <div class="flex w-1/2 justify-end">
           <p class="text-end text-white">{user.firstname} {user.lastname}</p>
@@ -39,7 +39,17 @@ function Header() {
     </div>
   )
   }else{
-    return(<div></div>)
+    return(
+      <div class="mt-0 mr-0 ml-0 flex p-4 justify-between align-center bg-[#B5B4A7]">
+      <div class="flex w-full">
+        <div class="flex w-1/2">
+
+        </div>
+        <div class="flex w-1/2 justify-end">
+                  </div>
+      </div>
+    </div>
+    )
   }
 }
 
