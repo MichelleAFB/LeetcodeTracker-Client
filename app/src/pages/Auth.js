@@ -3,10 +3,10 @@ import { useState } from 'react'
 
 //outside
 import axios from 'axios'
-//firebase
-import {auth, googleProvider} from './firebase'
+//firebase 
+import {auth, googleProvider} from '../firebase/firebase'
 import { createUserWithEmailAndPassword,signInWithPopup,signOut} from 'firebase/auth'
-import { db } from './firebase'
+import { db } from '../firebase/firebase'
 import {getDocs,collection,doc,setDoc,addDoc} from 'firebase/firestore'
 //routing
 import { useNavigate } from 'react-router-dom'
@@ -191,7 +191,12 @@ function Auth() {
       }
   }
 
-
+if(isLoading){
+  return(
+  <div class="flex w-full justify-center h-full">
+    <div class="loading-spinner"></div>
+    </div>)
+}
 if(!isLoading){
   return (
     <div class="bg-gray-300 rounded-md p-3 h-screen p-5">

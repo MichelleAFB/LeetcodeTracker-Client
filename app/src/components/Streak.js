@@ -2,6 +2,8 @@ import React from 'react'
 
 import { Bar } from "react-chartjs-2";
 import { useState,useEffect } from 'react';
+import {CategoryScale} from 'chart.js'; 
+import Chart from 'chart.js/auto';
 
 function Streak({streaks}) {
 
@@ -35,6 +37,7 @@ function Streak({streaks}) {
  
 
  if(!isLoading){
+  Chart.register(CategoryScale);
   console.log(streaks.length)
   const data= {
     labels:streaks.map((m) => {return m.day}),
