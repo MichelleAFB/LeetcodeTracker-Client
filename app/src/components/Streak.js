@@ -32,15 +32,7 @@ function Streak({streaks}) {
     },
   };
 
- /*const labels = [
-    starters[0].name,
-    starters[1].name,
-    starters[2].name,
-    starters[3].name,
-  ];
-*/
-//console.log(streak)
-//console.log(typeof(streak))
+ 
 
  if(!isLoading){
   console.log(streaks.length)
