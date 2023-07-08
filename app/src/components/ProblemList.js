@@ -18,7 +18,7 @@ import axios from 'axios'
 function ProblemList() {
 
   const[problems,setProblems]=useState()
-  const[isLoading,setIsLoading]=useState(false)
+  const[isLoading,setIsLoading]=useState(true)
 
   //search options
   const[dataStructure,setDataStructure]=useState()
@@ -49,6 +49,7 @@ function ProblemList() {
           const userType=JSON.parse(sessionStorage.getItem("userType"))
 
         const data=await getDocs(problemsListCollectionRef)
+        console.log(data)
         data.docs.map((doc)=>{
           
         
@@ -316,7 +317,16 @@ const handleSearchByDataStructure = (e) => {
     console.log(problem1.problem.attempts)
     console.log(problem2.attempts)
   }
-
+  if(isLoading){
+    return(
+      <div class="flex w-full justify-center ">
+          <div class="flex-col justify-end  ">
+          <div class="loading-spinner"/>
+      </div>
+    
+    </div>
+    )
+  }
   if(!isLoading && problems!=null){
     console.log("green:"+green)
    if(problems==null){
@@ -620,7 +630,7 @@ const handleSearchByDataStructure = (e) => {
       
     </div>
   )
-} if(!isLoading && problems==null){
+} if( problems==null){
 
   console.log(problems)
 return (

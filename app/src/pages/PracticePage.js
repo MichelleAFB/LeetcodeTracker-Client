@@ -37,6 +37,7 @@ const javascriptDefault = `// some comment`;
  
 function PracticePage() {
 
+const[sendingstreak,setSendingStreak]=useState(false)
   const [code, setCode] = useState(javascriptDefault);
   const[examples,setExamples]=useState(null)
   const [customInput, setCustomInput] = useState("");
@@ -400,6 +401,7 @@ function PracticePage() {
    
   
      <div class="bg-gray-900 p-3 rounded-md m-3">
+      
         
      <p class="text-white text-center text-2xl font-bold mb-2">{problem.problem.title}</p>
      
@@ -460,7 +462,14 @@ function PracticePage() {
       </div>
   }
        
-     
+     {
+      sendingstreak?
+      <div class="w-full flex justify-center m-3">
+
+      <div class="loading-spinner justify-center"></div>
+      </div>:
+      <div></div>
+     }
       
      
       <div className="h-4 w-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500"></div>
@@ -540,6 +549,7 @@ function PracticePage() {
       </button>
       <button class="bg-cyan-600 rounded-md p-3 w-1/3 m-2" onClick={(e)=>{
             e.preventDefault()
+            
             var p
             const arr=problem.problem.attempts;
             console.log(solution)
@@ -575,6 +585,7 @@ function PracticePage() {
                 
                   if(d.id==problemId && solution!=null && (code!=null && code!=initialBoilerCode) ){
                     console.log(solution)
+                    setSendingStreak(true)
                   // problem.problem.attempts[newAttemptID]=getEditorValue()
                   problem.problem.attempts[newAttemptID]=code
            
@@ -605,9 +616,15 @@ function PracticePage() {
                   
                  })
                  index++
+
                  const prev=examples
+                 console.log("prev")
+                 console.log(prev)
                  const prom1=new Promise((resolve,reject)=>{
-                  prev.push(code)
+                  console.log(prev)
+                  Object.keys(prev).forEach((key)=>{
+                    console.log(prev[key])
+                  })
                   resolve()
                  })
                  prom1.then(async()=>{
@@ -637,13 +654,13 @@ function PracticePage() {
                  }).then((response)=>{
                    console.log(response)
                    const user=JSON.parse(sessionStorage.getItem("user"))
-                   alert("success!!!")
+                  
                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,userId:Number(user.userId)}).then((response)=>{
                     console.log(response.data)
+                    setSendingStreak(false)
+                    alert("success!!!")
                    })
-                   const total=JSON.parse(Cookies.get("total_questions_today")).total
-                 
-                   Cookies.set("total_questions_today",JSON.stringify({total:total+1,userId:problem.problem.userId}),{expires:1/24})
+                   
                    
                    setReload(!reload)
  
@@ -658,6 +675,7 @@ function PracticePage() {
                   } 
                   if(d.id==problemId  && (code==null || code==initialBoilerCode)){
                    // console.log(d.problem.hasOwnProperty(boilerCode))
+                   setSendingStreak(true)
                     console.log("here")
                       const cDate=new Date()
                       const currDate=cDate.toString().substring(0,15)
@@ -679,8 +697,10 @@ function PracticePage() {
                    
                   }).then((response)=>{
                     console.log(response)
-                    alert("success++++++")
+                   
                     axios.post("https://leetcodetracker.onrender.comadd-to-streak",{problem:problem.problem}).then((response)=>{
+                      setSendingStreak(false)
+                      alert("success++++++")
                       console.log(response.data)
                      })
                     setReload(!reload)

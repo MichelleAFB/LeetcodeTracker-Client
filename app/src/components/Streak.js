@@ -58,8 +58,25 @@ function Streak({streaks}) {
     <div class="flex w-full m-2 border-l-2 border-gray-500 p-3">
      { 
       streaks!=null ?
-      <div >
+      <div class="flex-col">
             <Bar options={options} data={data} height='400px' width='300px' />
+            <div class="flex">
+            {streaks.map((s)=>{
+              return(
+                <div class="flex-col m-2">
+                <p class="text-md font-bold">
+                {s.day}
+                </p>
+                <ul>
+                  {
+                    s.problems.map((p)=>{
+                      return(<p class="text-xs m-2">-{p.title}</p>)
+                    })
+                  }
+                </ul>
+              </div>)
+            })}
+            </div>
       </div>
         :   
  <div>

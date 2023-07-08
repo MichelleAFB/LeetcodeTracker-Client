@@ -8,9 +8,11 @@ import Home from './pages/Home';
 import PracticePage from './pages/PracticePage';
 
 import Header from './components/layout/Header';
+import AddLeetcodeProblemModal from './components/AddLeetcodeProblemModal';
 function App() {
   return (
     <Router>
+      <AddLeetcodeProblemModal/>
         <Header/> 
       <Routes>
         <Route path="/" element={<Auth/>}/>

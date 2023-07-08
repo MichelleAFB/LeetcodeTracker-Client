@@ -152,6 +152,16 @@ function StreakChart() {
 
 
   console.log(months)
+  if(isLoading){
+    return(
+    <div class="flex w-full justify-center ">
+      <div class="flex-col justify-end  ">
+          <div class="loading-spinner"/>
+      </div>
+    
+    </div>
+    )
+  }
   if(!isLoading && streaks!=null){
   
     console.log(problems)
@@ -176,9 +186,12 @@ function StreakChart() {
     */
   return (
     <div class="flex w-full border-gray-300 border-b-2 m-3 p-4"> 
+      
       <p>{}</p>
     {streaks!=null?
-    <div class="flex-col w-full">
+    <div class="flex flex-col w-full">
+
+      
       <p class="text-4xl">Your Current  streaks</p>
       {!seeAllStreaks?
       <div class="flex-col w-full justify-between">

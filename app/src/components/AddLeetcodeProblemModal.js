@@ -82,7 +82,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
 
   },[])
   const p=JSON.parse(sessionStorage.getItem("currentProblem"))
-  console.log(p.id)
+  
   console.log(problemData)
   console.log(ourProblem)
 
@@ -105,7 +105,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
   return (
     <div class='bg-gray-200' data-testId="modal-public">
      
-    <div class='h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50'>
+    <div class='h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50 z-40'>
      
       <main id='content' role='main' class='w-full max-w-lg mx-auto h-[80vh] overflow-y-scroll overflow-hidden rounded-md'>
       
