@@ -6,6 +6,7 @@ import {CategoryScale} from 'chart.js';
 import Chart from 'chart.js/auto';
 
 function Streak({streaks}) {
+  Chart.register(CategoryScale);
 
   //console.log(streak[0]) 
   const[isLoading,setIsLoading]=useState(true)
@@ -37,7 +38,7 @@ function Streak({streaks}) {
  
 
  if(!isLoading){
-  Chart.register(CategoryScale);
+  
   console.log(streaks.length)
   const data= {
     labels:streaks.map((m) => {return m.day}),
