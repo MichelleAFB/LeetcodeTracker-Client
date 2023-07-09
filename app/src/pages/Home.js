@@ -1,7 +1,7 @@
 import React from 'react'
 import { useEffect } from 'react'
 //redux
-import {dispatch,connect} from 'react-redux'
+import {useDispatch,connect} from 'react-redux'
 //components
 import AddProblem from '../components/AddProblem'
 import ProblemList from '../components/ProblemList'
@@ -12,6 +12,7 @@ import AddLeetcodeProblemModal from '../components/AddLeetcodeProblemModal'
 import axios from 'axios'
 import Header from '../components/layout/Header'
 import StreakChart from '../components/StreakChart'
+import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editProblem-actions'
 
 function Home({problem,visibility,leetCodeVisiblity}) {
 
@@ -19,11 +20,12 @@ function Home({problem,visibility,leetCodeVisiblity}) {
     //axios.get("http://localhost:3022/generate-prompt")
 
   },[visibility,leetCodeVisiblity])
-  
+  const dispatch=useDispatch()
 
   return (
     <div class="w-full flex min-h-screen ">
-      <div class=" w-1/2 sticky ">
+      <div class=" w-1/2 sticky flex-col">
+      <AddProblem/>
         <ProblemList/>
       </div>
       <div class="w-1/2 overflow-y-scroll h-screen  sticky overflow-hidden p-3 ">

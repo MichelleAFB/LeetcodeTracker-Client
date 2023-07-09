@@ -67,7 +67,7 @@ function AddProblem() {
 
 //TODO:ADD LINK INPUT
   return (
-    <div class="flex w-full m-2  p-3 rounded-md w-1/2">
+    <div class="flex-col w-full m-2  p-3 rounded-md w-1/2">
         <button class="bg-green-500 p-3 rounded-md flex w-full justify-center" onClick={()=>{
           setShow(!show)
 
@@ -76,8 +76,8 @@ function AddProblem() {
         </button>
         <IconButton/>
         {show?
-        <div class="flex flex-col">
-          <div class="flex p-3 m2">
+        <div class="flex flex-col bg-gray-200 p-3 rounded-md">
+                   <div class="flex p-3 m2">
             <label>Title:</label>
             <input type="text" class="p-2 rounded-sm w-full ml-2" onChange={(e)=>{
               setTitle(e.target.value)
