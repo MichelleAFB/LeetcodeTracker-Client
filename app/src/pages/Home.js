@@ -24,7 +24,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
 
   return (
     <div class="w-full flex min-h-screen ">
-      <div class=" w-1/2 sticky flex-col">
+      <div class=" w-1/2 sticky flex-col bg-gray-400 ">
       <AddProblem/>
         <ProblemList/>
       </div>

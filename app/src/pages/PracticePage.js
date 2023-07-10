@@ -38,6 +38,7 @@ const javascriptDefault = `// some comment`;
 function PracticePage() {
 
 const[sendingstreak,setSendingStreak]=useState(false)
+const [attempts,setAttempts]=useState()
   const [code, setCode] = useState(javascriptDefault);
   const[examples,setExamples]=useState(null)
   const [customInput, setCustomInput] = useState("");
@@ -88,8 +89,7 @@ const[sendingstreak,setSendingStreak]=useState(false)
     console.log("reloading")
     const prom=new Promise((resolve,reject)=>{
       if (enterPress && ctrlPress) {
-        console.log("enterPress", enterPress);
-        console.log("ctrlPress", ctrlPress);
+   
         handleCompile();
       }
       var p
@@ -108,7 +108,7 @@ const[sendingstreak,setSendingStreak]=useState(false)
             console.log(doc.data().solution)
             //console.log(solution)
             setProblem({problem:doc.data(),id:doc.id})
-            console.log(doc.data().prompt)
+           
             if(doc.data().level!=null){
               setLevel(doc.data().level)
             }else{
@@ -142,6 +142,8 @@ const[sendingstreak,setSendingStreak]=useState(false)
                 }
               }`)
             }
+            console.log(doc.data().attempts)
+            setAttempts(doc.data().attempts.attempts)
             if(doc.data().examples!=null){
               setExamples(doc.data().examples)
             }if(doc.data().examples==null){
@@ -152,7 +154,7 @@ const[sendingstreak,setSendingStreak]=useState(false)
             }else{
               setSolution("solution")
             }
-            console.log("new link:"+doc.data().link)
+         
             if(doc.data().link!=null || doc.data().link!="https://leetcode.com/problemset/all/"){
               setLink(doc.data().link)
             }if(doc.data().link==null){
@@ -165,7 +167,7 @@ const[sendingstreak,setSendingStreak]=useState(false)
             }
           
             setTitle(doc.data().title)
-            console.log(doc.data().boilerCode)
+           
            
             setTimeout(()=>{
               return problem
@@ -377,24 +379,9 @@ const[sendingstreak,setSendingStreak]=useState(false)
     
     const oldAttempts=problem.problem.attempts
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
-     Object.keys(problem.problem.attempts).map((item)=>{
-      
-      const att=problem.problem.attempts[item]
-      Object.keys(att).map((date)=>{
-       
-        console.log(att[date].date)
-      })
-     })
+     
     
     
-
-
-
-
-
-    console.log(prompt)
-
-     console.log("code:"+code)
    
   return (
     <div>
@@ -575,11 +562,6 @@ const[sendingstreak,setSendingStreak]=useState(false)
                  
                   console.log(d.id==problemId)
                   
-                if(d.id==problemId){
-                  console.log("\n\n\n\n")
-                  console.log(d.data())
-                }
-                 
                 
                  
                 
@@ -603,12 +585,15 @@ const[sendingstreak,setSendingStreak]=useState(false)
                    
                    var num=key
                    console.log(bigAttempts)
+                   console.log("attemots length:"+attempts.length)
                    if(problem.problem.attempts[key].date!=null){
-                    
+                   
                    bigAttempts.attempts[index]={attempt:problem.problem.attempts[key],date:problem.problem.attempts[key].date}
-                   console.log(attempts[index])
+               
                    }else{
-                     bigAttempts.attempts[index]={attempt:problem.problem.attempts[key],date:" "}
+                    var cDate=new Date()
+                    cDate=cDate.toString().substring(0,15)
+                     bigAttempts.attempts[index]={attempt:problem.problem.attempts[key],date:cDate}
    
                    }
                    at=Math.max(i,at)
@@ -832,15 +817,25 @@ const[sendingstreak,setSendingStreak]=useState(false)
           seeAttempts? 
           <div class="bg-white">
             {
-          
-          Object.keys(problem.problem.attempts).map((key,i)=>{
+            Object.keys(attempts).map((k)=>{
+              console.log(attempts)
+              const at=attempts[k]
+              
+              if(at!=null && typeof(at.attempt)!="object" ){
+                console.log(at)
+                console.log(typeof(at.attempt))
+               
+              return(
+                <div class="flex flex-col bg-gray-200 rounded-md p-2 m-1">
+              <p class="text-center font-bold">{at.date}</p>
+              <p class="text-center">{at.attempt}</p>
+            </div>
+              )
+              }
+            })
             
-            return(<div class="flex flex-col bg-gray-400 rounded-md p-2 m-1">
-              <p class="text-center font-bold">{problem.problem.attempts[key].date}</p>
-              <p class="text-center">{problem.problem.attempts[key].attempt}</p>
-            </div>)
-           })
-          }
+           
+            }
         
           </div>:<div></div>
         }
