@@ -67,7 +67,7 @@ function AddProblem() {
 
 //TODO:ADD LINK INPUT
   return (
-    <div class="flex-col w-full m-2  p-3 rounded-md w-1/2">
+    <div class="flex-col bg-inherit w-full m-2  p-3 rounded-md w-1/2">
         <button class="bg-green-500 p-3 rounded-md flex w-full justify-center" onClick={()=>{
           setShow(!show)
 

@@ -19,6 +19,7 @@ function Auth() {
   const[password,setPassword]=useState()
   const[firstname,setFirstName]=useState()
   const[lastname,setLastName]=useState()
+  const[timezone,setTimezone]=useState("CST")
 
   //find user for regualr signin method
   const[userFound,setuserFound]=useState(false)
@@ -97,6 +98,7 @@ function Auth() {
                      onlock: false,
                      password: password,
                      userId:id,
+                     timezone:timezone
                   })
 
                   added()
@@ -239,6 +241,19 @@ if(!isLoading){
               setPassword(e.target.value)
                }}/>
           </div>
+         <div class="flex justify-center m-2">
+          <select class="justify-center" onChange={(e)=>{
+            setTimezone(e.target.value)
+          }}>
+            <option value="CST">CST</option>
+            <option value="AST">AST</option>
+            <option value="PST">PST</option>
+            <option value="MT">MT</option>
+            <option value="HAT">HAT</option>
+            <option value="ET">ET</option>
+          </select>
+          </div>
+         
           <div class="flex justify-center mt-2">
             <button class="bg-green-600 rounded-md p-3" onClick={signIn}>
                 <p class="text-white font-semibold">Create</p>

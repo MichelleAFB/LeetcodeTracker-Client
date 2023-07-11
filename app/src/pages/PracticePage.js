@@ -642,8 +642,11 @@ const [attempts,setAttempts]=useState()
                   
                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,userId:Number(user.userId)}).then((response)=>{
                     console.log(response.data)
-                    setSendingStreak(false)
-                    alert("success!!!")
+                    if(response.data.message!=null){
+                      alert(response.data.message)
+                    }else{
+                      alert("SUCCESS+++")
+                    }
                    })
                    
                    
@@ -685,7 +688,12 @@ const [attempts,setAttempts]=useState()
                    
                     axios.post("https://leetcodetracker.onrender.comadd-to-streak",{problem:problem.problem}).then((response)=>{
                       setSendingStreak(false)
-                      alert("success++++++")
+                      console.log(response)
+                      if(response.data.message!=null){
+                        alert(response.data.message)
+                      }else{
+                        alert("SUCCESS+++")
+                      }
                       console.log(response.data)
                      })
                     setReload(!reload)
