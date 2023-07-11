@@ -28,9 +28,13 @@ function ProblemList() {
   const[searchByDate,setSearchByDate]=useState(false)
   const[problemBad,setProblemBad]=useState()
   const problemsListCollectionRef=collection(db,"problems")
-  const[green,setGreen]=useState(0)
-  const[orange,setOrange]=useState(0)
-  const[red,setRed]=useState(0)
+  const[green,setGreen]=useState(false)
+  const[orange,setOrange]=useState(false)
+  const[red,setRed]=useState(false)
+  const[redCount,setRedCount]=useState(0)
+  const[greenCount,setGreenCount]=useState(0)
+  const[orangeCount,setOrangeCount]=useState(0)
+  
 
   useEffect(()=>{
     sessionStorage.setItem("green",0)
@@ -81,6 +85,7 @@ function ProblemList() {
             if(index<7){
               GREEN=GREEN+1
               sessionStorage.setItem("green",GREEN)
+             
 
             }
             if(index>7 && index<14){
@@ -107,7 +112,7 @@ function ProblemList() {
       }
   
       getProblemsList().then(()=>{
-   
+       
        // resolve()
         setTimeout(()=>{
           resolve()
@@ -121,9 +126,9 @@ function ProblemList() {
       const g=JSON.parse(sessionStorage.getItem("green"))
       const o=JSON.parse(sessionStorage.getItem("orange"))
       console.log(o+" "+g+" "+r)
-      setGreen(g)
-      setRed(r)
-      setOrange(o)
+      setGreenCount(g)
+      setRedCount(r) 
+      setOrangeCount(o)
 
      const prom1=new Promise((resolve1,reject1)=>{
       console.log(dataArr)
@@ -310,6 +315,178 @@ const handleSearchByDataStructure = (e) => {
 )   
 }
 
+const handleSearchByRed= () => {
+ 
+
+  const fil=[]
+
+  const prom = new Promise((resolve,reject) => {
+    
+  setFiltered([])
+  problems.map((ev) => {
+   
+  
+    var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+    "Aug","Sep","Oct","Nov","Dec"];
+    var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
+    var cDate=new Date()
+    var index=1
+    var st=ev.problem.lastPracticed.split(" ")
+  
+   
+  const currDate=cDate.toString().substring(0,15)
+
+    const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
+   
+    var nextDate=new Date(startDate);
+ 
+    var nextnext=nextDate.setDate(nextDate.getDate()+1)
+  
+   
+    nextDate=new Date(nextnext)
+    var index=1;
+   
+    while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
+      var nextnext=nextDate.setDate(nextDate.getDate()+1)
+      nextDate=new Date(nextnext)
+   
+      
+      index++
+   }
+   setTimeout(()=>{
+      if(index>14){
+        fil.push(ev)
+      }
+   },100)
+  })
+  console.log(fil)
+    resolve(fil)
+  })
+
+  prom.then(() => {
+    setFiltered(fil)
+    console.log("filtered should be")
+    console.log(filtered)
+}).catch(
+  console.log("filter not working")
+)   
+}
+
+
+const handleSearchByOrange= () => {
+
+  const fil=[]
+  const prom = new Promise((resolve,reject) => {
+    
+  setFiltered([])
+  console.log(problems)
+  problems.map((ev) => {
+   
+  
+    var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+    "Aug","Sep","Oct","Nov","Dec"];
+    var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
+    var cDate=new Date()
+    var index=1
+    var st=ev.problem.lastPracticed.split(" ")
+  
+   
+  const currDate=cDate.toString().substring(0,15)
+
+    const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
+   
+    var nextDate=new Date(startDate);
+ 
+    var nextnext=nextDate.setDate(nextDate.getDate()+1)
+  
+   
+    nextDate=new Date(nextnext)
+    var index=1;
+   
+    while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
+      var nextnext=nextDate.setDate(nextDate.getDate()+1)
+      nextDate=new Date(nextnext)
+   
+      
+      index++
+   }
+   setTimeout(()=>{
+      if(index<14 && index>=7){
+        fil.push(ev) 
+      }
+   },100)
+  })
+  console.log(fil)
+    resolve(fil)
+  })
+
+  prom.then(() => {
+    setFiltered(fil)
+    console.log("filtered should be")
+    console.log(filtered)
+}).catch(
+  console.log("filter not working")
+)   
+}
+
+
+const handleSearchByGreen= () => {
+ 
+
+  const fil=[]
+
+  const prom = new Promise((resolve,reject) => {
+    
+  setFiltered([])
+  problems.map((ev) => {
+   
+  
+    var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+    "Aug","Sep","Oct","Nov","Dec"];
+    var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
+    var cDate=new Date()
+    var index=1
+    var st=ev.problem.lastPracticed.split(" ")
+  
+   
+  const currDate=cDate.toString().substring(0,15)
+
+    const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
+   
+    var nextDate=new Date(startDate);
+ 
+    var nextnext=nextDate.setDate(nextDate.getDate()+1)
+  
+   
+    nextDate=new Date(nextnext)
+    var index=1;
+   
+    while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
+      var nextnext=nextDate.setDate(nextDate.getDate()+1)
+      nextDate=new Date(nextnext)
+   
+      
+      index++
+   }
+   setTimeout(()=>{
+      if(index<7){
+        fil.push(ev) 
+      }
+   },100)
+  })
+  console.log(fil)
+    resolve(fil)
+  })
+
+  prom.then(() => {
+    setFiltered(fil)
+    console.log("filtered should be")
+    console.log(filtered)
+}).catch(
+  console.log("filter not working")
+)   
+}
+
   
 
    
@@ -345,29 +522,124 @@ const handleSearchByDataStructure = (e) => {
       <div class="flex  justify-around">
         <div class="m-2 flex">
         <div class="m-2 flex">
-          <div class="bg-white  p-3 mr-3 ">
-           <p class="font-bold text-sm">{green}</p>
-           </div>
+        {green? 
+          <button class="bg-gray-200  p-3 mr-3 " onClick={()=>{
+            setGreen(false)
+            console.log("orange:"+orange+" red:"+red+ " green:"+green)
+
+          }}>
+          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("green"))}</p>
+           </button>
+           :
+        <button class="bg-white  p-3 mr-3 " onClick={()=>{
+            const prom=new Promise((resolve,reject)=>{
+              handleSearchByGreen()
+              setTimeout(()=>{
+                resolve()
+              },100)
+            })
+
+            prom.then(()=>{
+              setGreen(true)
+              setRed(false)
+              setOrange(false)
+              console.log("orange:"+orange+" red:"+red+ " green:"+green)
+
+            })
+          }}>
+          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("green"))}</p>
+           </button>
+           
+         
+        }
 
           <p class="font-bold text-xs">{"< 7 days "}</p>
         </div>
         <div class="flex m-2 w-1/3">
-          <div class="bg-orange-400 p-3 mr-3 ">
-          <p class="font-bold text-sm">{orange}</p>
-           </div>
+        {orange? 
+          <button class="bg-orange-700  p-3 mr-3 " onClick={()=>{
+            setOrange(false)
+            console.log("orange:"+orange+" red:"+red+ " green:"+green)
+
+          }}>
+          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("orange"))}</p>
+           </button>
+           :
+        <button class="bg-orange-600  p-3 mr-3 " onClick={()=>{
+            const prom=new Promise((resolve,reject)=>{
+              handleSearchByOrange()
+              setTimeout(()=>{
+                resolve()
+              },100)
+            })
+
+            prom.then(()=>{
+              setOrange(true)
+              setRed(false)
+              setGreen(false)
+              console.log("orange:"+orange+" red:"+red+ " green:"+green)
+           
+            })
+          }}>
+          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("orange"))}</p>
+           </button>
+           
+         
+        }
           <p class="font-bold text-xs">{"> 7 days"}</p>
           </div>
         </div>
         <div class="m-2 flex">
           <div class="m-2 flex w-1/3">
-          <div class="bg-red-600  p-3 mr-3 ">
-          <p class="font-bold text-sm">{red}</p>
-           </div>
+          {red?
+              <button class="bg-red-800  p-3 mr-3 " onClick={()=>{
+                setRed(false)
+                console.log("orange:"+orange+" red:"+red+ " green:"+green)
+    
+              }}>
+              <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("red"))}</p>
+               </button>
+               :
+           <button class="bg-red-600  p-3 mr-3 " onClick={()=>{
+            const prom=new Promise((resolve,reject)=>{
+              handleSearchByRed()
+              setTimeout(()=>{
+                resolve()
+              },100)
+            })
+
+            prom.then(()=>{
+              setOrange(false)
+              setGreen(false)
+              setRed(true)
+              console.log("orange:"+orange+" red:"+red+ " green:"+green)
+
+            })
+          }}>
+          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("red"))}</p>
+           </button>
+           
+        }
           <p class="font-bold text-xs">- > 2 weeks</p>
           </div>
+        
         </div>
-       
+      
       </div>
+      <div class="flex justify-center">
+        <button class="bg-white p-2 rounded-md m-2 flex w-1/4 justify-center" onClick={()=>{
+          setFiltered(problems)
+          setGreen(false)
+          setOrange(false)
+          setRed(false)
+          setSearchByCategory(false)
+          setSearchByDataStructure(false)
+          setSearchByDate(false)
+        }}>
+           <p class="text-black text-center font-semibold">Reset</p>
+         </button>
+      </div>
+      
    
       
      
@@ -617,6 +889,7 @@ const handleSearchByDataStructure = (e) => {
     </div>:
     <div></div>
       }
+  
       {
         !search && !searchByCategory && !searchByDataStructure?
         <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
@@ -630,7 +903,51 @@ const handleSearchByDataStructure = (e) => {
       
     </div>
   )
-} if( problems==null){
+}if(problems!=null && red && !orange&& !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+ 
+    return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+    { filtered.map((p)=>{
+     console.log(p)
+      return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+      })
+    }
+ </div>)
+ 
+}
+if(problems!=null && !red && orange && !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+ 
+  return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+  { filtered.map((p)=>{
+   console.log(p)
+    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+    })
+  }
+</div>)
+
+}
+if(problems!=null && !red && !orange && green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+ 
+  return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+  { filtered.map((p)=>{
+   console.log(p)
+    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+    })
+  }
+</div>)
+
+}
+if(problems!=null && !red && !orange && !green&& !search && !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+ 
+  return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+  { filtered.map((p)=>{
+   console.log(p)
+    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+    })
+  }
+</div>)
+
+}
+ if( problems==null){
 
   console.log(problems)
 return (

@@ -380,7 +380,7 @@ const [attempts,setAttempts]=useState()
     const oldAttempts=problem.problem.attempts
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
      
-    
+    console.log(problem.problem.attempts)
     
    
   return (
@@ -644,8 +644,12 @@ const [attempts,setAttempts]=useState()
                     console.log(response.data)
                     if(response.data.message!=null){
                       alert(response.data.message)
+                      setSendingStreak(false)
+
                     }else{
                       alert("SUCCESS+++")
+                      setSendingStreak(false)
+
                     }
                    })
                    
@@ -691,8 +695,12 @@ const [attempts,setAttempts]=useState()
                       console.log(response)
                       if(response.data.message!=null){
                         alert(response.data.message)
+                        setSendingStreak(false)
+
                       }else{
                         alert("SUCCESS+++")
+                        setSendingStreak(false)
+
                       }
                       console.log(response.data)
                      })
@@ -822,12 +830,14 @@ const [attempts,setAttempts]=useState()
           <p class="text-white">See Attempts</p>
         </button>
         {
-          seeAttempts? 
+          seeAttempts && attempts!=null? 
           <div class="bg-white">
             {
             Object.keys(attempts).map((k)=>{
               console.log(attempts)
+            
               const at=attempts[k]
+                if(at!=null){
               
               if(at!=null && typeof(at.attempt)!="object" ){
                 console.log(at)
@@ -840,12 +850,19 @@ const [attempts,setAttempts]=useState()
             </div>
               )
               }
+            }else{
+              console.log(attempts)
+            }
             })
             
            
             }
         
-          </div>:<div></div>
+          </div>:<div>
+            {
+              console.log(problem.problem.attempts.size)
+            }
+          </div>
         }
       </div>
          
