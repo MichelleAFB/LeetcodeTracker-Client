@@ -9,9 +9,11 @@ import PracticePage from './pages/PracticePage';
 
 import Header from './components/layout/Header';
 import AddLeetcodeProblemModal from './components/AddLeetcodeProblemModal';
+import EditProblemModal from './components/EditProblemModal';
 function App() {
   return (
     <Router>
+      <EditProblemModal/>
       <AddLeetcodeProblemModal/>
         <Header/> 
       <Routes>
