@@ -105,7 +105,7 @@ const [attempts,setAttempts]=useState()
         
          
           if(doc.id==problemId){
-            console.log(doc.data().solution)
+            console.log(doc.data())
             //console.log(solution)
             setProblem({problem:doc.data(),id:doc.id})
            
@@ -640,7 +640,7 @@ const [attempts,setAttempts]=useState()
                    console.log(response)
                    const user=JSON.parse(sessionStorage.getItem("user"))
                   
-                   axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,userId:Number(user.userId)}).then((response)=>{
+                   axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,userId:Number(user.userId)}).then((response)=>{
                     console.log(response.data)
                     if(response.data.message!=null){
                       alert(response.data.message)
@@ -690,7 +690,7 @@ const [attempts,setAttempts]=useState()
                   }).then((response)=>{
                     console.log(response)
                    
-                    axios.post("https://leetcodetracker.onrender.comadd-to-streak",{problem:problem.problem}).then((response)=>{
+                    axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem}).then((response)=>{
                       setSendingStreak(false)
                       console.log(response)
                       if(response.data.message!=null){

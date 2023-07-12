@@ -203,7 +203,7 @@ function StreakChart() {
       </button>
       </div>:
       <div class="flex-col">
-      <div class="flex w-full overflow-x-scroll overflow-hidden">
+      <div class="flex w-full overflow-x-scroll flex-row-reverse overflow-hidden">
         {allStreaks.map((st)=>{
           return(<Streak streaks={st}/>)
         })
