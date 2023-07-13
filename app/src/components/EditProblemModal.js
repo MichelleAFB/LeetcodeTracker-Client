@@ -10,31 +10,39 @@ import { db } from '../firebase/firebase'
 import {getDocs,collection,setDoc,doc,updateDoc} from 'firebase/firestore'
 
 function EditProblemModal({ourProblem,visibility}) {
-  const [problem,setProblem]=useState(ourProblem.problem)
-  const[link,setLink]=useState(ourProblem.problem.link)
-  console.log(problem)
+  
+  const [problem,setProblem]=useState()
+  const[link,setLink]=useState()
 
-  const[title,setTitle]=useState(ourProblem.problem.title)
-  const[dataStructure,setDataStructure]=useState(ourProblem.problem.dataStructure)
-  const[category,setCategory]=useState(ourProblem.problem.category)
-  const[hints,setHints]=useState(ourProblem.problem.hints)
-  const[solution,setSolution]=useState(ourProblem.problem.solution)
+
+  const[title,setTitle]=useState()
+  const[dataStructure,setDataStructure]=useState()
+  const[category,setCategory]=useState()
+  const[hints,setHints]=useState()
+  const[solution,setSolution]=useState()
   const [addPrompt,setAddPrompt]=useState(false)
-  const [prompt,setPrompt]=useState(ourProblem.problem.prompt)
+  const [prompt,setPrompt]=useState()
   const[addNewDataStructure,setAddNewDataStructure]=useState(false)
   const[addNewCategory,setAddNewCategory]=useState(false)
-  const[examples,setExamples]=useState(ourProblem.problem.examples)
+  const[examples,setExamples]=useState()
   const[addExamples,setAddExamples]=useState(false)
   const[numExamples,setNumExamples]=useState(0)
   const[currentExample,setCurrentExample]=useState()
  // const[solution,setSolution]=useState()
-
-  console.log(ourProblem)
   const[isLoading,setIsLoading]=useState(true)
+  
   useEffect(()=>{
-    
+    if(ourProblem!=null){
     const prom=new Promise((resolve,reject)=>{
-      
+      setTitle(ourProblem.problem.title)
+      setDataStructure(ourProblem.problem.dataStructure)
+      setLink(ourProblem.problem.link)
+      setCategory(ourProblem.problem.category)
+      setHints(ourProblem.problem.hints)
+      setSolution(ourProblem.problem.solution)
+      setPrompt(ourProblem.problem.prompt)
+      setExamples(ourProblem.problem.examples)
+      setProblem(ourProblem.problem)
       getProblemsList(ourProblem.id).then((response)=>{
         console.log(response)
        
@@ -66,6 +74,7 @@ function EditProblemModal({ourProblem,visibility}) {
       }
 
     })
+  }
   
 
   },[visibility,ourProblem])
