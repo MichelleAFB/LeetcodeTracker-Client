@@ -43,7 +43,7 @@ function StreakChart() {
         console.log(response1)
         setTimeout(()=>{
          resolve1()
-        },300)
+        },500)
       })
       
    
