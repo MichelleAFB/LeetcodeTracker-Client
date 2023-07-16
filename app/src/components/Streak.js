@@ -26,7 +26,8 @@ function Streak({streaks}) {
     plugins: {
       legend: {
         position: "top",
-        margin:"3px"
+        margin:"3px",
+        
       },
       title: {
         display: true,
@@ -56,11 +57,11 @@ function Streak({streaks}) {
  
  
   return (
-    <div class="flex w-full m-2 border-l-2 border-gray-500 p-3">
+    <div class="flex w-full m-2 border-l-2 border-gray-500 p-3 z-1">
      { 
       streaks!=null ?
-      <div class="flex-col">
-            <Bar options={options} data={data} height='400px' width='300px' />
+      <div class="flex-col z-1">
+            <Bar class="z-l"options={options} data={data} height='400px' width='300px' />
             <div class="flex">
             {streaks.map((s)=>{
               return(

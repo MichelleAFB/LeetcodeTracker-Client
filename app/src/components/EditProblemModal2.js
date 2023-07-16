@@ -93,7 +93,7 @@ function EditProblemModal2({ourProblem,visibility}) {
     console.log("here")
     const problemsListCollectionRef=collection(db,"problems")
   return (
-    <div class='bg-gray-200' data-testId="modal-public">
+    <div class='bg-gray-200 z-30' data-testId="modal-public">
      
     <div class='h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50'>
      

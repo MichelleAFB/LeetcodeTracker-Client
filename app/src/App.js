@@ -10,10 +10,11 @@ import PracticePage from './pages/PracticePage';
 import Header from './components/layout/Header';
 import AddLeetcodeProblemModal from './components/AddLeetcodeProblemModal';
 import EditProblemModal from './components/EditProblemModal';
+import EditProblemModal2 from './components/EditProblemModal2';
 function App() {
   return (
     <Router>
-      <EditProblemModal/>
+      <EditProblemModal2/>
       <AddLeetcodeProblemModal/>
         <Header/> 
       <Routes>

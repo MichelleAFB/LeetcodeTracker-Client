@@ -117,14 +117,14 @@ function EditProblemModal({ourProblem,visibility}) {
   if(!isLoading){
 
     console.log("prompt:"+prompt)
-    console.log("examples:"+examples)
+    
     console.log("link:"+link)
   return (
     <div class='bg-gray-200' data-testId="modal-public">
      
     <div class='h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50'>
      
-      <main id='content' role='main' class='w-full max-w-md mx-auto '>
+      <main id='content' role='main' class='w-full max-w-md mx-autoz-40 '>
         <div class=' bg-white  rounded-xl shadow-lg bg-white dark:border-gray-700 mb-5'>
           <div class='p-4 sm:p-7 flex flex-col'>
             {problem.problem.examples==null ?

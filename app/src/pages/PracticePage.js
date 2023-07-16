@@ -640,7 +640,7 @@ const [attempts,setAttempts]=useState()
                    console.log(response)
                    const user=JSON.parse(sessionStorage.getItem("user"))
                   
-                   axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,userId:Number(user.userId)}).then((response)=>{
+                   axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,userId:Number(user.userId)}).then((response)=>{
                     console.log(response.data)
                     if(response.data.message!=null){
                       alert(response.data.message)
@@ -690,7 +690,7 @@ const [attempts,setAttempts]=useState()
                   }).then((response)=>{
                     console.log(response)
                    
-                    axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem}).then((response)=>{
+                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem}).then((response)=>{
                       setSendingStreak(false)
                       console.log(response)
                       if(response.data.message!=null){
@@ -846,7 +846,7 @@ const [attempts,setAttempts]=useState()
               return(
                 <div class="flex flex-col bg-gray-200 rounded-md p-2 m-1">
               <p class="text-center font-bold">{at.date}</p>
-              <p class="text-center">{at.attempt}</p>
+              <p class="text-sm whitespace-pre-wrap ">{at.attempt}</p>
             </div>
               )
               }

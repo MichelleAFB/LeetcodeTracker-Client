@@ -514,7 +514,7 @@ const handleSearchByGreen= () => {
 
 
   return (
-    <div class="bg-gray-400 w-full  p-3 ">
+    <div class="bg-gray-400 w-full  p-3 z-10">
       <p class="text-xl text-center font-bold">
         Your Questions ({problems.length})
       </p>
