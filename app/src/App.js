@@ -14,7 +14,7 @@ import EditProblemModal2 from './components/EditProblemModal2';
 function App() {
   return (
     <Router>
-      <EditProblemModal2/>
+      <EditProblemModal/>
       <AddLeetcodeProblemModal/>
         <Header/> 
       <Routes>
