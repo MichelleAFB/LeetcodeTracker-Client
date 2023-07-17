@@ -28,7 +28,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
       <AddProblem/>
         <ProblemList/>
       </div>
-      <div class="w-1/2 overflow-y-scroll h-screen  sticky overflow-hidden p-3 ">
+      <div class="w-1/2 overflow-y-scroll h-screen  sticky overflow-hidden  ">
 
       
         <StreakChart/>
