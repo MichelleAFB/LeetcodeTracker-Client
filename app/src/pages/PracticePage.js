@@ -639,8 +639,9 @@ const [attempts,setAttempts]=useState()
                  }).then((response)=>{
                    console.log(response)
                    const user=JSON.parse(sessionStorage.getItem("user"))
-                  
-                   axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,userId:Number(user.userId)}).then((response)=>{
+                    var curr=new Date()
+                    curr=curr.toString().substring(0,15)
+                   axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,userId:Number(user.userId),day:curr}).then((response)=>{
                     console.log(response.data)
                     if(response.data.message!=null){
                       alert(response.data.message)
@@ -689,8 +690,9 @@ const [attempts,setAttempts]=useState()
                    
                   }).then((response)=>{
                     console.log(response)
-                   
-                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem}).then((response)=>{
+                   var curr=new Date()
+                   curr=curr.toString().substring(0,15)
+                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,day:curr}).then((response)=>{
                       setSendingStreak(false)
                       console.log(response)
                       if(response.data.message!=null){

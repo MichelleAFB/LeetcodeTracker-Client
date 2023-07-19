@@ -25,13 +25,16 @@ function Home({problem,visibility,leetCodeVisiblity}) {
   return (
     <div class="w-full flex min-h-screen ">
       <div class=" w-1/2  flex-col bg-gray-400 p-5 z-1 ">
+        
       <AddProblem/>
         <ProblemList/>
       </div>
-      <div class="w-1/2 overflow-y-scroll h-screen  sticky overflow-hidden  ">
+      <div class="w-1/2 overflow-y-scroll h-screen  p-10 sticky overflow-hidden  ">
 
+      <div class="">
+      <StreakChart/>
+      </div>
       
-        <StreakChart/>
         <p class="ml-4 text-4xl">Add More Problems</p>
         <AllProblems/>
 
@@ -40,27 +43,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
     </div>
   )
 }
-/*
-    <div class="p-8 md:w-full flex flex-col min-h-screen ">
-    <div class="flex flex-col p-15 justify-center">
-      {visibility?
-        <EditProblemModal2/>:<div></div>}
-      
-      {
-        leetCodeVisiblity?
-        <AddLeetcodeProblemModal/>:<div></div>
-      }
-      <div class="flex  justify-center ">
-          <StreakChart/>
-      </div>
-      <div class="flex w-full justify-center  p-5 ">
-       <ProblemList/>
-       <AllProblems/>
-      </div>
-    
-    </div>
-    </div>
-*/
+
 const mapStateToProps = (state, props) => {
   var visibility= state.editProblem.visibility;
   var problem=state.editProblem.problem
