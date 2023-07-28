@@ -1,0 +1,4 @@
+
+
+export const SET_USER="SET_USER"
+export const SET_HEADER_VISIBILITY="SET_HEADER_VISIBILITY"

@@ -194,7 +194,7 @@ function StreakChart() {
       
       <p class="text-4xl">Your Current  streaks</p>
       {!seeAllStreaks?
-      <div class="flex-col w-full justify-between">
+      <div class="flex-col w-full justify-between ">
       <Streak streaks={streaks}/>
       <button class="bg-green-700 p-3 rounded-md m-2" onClick={()=>{
         setSeeAllStreaks(!seeAllStreaks)

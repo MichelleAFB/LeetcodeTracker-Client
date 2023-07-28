@@ -7,7 +7,7 @@ import Editor from '@monaco-editor/react'
 import {SandpackCodeEditor,SandpackLayout,SandpackProvider,SandpackPreview} from "@codesandbox/sandpack-react"
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from 'js-cookie'
-
+import { Link } from 'react-router-dom'
 
 
 
@@ -107,6 +107,8 @@ const [attempts,setAttempts]=useState()
           if(doc.id==problemId){
             console.log(doc.data())
             //console.log(solution)
+            var prob=doc.data()
+            
             setProblem({problem:doc.data(),id:doc.id})
            
             if(doc.data().level!=null){
@@ -380,7 +382,7 @@ const [attempts,setAttempts]=useState()
     const oldAttempts=problem.problem.attempts
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
      
-    console.log(problem.problem.attempts)
+    console.log(problem.problem)
     
    
   return (
@@ -389,7 +391,7 @@ const [attempts,setAttempts]=useState()
   
      <div class="bg-gray-900 p-3 rounded-md m-3">
       
-        
+      <Link class="justify-start" to="/home"><p class="text-white text-xl">Home</p></Link>  
      <p class="text-white text-center text-2xl font-bold mb-2">{problem.problem.title}</p>
      
      {
@@ -622,6 +624,7 @@ const [attempts,setAttempts]=useState()
                   console.log("\n\n\ncode not null.solutuion niot nuklkk")
                  
                   await setDoc(docRefer, {
+                    id:problem.id,
                    title:problem.problem.title,
                    dataStructure:problem.problem.dataStructure,
                    category:problem.problem.category,
@@ -674,6 +677,7 @@ const [attempts,setAttempts]=useState()
                       const currDate=cDate.toString().substring(0,15)
                       console.log("\n\n\ncode is null.solutuion not nukll")
                   await setDoc(docRefer, {
+                    id:problem.id,
                     title:problem.problem.title,
                     dataStructure:problem.problem.dataStructure,
                     category:problem.problem.category,
@@ -682,7 +686,7 @@ const [attempts,setAttempts]=useState()
                     no_attempts:problem.problem.no_attempts,
                     attempts:problem.problem.attempts,
                     solution:solution,
-                    userId:problem.problem.userId,
+                    userId:problem.problem.userId, 
                     boilerCode:boilerCode,
                     prompt:prompt,
                     examples:examples,
@@ -692,7 +696,7 @@ const [attempts,setAttempts]=useState()
                     console.log(response)
                    var curr=new Date()
                    curr=curr.toString().substring(0,15)
-                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,day:curr}).then((response)=>{
+                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,problem,id:problem.id,day:curr}).then((response)=>{
                       setSendingStreak(false)
                       console.log(response)
                       if(response.data.message!=null){

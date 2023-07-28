@@ -4,7 +4,7 @@ import { Bar } from "react-chartjs-2";
 import { useState,useEffect } from 'react';
 import {CategoryScale} from 'chart.js'; 
 import Chart from 'chart.js/auto';
-
+import axios from 'axios';
 function Streak({streaks}) {
   Chart.register(CategoryScale);
 
@@ -57,8 +57,9 @@ function Streak({streaks}) {
  
  
   return (
-    <div class="flex w-full m-2 border-l-2 border-gray-500 p-3 z-1">
-     { 
+    <div class="flex w-full m-2 border-l-2 border-gray-500 p-3 z-1 ">
+      <div class="overflow-x-scroll overflow-hidden">
+      { 
       streaks!=null ?
       <div class="flex-col z-1">
             <Bar class="z-l"options={options} data={data} height='400px' width='300px' />
@@ -69,10 +70,17 @@ function Streak({streaks}) {
                 <p class="text-md font-bold">
                 {s.day}
                 </p>
-                <ul>
+                <ul class="h-[150px] overflow-y-scroll overflow-hidden">
                   {
                     s.problems.map((p)=>{
-                      return(<p class="text-xs m-2">-{p.title}</p>)
+                      console.log(p)
+                      return(<div class="flex"><button class="bg-red-500 p-1 rounded-md m-2" onClick={()=>{
+                        axios.post("https://leetcodetracker.onrender.com/remove-from-streak",{problem:p,userId:JSON.parse(sessionStorage.getItem("user")).userId,day:s.day}).then((response)=>{
+                          console.log(response)
+
+                        })
+                      }
+                      }><p class="text-white">x</p></button><p class="text-xs m-2">-{p.title} {p.id}</p></div>)
                     })
                   }
                 </ul>
@@ -84,6 +92,8 @@ function Streak({streaks}) {
  <div>
   
   </div>}
+      </div>
+    
       
     </div>
   )

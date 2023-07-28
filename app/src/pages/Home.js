@@ -18,13 +18,17 @@ function Home({problem,visibility,leetCodeVisiblity}) {
 
   useEffect(()=>{
     //axios.get("http://localhost:3022/generate-prompt")
+    /*axios.post("http://localhost:3022/remove-duplicates").then((response)=>{
+      console.log(response)
+    })
+    */
 
   },[visibility,leetCodeVisiblity])
   const dispatch=useDispatch()
 
   return (
     <div class="w-full flex min-h-screen ">
-      <div class=" w-1/2  flex-col bg-gray-400 p-5 z-1 ">
+      <div class=" w-1/2 flex-col bg-gray-400 p-5 z-1 ">
         
       <AddProblem/>
         <ProblemList/>

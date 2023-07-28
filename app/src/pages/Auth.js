@@ -11,6 +11,8 @@ import {getDocs,collection,doc,setDoc,addDoc} from 'firebase/firestore'
 //routing
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
+import {useDispatch } from 'react-redux'
+import { setUser,setHeaderVisibility } from '../redux/user/editUser-actions'
 function Auth() {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -46,7 +48,7 @@ function Auth() {
       setIsLoading(false)
     })
   },[])
- 
+ const dispatch=useDispatch()
   const signIn=async()=>{
 
     try{
@@ -61,6 +63,7 @@ function Auth() {
               found=true
               sessionStorage.setItem("user",JSON.stringify(userData))
               sessionStorage.setItem("signInType","signIn")
+              dispatch(setUser(userData))
 
               const todaysQuestions=Cookies.get("total_questions_today")
               if(todaysQuestions==null){
@@ -75,6 +78,7 @@ function Auth() {
           console.log(found)
 
           if(found){
+            dispatch(setHeaderVisibility(true))
             navigate('/home')
           }else{
 
@@ -84,6 +88,7 @@ function Auth() {
                 console.log(response)
 
                 var userUid = auth.currentUser.uid;
+                dispatch(setUser(auth.currentUser))
                 const id=Math.floor(Math.random()*100000)
 
                 const added=async()=>{
@@ -166,6 +171,7 @@ function Auth() {
   console.log(Math.floor(Math.random()*1000))
 
   const signInWithGoogle=async()=>{
+  
     try{
       await signInWithPopup(auth,googleProvider).then((response)=>{
         console.log("signin with google")
@@ -174,7 +180,8 @@ function Auth() {
         const user=response.user.providerData[0]
         sessionStorage.setItem("user",JSON.stringify(user))
         sessionStorage.setItem("signInType","google")
-      }).then(()=>{
+      }).then((user)=>{
+      
         navigate("/home")
       })
     }catch(err){
