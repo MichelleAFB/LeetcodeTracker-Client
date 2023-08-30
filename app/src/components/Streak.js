@@ -5,10 +5,13 @@ import { useState,useEffect } from 'react';
 import {CategoryScale} from 'chart.js'; 
 import Chart from 'chart.js/auto';
 import axios from 'axios';
+import { db } from '../firebase/firebase';
+import { getDocs } from 'firebase/firestore';
+import { collection } from 'firebase/firestore';
+import RemoveProblemFromStreak from './RemoveProblemFromStreak';
 function Streak({streaks}) {
   Chart.register(CategoryScale);
 
-  //console.log(streak[0]) 
   const[isLoading,setIsLoading]=useState(true)
   
   const [problems,setProblems]=useState()
@@ -21,8 +24,10 @@ function Streak({streaks}) {
 
   const options = {
     maintainAspectRatio: true,
-    width: 200,
-    height: 100,
+    responsive: true,
+    type:"bar",
+   // width: 200,
+   // height: 100,
     plugins: {
       legend: {
         position: "top",
@@ -37,55 +42,101 @@ function Streak({streaks}) {
   };
 
  
-
- if(!isLoading){
-  
-  console.log(streaks.length)
   const data= {
     labels:streaks.map((m) => {return m.day}),
     datasets: [
       {
         base:0,
-        dataIndex:"hello",
         xAxisId:"Problems",
         label: streaks.map((d)=>{return d.day}),
-        data: streaks.map((m) => m.problems.length),
+        data: streaks.map((m) => m.problems!=null? m.problems.length:0),
         backgroundColor: "rgba(50, 270, 100, 0.5)",
       },
     ],
   };
+
+ async function remove(e,s,p){
+  e.preventDefault()
+  console.log("here")
+ const problemsListCollectionRef=collection(db,"problems")
+ const user=JSON.parse(sessionStorage.getItem("user"))
  
+   const data=await getDocs(problemsListCollectionRef) 
+   data.docs.map((d)=>{
+   // console.log(p.title)
+    
+     if(d.data().userId==user.userId && d.data().title==p.title){
+      console.log("MATCH")
+      axios.post("https://leetcodetracker.onrender.com/try-remove",{problem:p,userId:JSON.parse(sessionStorage.getItem("user")).userId,day:s.day}).then((response)=>{
+        console.log(response)
+        if(response.data.success){
+          alert("SUCCESS: deleted "+ p.title)
+        }
+
+      })
+       console.log("match")
+     }
+  
+ })
+}
+
+ if(!isLoading && streaks.length!=0){
+  //console.log(streaks)
  
+  console.log(streaks)
+  
   return (
-    <div class="flex w-full m-2 border-l-2 border-gray-500 p-3 z-1 ">
-      <div class="overflow-x-scroll overflow-hidden">
+    <div class="flex h-[500px]  w-full m-2 border-l-2 border-gray-500 p-3 z-1  ">
+      <div class={streaks.length>4?"flex w-full":"flex w-full"}>
       { 
       streaks!=null ?
-      <div class="flex-col z-1">
-            <Bar class="z-l"options={options} data={data} height='400px' width='300px' />
-            <div class="flex">
+      <div class=" flex-col z-1 ">
+        <div class="h-1/2">
+            <Bar class="z-l"options={options} data={data} height={null} width={null} />
+            </div>
+            <div class="flex  w-[470px] overflow-x-scroll overflow-hidden h-1/2 pt-6" >
+          
             {streaks.map((s)=>{
+              if(s!=null || s!={}){
+            
               return(
-                <div class="flex-col m-2">
+                <div class="flex-col m-2 mb-1 ">
                 <p class="text-md font-bold">
                 {s.day}
                 </p>
-                <ul class="h-[150px] overflow-y-scroll overflow-hidden">
+          
+                <ul class={`h-full ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
                   {
                     s.problems.map((p)=>{
-                      console.log(p)
-                      return(<div class="flex"><button class="bg-red-500 p-1 rounded-md m-2" onClick={()=>{
-                        axios.post("https://leetcodetracker.onrender.com/remove-from-streak",{problem:p,userId:JSON.parse(sessionStorage.getItem("user")).userId,day:s.day}).then((response)=>{
-                          console.log(response)
+                      if(p!=null){
+                 
+                   if(Object.keys(p).includes("problem")){
+                      return(<RemoveProblemFromStreak p={p.problem} s={s}/>)
+                   }else if(!Object.keys(p).includes("problem")){
+                       return(<RemoveProblemFromStreak p={p} s={s}/>)
 
-                        })
+                   }
+
+                      }else{
+                        console.log("\n\nnull problem")
+                        console.log(p)
                       }
-                      }><p class="text-white">x</p></button><p class="text-xs m-2">-{p.title} {p.id}</p></div>)
-                    })
+                     
+                      })
                   }
                 </ul>
+                
+               
+
+              
+              
+              
               </div>)
+
+
+            }
             })}
+        
             </div>
       </div>
         :   
@@ -96,7 +147,10 @@ function Streak({streaks}) {
     
       
     </div>
-  )
+
+
+
+)
       }else{
         return(<div></div>)
       }

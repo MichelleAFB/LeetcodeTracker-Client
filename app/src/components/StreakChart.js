@@ -35,16 +35,19 @@ function StreakChart() {
       console.log(data)
       console.log(response.data.streaks)
       console.log(response.data)
-      
-      axios.get("https://leetcodetracker.onrender.com/sort-streaks/"+user.userId,{message:"hi",userId:parseInt(user.userId)}).then((response1)=>{
+      if(response.data.streaks!=null){
+      axios.get("https://leetcodetracker.onrender.com/sort-streaks/"+user.userId,{message:"hi",userId:user.userId}).then((response1)=>{
         setAllStreaks(response1.data.streaks)
         const str=response.data.streaks 
         setStreaks(response.data.streaks)
         console.log(response1)
         setTimeout(()=>{
          resolve1()
-        },500)
+        },700)
       })
+    }else{
+      resolve1()
+    }
       
    
 
@@ -185,7 +188,7 @@ function StreakChart() {
     };
     */
   return (
-    <div class="flex w-full border-gray-300 border-b-2 m-3 p-4"> 
+    <div class="m-5 flex h-[500px] w-full  border-gray-300 border-b-2 m p-3  "> 
       
       <p>{}</p>
     {streaks!=null?
@@ -194,16 +197,9 @@ function StreakChart() {
       
       <p class="text-4xl">Your Current  streaks</p>
       {!seeAllStreaks?
-      <div class="flex-col w-full justify-between ">
-      <Streak streaks={streaks}/>
-      <button class="bg-green-700 p-3 rounded-md m-2" onClick={()=>{
-        setSeeAllStreaks(!seeAllStreaks)
-      }}>
-        <p class="text-white">See all streaks</p>
-      </button>
-      </div>:
+      
       <div class="flex-col">
-      <div class="flex w-full overflow-x-scroll flex-row-reverse overflow-hidden">
+      <div class="flex w-full overflow-x-scroll  overflow-hidden">
         {allStreaks.map((st)=>{
           return(<Streak streaks={st}/>)
         })
@@ -216,6 +212,15 @@ function StreakChart() {
         <p class="text-white">See Current Streak</p>
       </button>
       </div>
+      :
+      <div class="flex-col w-full ">
+      <Streak streaks={streaks}/>
+      <button class="bg-green-700 p-3 rounded-md m-2" onClick={()=>{
+        setSeeAllStreaks(!seeAllStreaks)
+      }}>
+        <p class="text-white">See all streaks</p>
+      </button>
+      </div>
       }
     
       </div>:
@@ -223,8 +228,8 @@ function StreakChart() {
   }
     </div>
   )
-    }else{
-      return(<div></div>)
+    }else if(!isLoading && streaks==null){
+      return(<div>No Streaks Yet</div>) 
     }
 }
 

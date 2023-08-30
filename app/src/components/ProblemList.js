@@ -14,6 +14,7 @@ import ProblemListItem from './ProblemListItem'
 
 //outside
 import axios from 'axios'
+import ProblemCountMeter from './ProblemCountMeter'
 
 function ProblemList() {
 
@@ -28,6 +29,8 @@ function ProblemList() {
   const[searchByDate,setSearchByDate]=useState(false)
   const[problemBad,setProblemBad]=useState()
   const problemsListCollectionRef=collection(db,"problems")
+  
+
   const[green,setGreen]=useState(false)
   const[orange,setOrange]=useState(false)
   const[red,setRed]=useState(false)
@@ -35,7 +38,8 @@ function ProblemList() {
   const[greenCount,setGreenCount]=useState(0)
   const[orangeCount,setOrangeCount]=useState(0)
   
-
+  const[full,setFull]=useState()
+  const fuller=[]
   useEffect(()=>{
     sessionStorage.setItem("green",0)
     sessionStorage.setItem("red",0)
@@ -49,15 +53,29 @@ function ProblemList() {
 
         //READ DATA
         try{
+          const titles=[]
           const user=JSON.parse(sessionStorage.getItem("user"))
           const userType=JSON.parse(sessionStorage.getItem("userType"))
 
         const data=await getDocs(problemsListCollectionRef)
         console.log(data)
         data.docs.map((doc)=>{
-          
+          var thing=doc.data()
+          const thinger=thing
+          thinger.id=doc.id     
+              
         
           if(doc.data().userId==user.userId){
+            titles.push(thing.title) 
+
+            setTimeout(()=>{
+             console.log(titles.includes(doc.data().title))
+              if(!titles.includes(doc.data().title)){
+                console.log(fuller)
+              fuller.push(thinger) 
+              }
+
+            },5)
             RED=0;
             ORANGE=0
             GREEN=0
@@ -98,7 +116,6 @@ function ProblemList() {
               sessionStorage.setItem("red",RED)
 
             }
-            console.log("RED"+RED+" ORANGE:"+ORANGE+" GREEN:"+GREEN)
            },50)
          
          
@@ -116,12 +133,13 @@ function ProblemList() {
        // resolve()
         setTimeout(()=>{
           resolve()
-        },300)
+        },500)
       })
       
     })
 
     prom.then(()=>{
+      setFull(fuller)
       const r=JSON.parse(sessionStorage.getItem("red"))
       const g=JSON.parse(sessionStorage.getItem("green"))
       const o=JSON.parse(sessionStorage.getItem("orange"))
@@ -129,6 +147,8 @@ function ProblemList() {
       setGreenCount(g)
       setRedCount(r) 
       setOrangeCount(o)
+setTimeout(()=>{
+
 
      const prom1=new Promise((resolve1,reject1)=>{
       console.log(dataArr)
@@ -140,11 +160,21 @@ function ProblemList() {
 
      prom1.then(()=>{
      
-      setTimeout(()=>{
-        setIsLoading(false)
-      },500)
+      const prom2=new Promise((resolve2,reject2)=>{
+        console.log(redCount+ " "+greenCount+" "+greenCount)
+        resolve2()
+
+      })
+
+      prom2.then(()=>{
+        setTimeout(()=>{
+          setIsLoading(false)
+        },1000)
+      })
 
      })
+    },500)
+
     })
     
 
@@ -153,6 +183,76 @@ function ProblemList() {
   const[searchText,setSearchText]=useState()
   const[search,setSearch]=useState(false)
   const[filtered,setFiltered]=useState()
+
+  function  myDecoStyle(value) {
+    console.log(value+" pixels")
+    return "Rectangle3 w-[43.4px] h-["+value+"px] left-[8.5px] top-[93px] absolute bg-red-500 rounded-b-[15px] border-black border-4";
+ }
+
+  async function getIds(){
+    const ful=[]
+    const getProblemsList=async()=>{
+
+      //READ DATA
+      try{
+        const title=[]
+        const user=JSON.parse(sessionStorage.getItem("user"))
+        const userType=JSON.parse(sessionStorage.getItem("userType"))
+
+      const data=await getDocs(problemsListCollectionRef)
+      console.log(data)
+      data.docs.map((doc)=>{
+        //console.log(doc.data())
+        var thing=doc.data()
+        const thinger=thing
+        thinger.id=doc.id     
+            
+      
+        if(doc.data().userId==user.userId){
+          title.push(thing.title) 
+          console.log(ful)
+          setTimeout(()=>{
+           // console.log(title)
+            ful.push({title:thinger.title,userId:thinger.userId,id:thinger.id}) 
+            console.log({title:thinger.title,userId:thinger.userId,id:thinger.id})
+       
+
+         
+
+          },10)
+        
+         
+        
+    
+        } 
+      })
+      }catch(err){
+        console.log(err)
+      }
+      setTimeout(()=>{
+        console.log(ful)
+        console.log("DIR")
+        console.log(ful.slice(0,ful.length/2))
+        const p=ful.slice(0,ful.length/3)
+        console.log(p[0])
+        axios.post("https://leetcodetracker.onrender.com/set-ids",{problems:ful}).then((response)=>{
+          console.log(response.data)
+        })
+        return ful
+      },800)
+    }
+
+    getProblemsList().then((res)=>{
+     console.log(res)
+     console.log("DONE")
+
+     // resolve()
+      setTimeout(()=>{
+        
+      },500)
+    })
+
+  }
   
 
   const handleSearch = (e) => {
@@ -355,7 +455,24 @@ const handleSearchByRed= () => {
    }
    setTimeout(()=>{
       if(index>14){
-        fil.push(ev)
+        if(searchByCategory){
+          if(ev.category==category){
+        fil.push(ev) 
+          }
+        }else if(searchByDataStructure){
+          if(ev.dataStructure==dataStructure){
+            fil.push(ev) 
+              }
+
+        }else if(searchByDate){
+          var curr=new Date()
+          if(ev.category==curr.toString().substring(0,15)){
+            fil.push(ev) 
+              }
+
+        }else{
+          fil.push(ev)
+        }
       }
    },100)
   })
@@ -412,7 +529,24 @@ const handleSearchByOrange= () => {
    }
    setTimeout(()=>{
       if(index<14 && index>=7){
+        if(searchByCategory){
+          if(ev.category==category){
         fil.push(ev) 
+          }
+        }else if(searchByDataStructure){
+          if(ev.dataStructure==dataStructure){
+            fil.push(ev) 
+              }
+
+        }else if(searchByDate){
+          var curr=new Date()
+          if(ev.category==curr.toString().substring(0,15)){
+            fil.push(ev) 
+              }
+
+        }else{
+          fil.push(ev)
+        }
       }
    },100)
   })
@@ -470,7 +604,24 @@ const handleSearchByGreen= () => {
    }
    setTimeout(()=>{
       if(index<7){
+        if(searchByCategory){
+          if(ev.category==category){
         fil.push(ev) 
+          }
+        }else if(searchByDataStructure){
+          if(ev.dataStructure==dataStructure){
+            fil.push(ev) 
+              }
+
+        }else if(searchByDate){
+          var curr=new Date()
+          if(ev.category==curr.toString().substring(0,15)){
+            fil.push(ev) 
+              }
+
+        }else{
+          fil.push(ev)
+        }
       }
    },100)
   })
@@ -488,6 +639,12 @@ const handleSearchByGreen= () => {
 }
 
   
+function fixIds(problems,user){
+  axios.post("https://leetcodetracker.onrender.com/idss",{problems:problems,user:user.userId}).then((response)=>{
+
+  })
+}
+const user=JSON.parse(sessionStorage.getItem("user"))
 
    
   function fix(problem1,problem2){
@@ -495,6 +652,7 @@ const handleSearchByGreen= () => {
     console.log(problem2.attempts)
   }
   if(isLoading){
+    
     return(
       <div class="flex w-full justify-center ">
           <div class="flex-col justify-end  ">
@@ -505,9 +663,16 @@ const handleSearchByGreen= () => {
     )
   }
   if(!isLoading && problems!=null){
-    console.log("green:"+green)
+    console.log("\n\nfull")
+    console.log(full)
+
+    const redPX= JSON.parse(sessionStorage.getItem("red"))
+
+    console.log(redCount+" px")
+
+    
    if(problems==null){
-    console.log("orange:"+orange)
+    
 
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
@@ -518,113 +683,110 @@ const handleSearchByGreen= () => {
       <p class="text-xl text-center font-bold">
         Your Questions ({problems.length})
       </p>
+    
       <p class="text-center font-bold text-md mt-2"> last practiced:</p>
       <div class="flex  justify-around">
-        <div class="m-2 flex">
-        <div class="m-2 flex">
-        {green? 
-          <button class="bg-gray-200  p-3 mr-3 " onClick={()=>{
-            setGreen(false)
-            console.log("orange:"+orange+" red:"+red+ " green:"+green)
 
+        <div class="flex-col mt-2" >
+          {green?
+          <button class="flex-col p-2 "  onClick={()=>{
+            setGreen(false)
           }}>
-          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("green"))}</p>
-           </button>
-           :
-        <button class="bg-white  p-3 mr-3 " onClick={()=>{
+           <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("green"))} color={"green"}/>
+           <p  class="text-center text-sm font-bold">{" < 7 days ago"}</p>
+
+          </button>
+          :
+          <button class="flex-col p-2"onClick={()=>{
             const prom=new Promise((resolve,reject)=>{
               handleSearchByGreen()
               setTimeout(()=>{
-                resolve()
+                  resolve()
               },100)
             })
 
-            prom.then(()=>{
+              prom.then(()=>{
+              
               setGreen(true)
               setRed(false)
               setOrange(false)
-              console.log("orange:"+orange+" red:"+red+ " green:"+green)
-
-            })
-          }}>
-          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("green"))}</p>
-           </button>
+          
+             })
+            }}>
+           <ProblemCountMeter  count={JSON.parse(sessionStorage.getItem("green"))} color={"green"} />
+           <p  class="text-center text-sm font-bold">{" < 7 days ago"}</p>
            
-         
-        }
+          </button>
 
-          <p class="font-bold text-xs">{"< 7 days "}</p>
+          }
         </div>
-        <div class="flex m-2 w-1/3">
-        {orange? 
-          <button class="bg-orange-700  p-3 mr-3 " onClick={()=>{
-            setOrange(false)
-            console.log("orange:"+orange+" red:"+red+ " green:"+green)
-
+        <div class="flex-col mt-2">
+        {orange?
+          <button class="flex-col p-2 "  onClick={()=>{
+            setGreen(false)
           }}>
-          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("orange"))}</p>
-           </button>
-           :
-        <button class="bg-orange-600  p-3 mr-3 " onClick={()=>{
+           <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("orange"))} color={"orange"}/>
+           <p  class="text-center text-xs font-bold">{" < 14 days ago"}</p>
+           <p  class="text-center text-xs font-bold">{" > 7 days ago"}</p>
+          </button>
+          :
+          <button class="flex-col p-2"onClick={()=>{
             const prom=new Promise((resolve,reject)=>{
               handleSearchByOrange()
               setTimeout(()=>{
-                resolve()
+                  resolve()
               },100)
             })
 
-            prom.then(()=>{
-              setOrange(true)
-              setRed(false)
+              prom.then(()=>{
+              
               setGreen(false)
-              console.log("orange:"+orange+" red:"+red+ " green:"+green)
-           
-            })
-          }}>
-          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("orange"))}</p>
-           </button>
-           
-         
-        }
-          <p class="font-bold text-xs">{"> 7 days"}</p>
-          </div>
+              setRed(false)
+              setOrange(true)
+          
+             })
+            }}>
+           <ProblemCountMeter  count={JSON.parse(sessionStorage.getItem("orange"))} color={"orange"} />
+           <p  class="text-center text-xs font-bold">{" < 14 days ago"}</p>
+           <p  class="text-center text-xs font-bold">{" > 7 days ago"}</p>
+
+
+          </button>
+
+          }
         </div>
-        <div class="m-2 flex">
-          <div class="m-2 flex w-1/3">
-          {red?
-              <button class="bg-red-800  p-3 mr-3 " onClick={()=>{
-                setRed(false)
-                console.log("orange:"+orange+" red:"+red+ " green:"+green)
-    
-              }}>
-              <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("red"))}</p>
-               </button>
-               :
-           <button class="bg-red-600  p-3 mr-3 " onClick={()=>{
+        <div class="mt-2 flex-col">
+        {red?
+          <button class="flex-col p-2 "  onClick={()=>{
+            setRed(false)
+          }}>
+           <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("red"))} color={"red"}/>
+           <p  class="text-center text-sm font-bold"> >14 days ago</p>
+
+          </button>
+          :
+          <button class="flex-col p-2"onClick={()=>{
             const prom=new Promise((resolve,reject)=>{
               handleSearchByRed()
               setTimeout(()=>{
-                resolve()
+                  resolve()
               },100)
             })
 
-            prom.then(()=>{
-              setOrange(false)
+              prom.then(()=>{
+              
               setGreen(false)
               setRed(true)
-              console.log("orange:"+orange+" red:"+red+ " green:"+green)
+              setOrange(false)
+          
+             })
+            }}>
+           <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen}  count={JSON.parse(sessionStorage.getItem("red"))} color={"red"} />
+           <p  class="text-center text-sm font-bold"> >14 days ago</p>
+          </button>
 
-            })
-          }}>
-          <p class="font-bold text-sm">{JSON.parse(sessionStorage.getItem("red"))}</p>
-           </button>
-           
-        }
-          <p class="font-bold text-xs">- > 2 weeks</p>
-          </div>
-        
+          }
         </div>
-      
       </div>
       <div class="flex justify-center">
         <button class="bg-white p-2 rounded-md m-2 flex w-1/4 justify-center" onClick={()=>{

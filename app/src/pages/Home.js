@@ -17,8 +17,8 @@ import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editPr
 function Home({problem,visibility,leetCodeVisiblity}) {
 
   useEffect(()=>{
-    //axios.get("http://localhost:3022/generate-prompt")
-    /*axios.post("http://localhost:3022/remove-duplicates").then((response)=>{
+    //axios.get("https://leetcodetracker.onrender.com/generate-prompt")
+    /*axios.post("https://leetcodetracker.onrender.com/remove-duplicates").then((response)=>{
       console.log(response)
     })
     */
@@ -33,17 +33,20 @@ function Home({problem,visibility,leetCodeVisiblity}) {
       <AddProblem/>
         <ProblemList/>
       </div>
-      <div class="w-1/2 overflow-y-scroll h-screen  p-10 sticky overflow-hidden  ">
 
-      <div class="">
-      <StreakChart/>
-      </div>
-      
-        <p class="ml-4 text-4xl">Add More Problems</p>
-        <AllProblems/>
+      <div class="w-1/2 flex-col overflow-y-scroll h-screen  p-5 sticky overflow-hidden  ">
 
+        <div>
+       
+         <div class="mt-10 border-box block">
+          <p class="ml-4 mt-5 text-4xl z-10">Add More Problems</p>
+            <  AllProblems/>
+         </div>
+       
+  
+        </div>
+    
       </div>
-   
     </div>
   )
 }

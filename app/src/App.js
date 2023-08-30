@@ -12,6 +12,7 @@ import AddLeetcodeProblemModal from './components/AddLeetcodeProblemModal';
 import EditProblemModal from './components/EditProblemModal';
 import EditProblemModal2 from './components/EditProblemModal2';
 import {useState,useEffect} from 'react'
+import AnalyticsPage from './pages/AnalyticsPage';
 function App() {
   return (
     <Router>
@@ -22,6 +23,8 @@ function App() {
         <Route path="/" element={<Auth/>}/>
         <Route path="/home" element={<Home/>}/>
         <Route path="/practice/:problemId" element={<PracticePage/>}/>
+        <Route path="/analytics" element={<AnalyticsPage/>}/>
+
       
         
       </Routes>

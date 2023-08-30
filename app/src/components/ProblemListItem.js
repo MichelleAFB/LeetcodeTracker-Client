@@ -176,6 +176,7 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
     var index=1;
    
     while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
+      
       var nextnext=nextDate.setDate(nextDate.getDate()+1)
       nextDate=new Date(nextnext)
    
@@ -183,13 +184,16 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
       index++
    }
    
-    
+    console.log(Object.keys(problem.problem.attempts))
     if(index<7 && problem.problem.no_attempts!=0){
     
      
       
       return (
         <div className='p-5 bg-white rounded shadow m-3'>
+          <div class="flex w-full justify-end">
+            <div class="flex w-1/3"><p class="font-semibold text-end text-sm">Practiced {index} days ago</p></div>
+          </div>
         <div className="flex  items-center mb-4">
         
           <div className="flex w-full">
@@ -242,13 +246,13 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
           </div>
           <div class="flex">
           <span className="text-green mr-1">
-             <p class="font-bold">Attempts:<span class="font-normal mr-2">{problem.problem.no_attempts}</span></p>
+             <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.no_attempts}</span></p>
              
           </span>
           </div>
           <div class="flex">
           <span className="text-green mr-1">
-             <p class="font-bold">Category:<span class="font-normal mr-2">{problem.problem.category}</span></p>
+             <p class="font-bold text-sm ">Category:<span class="font-normal ml-2">{problem.problem.category}</span></p>
              
           </span>
           </div>
@@ -271,6 +275,9 @@ if(index>7 && index<14){
  
   return (
     <div className='p-5 bg-orange-400 rounded shadow m-3'>
+         <div class="flex w-full justify-end">
+            <div class="flex w-1/2"><p class="font-semibold text-end text-sm">Practiced {index} days ago</p></div>
+          </div>
     <div className="flex  items-center mb-4">
       <div className="flex w-full">
         <p class="font-bold text-xl">{problem.problem.title.toUpperCase()}</p>
@@ -314,7 +321,7 @@ if(index>7 && index<14){
   
     <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
     <div class="flex">
-      <p className="text-green font-bold mr-1">Last Practiced:</p>
+      <p className="text-green font-bold mr-1 text-sm">Last Practiced:</p>
       <p>{dateLast}</p>
         
       
@@ -322,13 +329,13 @@ if(index>7 && index<14){
       </div>
       <div class="flex">
       <span className="text-green mr-1">
-         <p class="font-bold">Attempts:<span class="font-normal mr-2">{problem.problem.no_attempts}</span></p>
+         <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.no_attempts}</span></p>
          
       </span>
       </div>
       <div class="flex">
       <span className="text-green mr-1">
-         <p class="font-bold">Category:<span class="font-normal mr-2">{problem.problem.category}</span></p>
+         <p class="font-bold text-sm">Category:<span class="font-normal ml-2">{problem.problem.category}</span></p>
          
       </span>
       </div>
@@ -350,6 +357,9 @@ if(index>14 || problem.problem.no_attempts==0){
   
   return (
     <div className='p-5 bg-red-400 rounded shadow m-3'>
+         <div class="flex w-full justify-end">
+            <div class="flex w-1/2"><p class="font-semibold text-end text-sm mb-3">Practiced {index} days ago</p></div>
+          </div>
     <div className="flex  items-center mb-4">
       <div className="flex w-full">
         <p class="font-bold text-xl">{problem.problem.title.toUpperCase()}</p>
@@ -393,7 +403,7 @@ if(index>14 || problem.problem.no_attempts==0){
     
     <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
     <div class="flex">
-      <p className="text-green font-bold mr-1">Last Practiced:</p>
+      <p className="text-green font-bold mr-1 text-sm">Last Practiced:</p>
       <p>{dateLast}</p>
         
       
@@ -401,13 +411,13 @@ if(index>14 || problem.problem.no_attempts==0){
       </div>
       <div class="flex">
       <span className="text-green mr-1">
-         <p class="font-bold">Attempts:<span class="font-normal mr-2">{problem.problem.no_attempts}</span></p>
+         <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.no_attempts}</span></p>
          
       </span>
       </div>
       <div class="flex">
       <span className="text-green mr-1">
-         <p class="font-bold">Category:<span class="font-normal mr-2">{problem.problem.category}</span></p>
+         <p class="font-bold text-sm">Category:<span class="font-normal ml-2">{problem.problem.category}</span></p>
          
       </span>
       </div>

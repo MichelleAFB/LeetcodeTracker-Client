@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
-import { useNavigate ,useLocation} from 'react-router-dom'
+import { useNavigate ,useLocation, Link} from 'react-router-dom'
 import { connect } from 'react-redux'
 function Header({ourUser,visibility}) {
 
@@ -37,7 +37,9 @@ function Header({ourUser,visibility}) {
   if(!isLoading && user!=null){
     console.log(user)
   return (
-    <div class="mt-0 mr-0 ml-0 flex p-4 justify-between align-center bg-[#B5B4A7]">
+    <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
+      <div class="flex-col w-full ">
+        <div class="w-full flex p-4">
       <div class="flex w-full">
         <div class="flex w-5/6">
           <p class="text-purple-800 text-4xl">LeetcodeTracker</p>
@@ -48,6 +50,7 @@ function Header({ourUser,visibility}) {
             <button class="justify-end flex">
               <p class="text-end text-lg text-white">{user.firstname} {user.lastname}</p>
            </button>
+           <p class="text-end"></p>
            <button class="justify-end flex" onClick={()=>{
             setIsLoading(true)
             navigate("/")
@@ -57,6 +60,14 @@ function Header({ourUser,visibility}) {
          </div>
          
         </div>
+      </div>
+      </div>
+      <div class="bg-cyan-600 flex w-full p-2 mb-0 justify-around ">
+        <Link class="text-white font-bold" to="/home">Your Problems</Link>
+
+        <Link class="text-white font-bold" to="/analytics">Your Stats</Link>
+
+      </div>
       </div>
     </div>
   )

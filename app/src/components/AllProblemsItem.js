@@ -10,7 +10,8 @@ function AllProblemsItem({problem}) {
  // console.log(problem)
   if(problem.firebase_id==null){
   return (
-    <div class="bg-gray-200 p-3 m-3 rounded-md flex flex-col">
+    <div class="relative z-[-1]">
+    <div class="bg-gray-200 p-3 m-3 rounded-md flex flex-col z-10">
       <button class="bg-green-400 rounded-md p-2 m-2 justify-end"><p class="text-white" onClick={()=>{
         const prom=new Promise((resolve,reject)=>{
           dispatch(setLeetcodeProblem(problem))
@@ -29,10 +30,12 @@ function AllProblemsItem({problem}) {
       </div>
 
     </div>
+    </div>
   )
     }else{
       return(
-        <div class="bg-gray-300 p-3 m-3 rounded-md flex flex-col">
+        <div class="relative z-[-1]">
+        <div class="bg-gray-300 p-3 m-3 rounded-md flex flex-col z-10">
         <button class="bg-gray-400 rounded-md p-2 m-2 justify-end"><p class="text-white" onClick={()=>{
           const prom=new Promise((resolve,reject)=>{
             dispatch(setLeetcodeProblem(problem))
@@ -50,6 +53,7 @@ function AllProblemsItem({problem}) {
           <a target="_blank" rel="noopener noreferrer" class="text-center hover:text-yellow-600 font-semibold"href={problem.link}>{problem.link}</a>
         </div>
   
+      </div>
       </div>
 
       )

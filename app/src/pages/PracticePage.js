@@ -105,6 +105,9 @@ const [attempts,setAttempts]=useState()
         
          
           if(doc.id==problemId){
+            const newp=doc.data()
+            newp.xid=doc.id
+            const theProb=newp
             console.log(doc.data())
             //console.log(solution)
             var prob=doc.data()
@@ -375,6 +378,14 @@ const [attempts,setAttempts]=useState()
   function resetEditorValue(){
    // return editorRef.current.value=null
   }
+
+ /* setInterval(()=>{
+    axios.get("https://leetcodetracker.onrender.com").then((response)=>{
+      const time=new Date()
+      console.log(response+" "+time.toString())
+    })
+  },6000000)
+  */
   if(!isLoading && problem!=null){
 
   
@@ -618,6 +629,7 @@ const [attempts,setAttempts]=useState()
                   const cDate=new Date()
                   const currDate=cDate.toString().substring(0,15);
                   bigAttempts.attempts[index]={attempt:code,date:currDate}
+                  console.log(bigAttempts)
                   console.log("\n\n\n\n\n new attempt")
                   console.log(attempts)
                   console.log(bigAttempts.attempts)
@@ -640,22 +652,7 @@ const [attempts,setAttempts]=useState()
                    level:level
                   
                  }).then((response)=>{
-                   console.log(response)
-                   const user=JSON.parse(sessionStorage.getItem("user"))
-                    var curr=new Date()
-                    curr=curr.toString().substring(0,15)
-                   axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,userId:Number(user.userId),day:curr}).then((response)=>{
-                    console.log(response.data)
-                    if(response.data.message!=null){
-                      alert(response.data.message)
-                      setSendingStreak(false)
-
-                    }else{
-                      alert("SUCCESS+++")
-                      setSendingStreak(false)
-
-                    }
-                   })
+                   
                    
                    
                    setReload(!reload)
@@ -693,23 +690,7 @@ const [attempts,setAttempts]=useState()
                     level:level
                    
                   }).then((response)=>{
-                    console.log(response)
-                   var curr=new Date()
-                   curr=curr.toString().substring(0,15)
-                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,problem,id:problem.id,day:curr}).then((response)=>{
-                      setSendingStreak(false)
-                      console.log(response)
-                      if(response.data.message!=null){
-                        alert(response.data.message)
-                        setSendingStreak(false)
-
-                      }else{
-                        alert("SUCCESS+++")
-                        setSendingStreak(false)
-
-                      }
-                      console.log(response.data)
-                     })
+                    
                     setReload(!reload)
 
                   });
@@ -764,13 +745,41 @@ const [attempts,setAttempts]=useState()
               }
             }
         
-            setDocument().then((response)=>{
-              //resetEditorValue()
-              console.log(response)
-              console.log(p)
-        
-              
-            })
+            
+                   var curr=new Date()
+                   curr=curr.toString().substring(0,15)
+                   console.log(problem.userId)
+                   
+                   const user=JSON.parse(sessionStorage.getItem("user"))
+                   console.log(problem)
+                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
+                      
+                      console.log(response)
+                      if(response.data.message!=null){
+                        alert(response.data.message)
+                        setSendingStreak(false)
+
+                      }else if(response.data.success){
+                        const user =JSON.parse(sessionStorage.getItem("user"))
+                        var day=new Date()
+                        const date=day.toString().substring(0,15)
+                       
+                        setDocument().then((response)=>{
+                          //resetEditorValue()
+                          console.log(response)
+                          console.log(p)
+                          alert("SUCCESS+++")
+                           setSendingStreak(false)
+                    
+                          
+                        })
+                        
+                      
+
+                      }
+                      
+                     })
+           
             
           }}>
            <p class="font-bold text-white ">Submit</p> 

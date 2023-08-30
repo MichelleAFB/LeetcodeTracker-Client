@@ -108,7 +108,7 @@ function EditProblemModal2({ourProblem,visibility}) {
             </p>
           </button>
           <button class="bg-green-400 p-3" onClick={()=>{
-            axios.get("http://localhost:3022/getData").then((response)=>{
+            axios.get("https://leetcodetracker.onrender.com/getData").then((response)=>{
               console.log(response)
             })
           }}>

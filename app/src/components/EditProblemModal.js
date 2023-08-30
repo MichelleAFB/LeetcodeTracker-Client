@@ -120,17 +120,17 @@ function EditProblemModal({ourProblem,visibility}) {
     
     console.log("link:"+link)
   return (
-    <div class='bg-gray-200' data-testId="modal-public">
+    <div class='bg-gray-200 z-20' data-testId="modal-public">
      
-    <div class='h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50'>
+    <div class='h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50 z-50'>
      
-      <main id='content' role='main' class='w-full max-w-md mx-autoz-40 '>
+      <main id='content' role='main' class='w-full max-w-md mx-auto z-40 '>
         <div class=' bg-white  rounded-xl shadow-lg bg-white dark:border-gray-700 mb-5'>
           <div class='p-4 sm:p-7 flex flex-col'>
-            {problem.problem.examples==null ?
+            {problem.problem==null ?
             <p class="text-xl">
                  add examples
-            </p>:<p class="text-red-600 font-bold text-xl">Dont add examples</p>}
+            </p>:<p class="text-red-600 font-bold text-xl">Dont add examples!</p>}
           <div class="flex justify-end">
                <button class="bg-red-400 p-3"><p class="text-xl text-white text-center font-bold " onClick={()=>{
                 dispatch(setEditProblemVisibility(false))
