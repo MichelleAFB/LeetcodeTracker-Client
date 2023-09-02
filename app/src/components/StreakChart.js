@@ -157,7 +157,7 @@ function StreakChart() {
   console.log(months)
   if(isLoading){
     return(
-    <div class="flex w-full justify-center ">
+    <div class="h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
       <div class="flex-col justify-end  ">
           <div class="loading-spinner"/>
       </div>
@@ -188,17 +188,18 @@ function StreakChart() {
     };
     */
   return (
-    <div class="m-5 flex h-[500px] w-full  border-gray-300 border-b-2 m p-3  "> 
+    <div class="m-5 flex h-[500px] w-full  border-gray-300 border-b-2 m p-5 "> 
       
       <p>{}</p>
     {streaks!=null?
     <div class="flex flex-col w-full">
 
       
-      <p class="text-4xl">Your Current  streaks</p>
-      {!seeAllStreaks?
+   
+      {seeAllStreaks?
       
-      <div class="flex-col">
+      <div class="flex-co p-5l">
+           <p class="text-4xl">Your Streaks</p>
       <div class="flex w-full overflow-x-scroll  overflow-hidden">
         {allStreaks.map((st)=>{
           return(<Streak streaks={st}/>)
@@ -213,7 +214,8 @@ function StreakChart() {
       </button>
       </div>
       :
-      <div class="flex-col w-full ">
+      <div class="flex-col w-full p-10">
+           <p class="text-4xl">Your Current Streak</p>
       <Streak streaks={streaks}/>
       <button class="bg-green-700 p-3 rounded-md m-2" onClick={()=>{
         setSeeAllStreaks(!seeAllStreaks)

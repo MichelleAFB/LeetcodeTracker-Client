@@ -379,13 +379,13 @@ const [attempts,setAttempts]=useState()
    // return editorRef.current.value=null
   }
 
- /* setInterval(()=>{
+  setInterval(()=>{
     axios.get("https://leetcodetracker.onrender.com").then((response)=>{
       const time=new Date()
-      console.log(response+" "+time.toString())
+      console.log(response.data+" "+time.toString())
     })
-  },6000000)
-  */
+  },360000)
+  
   if(!isLoading && problem!=null){
 
   
