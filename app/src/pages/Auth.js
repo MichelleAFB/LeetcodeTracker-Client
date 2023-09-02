@@ -32,7 +32,7 @@ function Auth() {
   
 
   useEffect(()=>{
-
+    sessionStorage.clear()
     const prom=new Promise((resolve,reject)=>{
       axios.get("https://leetcodetracker.onrender.com").then((response)=>{
         console.log(response.data)
@@ -46,6 +46,13 @@ function Auth() {
 
     prom.then(()=>{
       setIsLoading(false)
+      const prom1=new Promise((resolve1,reject1)=>{
+        dispatch(setHeaderVisibility(false))
+        dispatch(setUser(false))
+        setTimeout(()=>{
+          setIsLoading(false)
+        },300) 
+      })
     })
   },[])
  const dispatch=useDispatch()
@@ -72,7 +79,10 @@ function Auth() {
               }
             }
           })
-          resolve()
+          setTimeout(()=>{
+            resolve()
+
+          },200)
         })
       
         prom.then(()=>{
@@ -80,7 +90,10 @@ function Auth() {
 
           if(found){
             dispatch(setHeaderVisibility(true))
-            navigate('/home')
+            setTimeout(()=>{
+              navigate('/home')
+
+            },200)
           }else{
 
             const prom1=new Promise((resolve1,reject1)=>{

@@ -30,7 +30,7 @@ function Header({ourUser,visibility}) {
       }
     })
 
-  },[])
+  },[visibility])
 
   const navigate=useNavigate()
 

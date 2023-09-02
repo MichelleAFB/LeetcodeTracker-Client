@@ -745,7 +745,7 @@ const [attempts,setAttempts]=useState()
               }
             }
         
-            
+              setSendingStreak(true)
                    var curr=new Date()
                    curr=curr.toString().substring(0,15)
                    console.log(problem.userId)
