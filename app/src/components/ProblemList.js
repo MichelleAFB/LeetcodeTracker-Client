@@ -29,7 +29,8 @@ function ProblemList() {
   const[searchByDate,setSearchByDate]=useState(false)
   const[problemBad,setProblemBad]=useState()
   const problemsListCollectionRef=collection(db,"problems")
-  
+  const[oldest,setOldest]=useState()
+  const[oldestIndex,setOldestIndex]=useState(0)
 
   const[green,setGreen]=useState(false)
   const[orange,setOrange]=useState(false)
@@ -651,6 +652,20 @@ const user=JSON.parse(sessionStorage.getItem("user"))
     console.log(problem1.problem.attempts)
     console.log(problem2.attempts)
   }
+
+  function handleOldest(p,index){
+    //console.log("Handling oldest:"+index+" problem:"+p.problem.title)
+    if(oldest==null){
+      setOldest(p)
+      setOldestIndex(index)
+    }else{
+      if(index>=oldestIndex){
+        setOldest(p)
+        setOldestIndex(index)
+      }
+    }
+  }
+
   if(isLoading){
     
     return(
@@ -676,8 +691,8 @@ const user=JSON.parse(sessionStorage.getItem("user"))
 
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
-
-
+   console.log("oldest:")
+   console.log(oldest)
   return (
     <div class="bg-gray-400 w-full  p-3 z-10">
       <p class="text-xl text-center font-bold">
@@ -788,6 +803,12 @@ const user=JSON.parse(sessionStorage.getItem("user"))
           }
         </div>
       </div>
+      {
+        oldest!=null?
+        <p class="text-center"><span class="font-semibold">Most Neglected Question</span>:{oldest.problem.title}</p>
+        :
+        <p></p>
+      }
       <div class="flex justify-center">
         <button class="bg-white p-2 rounded-md m-2 flex w-1/4 justify-center" onClick={()=>{
           setFiltered(problems)
@@ -948,6 +969,9 @@ const user=JSON.parse(sessionStorage.getItem("user"))
 
         </div>
         <div class="flex flex-col mt-1 justify-center">
+          {
+
+          }
        
           {
             searchByCategory && !searchByDataStructure?
@@ -1008,7 +1032,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.dataStructure==dataStructure){
-           return(<ProblemListItem problem={p}/>)
+           return(<ProblemListItem problem={p} handleOldest={handleOldest}/>)
           }
            })
          }
@@ -1022,7 +1046,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
           const cDate=new Date()
           const currDate=cDate.toString().substring(0,15)
           if(p.problem.lastPracticed.substring(0,15)==currDate){
-           return(<ProblemListItem problem={p}/>)
+           return(<ProblemListItem problem={p} handleOldest={handleOldest}/>)
           }
            })
          }
@@ -1034,7 +1058,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.category==category){
-           return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+           return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
           }
            })
          }
@@ -1045,7 +1069,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
        <div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
        { filtered.map((p)=>{
         console.log(p)
-         return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+         return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
          })
        }
     </div>:
@@ -1056,7 +1080,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
         !search && !searchByCategory && !searchByDataStructure?
         <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
         {filtered.map((p)=>{
-         return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+         return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
         })}
      </div>:
      <div></div> 
@@ -1070,7 +1094,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
     return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
     { filtered.map((p)=>{
      console.log(p)
-      return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+      return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
       })
     }
  </div>)
@@ -1081,7 +1105,7 @@ if(problems!=null && !red && orange && !green&& !search&& !searchByCategory && !
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
-    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
 </div>)
@@ -1092,7 +1116,7 @@ if(problems!=null && !red && !orange && green&& !search&& !searchByCategory && !
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
-    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
 </div>)
@@ -1103,7 +1127,7 @@ if(problems!=null && !red && !orange && !green&& !search && !searchByCategory &&
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
-    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange}/>)
+    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
 </div>)

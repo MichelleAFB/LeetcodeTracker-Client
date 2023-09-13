@@ -1,13 +1,15 @@
 import React from "react";
-
+import axios from 'axios'
 import { customStyles } from "../constants/customStyles";
 import { languageOptions } from "../constants/languageOptions";
 import { useState,useEffect } from "react";
 import Select from "react-select";
-const LanguagesDropdown = ({ onSelectChange }) => {
+const LanguagesDropdown = ({ onSelectChange,handleSelectedLanguage }) => {
 
   const [languages,setLanguages]=useState()
   const[isLoading,setIsloading]=useState(true)
+  const[ids,setIds]=useState()
+  const[language,setLanguage]=useState()
 
   const tryIt=async()=>{
     const axios = require('axios');
@@ -33,28 +35,71 @@ try {
 
   useEffect(()=>{
     var l
+    const arr=[]
+    var id=[]
     const prom=new Promise((resolve,reject)=>{
-      resolve()
+      axios.get("https://ce.judge0.com/languages/").then((response)=>{
+        setLanguages(response.data)
+        console.log(response)
+        response.data.map((l)=>{
+          console.log(typeof(l))
+          arr.push({value:{id:l.id,name:l.name},label:l.name})
+        })
+
+        setTimeout(()=>{
+          resolve()
+        },500)
+      })
       
 
     })
 
     prom.then(()=>{
-      console.log(l)
+      const prom1=new Promise((resolve1,reject1)=>{
+        setLanguages(arr)
+        setTimeout(()=>{
+          resolve1()
+        },500)
+
+      })
+
+      prom.then(()=>{
         setIsloading(false)
+
+      })
+
     })
-  })
+  },[])
+  
+
+  if(!isLoading){
+  return (
+    <div class="flex w-full "> 
+   
+          <select class="flex w-full rounded-sm pb-2 pt-2 pr-4"
+          default={JSON.stringify({id:4,name:'Jave (JDK (OpenJDK 14.0.1'})}
+          onChange={(e)=>{
+            //console.log(Object.keys(e.target.value))
+            handleSelectedLanguage(e.target.value)
+          }}>
+            {
+              languages.map((l)=>{
+                return(
+                  <option value={JSON.stringify(l.value)} label={l.label}/> 
+                )
+              })
+            }
+          </select>
+  </div>
 
   
-  return (
-    <Select
-    placeholder={`Filter By Category`}
-    options={languageOptions}
-    styles={customStyles}
-    defaultValue={languageOptions[0]}
-    onChange={(selectedOption) => onSelectChange(selectedOption)}
-  />
+  
   );
+  }else{
+    return(
+      <div></div>
+    )
+  }
   
 };
 

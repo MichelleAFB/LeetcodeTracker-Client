@@ -15,7 +15,7 @@ import { useDispatch } from 'react-redux'
 import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editProblem-actions'
 import { doc, deleteDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase'
-function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
+function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,handleOldest}) {
 
 
   const[isLoading,setIsLoading]=useState(true)
@@ -187,12 +187,13 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
     console.log(Object.keys(problem.problem.attempts))
     if(index<7 && problem.problem.no_attempts!=0){
     
+      handleOldest(problem,index)
      
       
       return (
         <div className='p-5 bg-white rounded shadow m-3'>
           <div class="flex w-full justify-end">
-            <div class="flex w-1/3"><p class="font-semibold text-end text-sm">Practiced {index} days ago</p></div>
+            <div class="flex w-1/3"><p class="font-semibold text-end text-sm">Practiced {index-1} days ago</p></div>
           </div>
         <div className="flex  items-center mb-4">
         
@@ -271,12 +272,13 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange}) {
    
   
 if(index>7 && index<14){
-  
+  handleOldest(problem,index)
+
  
   return (
     <div className='p-5 bg-orange-400 rounded shadow m-3'>
          <div class="flex w-full justify-end">
-            <div class="flex w-1/2"><p class="font-semibold text-end text-sm">Practiced {index} days ago</p></div>
+            <div class="flex w-1/2"><p class="font-semibold text-end text-sm">Practiced {index-1} days ago</p></div>
           </div>
     <div className="flex  items-center mb-4">
       <div className="flex w-full">
@@ -354,11 +356,12 @@ if(index>7 && index<14){
       
 if(index>14 || problem.problem.no_attempts==0){
  
-  
+  handleOldest(problem,index)
+
   return (
     <div className='p-5 bg-red-400 rounded shadow m-3'>
          <div class="flex w-full justify-end">
-            <div class="flex w-1/2"><p class="font-semibold text-end text-sm mb-3">Practiced {index} days ago</p></div>
+            <div class="flex w-1/2"><p class="font-semibold text-end text-sm mb-3">Practiced {index-1} days ago</p></div>
           </div>
     <div className="flex  items-center mb-4">
       <div className="flex w-full">
@@ -425,7 +428,8 @@ if(index>14 || problem.problem.no_attempts==0){
    
 
       <button class="bg-gray-300 p-3 rounded-sm w-full" onClick={()=>{
-          navigate("/practice/"+problem.id)
+        console.log(typeof(problem.id.toString()))
+         navigate("/practice/"+problem.id.toString())
       }}>
         Practice
       </button>

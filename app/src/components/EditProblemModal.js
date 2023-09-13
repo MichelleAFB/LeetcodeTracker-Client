@@ -18,6 +18,8 @@ function EditProblemModal({ourProblem,visibility}) {
   const[title,setTitle]=useState()
   const[dataStructure,setDataStructure]=useState()
   const[category,setCategory]=useState()
+  const[level,setLevel]=useState()
+
   const[hints,setHints]=useState()
   const[solution,setSolution]=useState()
   const [addPrompt,setAddPrompt]=useState(false)
@@ -37,6 +39,7 @@ function EditProblemModal({ourProblem,visibility}) {
       setTitle(ourProblem.problem.title)
       setDataStructure(ourProblem.problem.dataStructure)
       setLink(ourProblem.problem.link)
+      setLevel(ourProblem.problem.level!=null? ourProblem.problem.level:null)
       setCategory(ourProblem.problem.category)
       setHints(ourProblem.problem.hints)
       setSolution(ourProblem.problem.solution)
@@ -114,7 +117,7 @@ function EditProblemModal({ourProblem,visibility}) {
 
   console.log(examples)
 
-  if(!isLoading){
+  if(!isLoading && problem!=null){
 
     console.log("prompt:"+prompt)
     
@@ -125,7 +128,7 @@ function EditProblemModal({ourProblem,visibility}) {
     <div class='h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50 z-50'>
      
       <main id='content' role='main' class='w-full max-w-md mx-auto z-40 '>
-        <div class=' bg-white  rounded-xl shadow-lg bg-white dark:border-gray-700 mb-5'>
+        <div class='   rounded-xl shadow-lg bg-pink-300 dark:border-gray-700 mb-5'>
           <div class='p-4 sm:p-7 flex flex-col'>
             {problem.problem==null ?
             <p class="text-xl">
@@ -157,7 +160,23 @@ function EditProblemModal({ourProblem,visibility}) {
 
                   }}/>
                   
+                  
                 </div>
+                <div class="flex w-full">
+                <select
+                  id='level'
+                   class=' m-2  w-full text-gray-900 text-sm rounded-md border-l border-gray-300 p-1'
+                         onChange={(e)=>{
+                           console.log(e.target.value)
+                           setLevel(e.target.value)
+                         }} >   
+                     <option value={problem.problem.level!=null? problem.problem.level:"Level"} selected>{problem.problem.level!=null? problem.problem.level:"Level"}</option>
+                     <option value ="Easy" class="text-green-700"><p class="text-green-500">Easy</p></option>
+
+                     <option value ="Medium" class="text-yellow-600"><p class="text-yellow-500">Medium</p></option>
+                     <option value="Hard" class="text-red-600"><p class="text-red-500">Hard</p></option>
+              </select>
+              </div>
                   <div class flex=" p-2 justify-between">
                   <div class="flex flex-col m-2">
                 <div class="flex m-2">
@@ -247,35 +266,33 @@ function EditProblemModal({ourProblem,visibility}) {
                 {
                 addPrompt?
                 <div class="flex flex-col m-2">
-                  <div class="flex m-2">
+                  <div>
                 <label><p class="text-ld font-bold">Prompt:</p>
                   </label>
                   <button class="bg-green-400 p-1 rounded-md" onClick={()=>{
                     setAddPrompt(!addPrompt)
+                    console.log(prompt)
                   }}>
-                    No prompt
+                    Add Prompt
                   </button>
                   </div>
                   <textarea type="text-area" cols="4" rows="5"  class="bg-gray-300 rounded-md"placeholder={problem.problem.hints} default={problem.problem.hints} onChange={(e)=>{
                     setPrompt(e.target.value)
                     console.log(e.target.value)
                   }}/>
-                </div>:<div class="flex m-2">
-                <label><p class="text-ld font-bold">Prompt:</p>
-                  </label>
-                  <button class="bg-green-400 p-2 rounded-md" onClick={()=>{
-                    setAddExamples(!addExamples)
-                    console.log("addExamples:"+addExamples)
-                    console.log("here")
+                </div>:<div class="flex flex-col">
+                <button class="bg-green-400 p-1 rounded-md" onClick={()=>{
+                    setAddPrompt(!addPrompt)
+                    console.log(prompt)
                   }}>
-                    Add
+                    Add Prompt
                   </button>
                 </div>
                }
                {
                 addExamples? 
                 <div class="flex flex-col m-2">
-                <div class="flex m-2">
+                <div class>
               <label><p class="text-ld font-bold">Examples:</p>
                 </label>
                 <textarea  type="text-area" row="5"cols="4" class="bg-gray-300 rounded-md" onChange={(e)=>{
@@ -368,6 +385,7 @@ function EditProblemModal({ourProblem,visibility}) {
                             await setDoc(docRefer, {
                               title:title,
                               dataStructure:dataStructure,
+                              level:level,
                               category:category,
                               lastPracticed:problem.problem.lastPracticed,
                               hints:hints,
@@ -392,6 +410,7 @@ function EditProblemModal({ourProblem,visibility}) {
                             category:category,
                             lastPracticed:problem.problem.lastPracticed,
                             hints:hints,
+                            level:level,
                             link:(link!=null ? link:null),
                             no_attempts:problem.problem.no_attempts,
                             attempts:problem.problem.attempts,
@@ -413,6 +432,7 @@ function EditProblemModal({ourProblem,visibility}) {
                             category:category,
                             lastPracticed:problem.problem.lastPracticed,
                             hints:hints,
+                            level:level,
                             link:(link!=null ? link:null),
                             no_attempts:problem.problem.no_attempts,
                             attempts:problem.problem.attempts,
@@ -423,7 +443,7 @@ function EditProblemModal({ourProblem,visibility}) {
                            
                           }).then((response)=>{
                             console.log(response)
-                            dispatch(setEditProblemVisibility(false))
+                           // dispatch(setEditProblemVisibility(false))
                             setIsLoading(true)
                           });
                         }
@@ -443,24 +463,26 @@ function EditProblemModal({ourProblem,visibility}) {
                            
                           }).then((response)=>{
                             console.log(response)
-                            dispatch(setEditProblemVisibility(false))
+                           // dispatch(setEditProblemVisibility(false))
                             setIsLoading(true)
                           });
                           
                         }
                         if(addPrompt && !addExamples ){
+                          console.log("ADD PROMPT")
                           await setDoc(docRefer, {
                             title:title,
                             dataStructure:dataStructure,
                             category:category,
                             lastPracticed:problem.problem.lastPracticed,
                             hints:hints,
+                            level:level,
                             link:(link!=null ? link:null),
                             no_attempts:problem.problem.no_attempts,
                             attempts:problem.problem.attempts,
                             solution:problem.problem.solution,
                             userId:problem.problem.userId,
-                            prompt:problem.problem.prompt,
+                            prompt:prompt,
                             examples:problem.problem.examples
                            
                           }).then((response)=>{
@@ -474,6 +496,7 @@ function EditProblemModal({ourProblem,visibility}) {
                             title:title,
                             dataStructure:dataStructure,
                             category:category,
+                            level:level,
                             lastPracticed:problem.problem.lastPracticed,
                             hints:hints,
                             link:(link!=null ? link:null),
@@ -486,7 +509,7 @@ function EditProblemModal({ourProblem,visibility}) {
                            
                           }).then((response)=>{
                             console.log(response)
-                            dispatch(setEditProblemVisibility(false))
+                           // dispatch(setEditProblemVisibility(false))
                             setIsLoading(true)
                           });
                         }

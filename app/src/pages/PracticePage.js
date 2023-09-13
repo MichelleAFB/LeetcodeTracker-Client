@@ -80,14 +80,21 @@ const [attempts,setAttempts]=useState()
   const[title,setTitle]=useState()
   const[link,setLink]=useState()
   const[initialBoilerCode,setInitialBoilerCode]=useState()
-  
+  const[languages,setLanguages]=useState()
+  const [selectedLanguage,setSelectedLanguage]=useState({id:91,name:'Java (OpenJDK 17.0.6'})
+  const[token,setToken]=useState()
   const[reload,setReload]=useState(true)
   const editorRef=useRef()
 
   const problemsListCollectionRef=collection(db,"problems")
+
+  
+
+
   useEffect(()=>{
     console.log("reloading")
     const prom=new Promise((resolve,reject)=>{
+
       if (enterPress && ctrlPress) {
    
         handleCompile();
@@ -227,17 +234,57 @@ const [attempts,setAttempts]=useState()
   console.log(language)
 
   const handleCompile = async() => {
+    console.log(selectedLanguage.id)
     setProcessing(true);
+
+    
     console.log(btoa(code))
+    const options = {
+      method: 'POST',
+      url: 'https://judge0-ce.p.rapidapi.com/submissions/batch',
+      params: {
+        base64_encoded: "true",
+        fields: "*"
+      },
+      headers: {
+        'content-type': 'application/json',
+        'Content-Type': 'application/json',
+        'X-RapidAPI-Key': '00f165d168msh14ee358d2258223p12aa97jsne2c06db3d539',
+        'X-RapidAPI-Host': process.env.REACT_APP_RAPID_API_HOST
+      },
+      data: {
+        submissions:[{
+          language_id: 4,
+          source_code: btoa(code),
+         stdin: btoa(customInput)
+        }]
+      }
+    };
+  
+    try {
+      const response = await axios.request(options);
+      console.log("\n\nSUCCESS")
+      console.log(response);
+      console.log(response.data[0])
+    checkStatus(response.data[0].token)
+    } catch (error) {
+      console.error(error);
+    }
+   /* console.log(btoa(code))
+    axios.get("https://ce.judge0.com/languages/"+selectedLanguage.id).then((response)=>{
+
+    console.log(response)
+  console.log(selectedLanguage.id)
     const formData = {
-      language_id: language.id,
+    //  language_id: 4,
       // encode source code in base64
       source_code: btoa(code),
       stdin: btoa(customInput),
     };
+    
     const options = {
       method: 'POST',
-      url: 'https://judge0-extra-ce.p.rapidapi.com/submissions',
+      url: 'https://judge0-extra-ce.p.rapidapi.com/submissions/'+selectedLanguage.id,
       params: {
         base64_encoded: 'true',
         wait: 'true',
@@ -256,7 +303,7 @@ const [attempts,setAttempts]=useState()
       .request(options)
       .then(function (response) {
         console.log("res.data", response.data);
-        const token = response.data.token;
+        const token = resptokenonse.data.;
         
         checkStatus(token);
       })
@@ -276,9 +323,64 @@ const [attempts,setAttempts]=useState()
         setProcessing(false);
         console.log("catch block...", error);
       });
-  };
+    })
+    */
 
+  };
+console.log("code:"+btoa(code))
   const checkStatus = async (token) => {
+    console.log("token is here:"+token)
+
+      const options = {
+      method: 'GET',
+      url: 'https://judge0-extra-ce.p.rapidapi.com/submissions/batch?tokens='+token+"&base64_encoded=true&fields=*",
+   
+      headers: {
+      'X-RapidAPI-Key': '00f165d168msh14ee358d2258223p12aa97jsne2c06db3d539',
+      'X-RapidAPI-Host': process.env.REACT_APP_RAPID_API_HOST
+    },
+    dataT:{
+      d:"https://judge0-extra-ce.p.rapidapi.com/submissions/batch?tokens"
+    }
+      };
+
+      //try {
+         axios.get(options).then((response)=>{
+          console.log("SUCCESS AXIOS")
+          console.log(response)
+          let statusId = response.data.status?.id;
+  
+
+        // Processed - we have a result
+        if (statusId === 1 || statusId === 2) {
+          // still processing
+          setTimeout(() => {
+           const st= checkStatus(token);
+           console.log(st)
+          }, 2000);
+          return;
+        } else {
+          console.log("SUCCESS FOR ALL")
+          setProcessing(false);
+          setOutputDetails(response.data);
+          showSuccessToast(`Compiled Successfully!`);
+          console.log("response.data", response.data);
+          return;
+        }
+
+
+         }).catch((err)=>{
+          console.log("ERROR:")
+          console.log(err)
+         });
+      /*} catch (err) {
+        console.log("FAIL")
+        console.log("err", err);
+        setProcessing(false);
+        showErrorToast();
+      }
+      */
+  /*  console.log("\n\ntoken:"+token)
     const options = {
       method: "GET",
       url: "https://judge0-extra-ce.p.rapidapi.com/submissions/"+ token,
@@ -312,6 +414,7 @@ const [attempts,setAttempts]=useState()
       setProcessing(false);
       showErrorToast();
     }
+    */
   };
 
   function handleThemeChange(th) {
@@ -364,7 +467,11 @@ const [attempts,setAttempts]=useState()
 
 
 
-
+function handleSelectedLanguage(l){
+  console.log("changing to ")
+  console.log(JSON.parse(l))
+  setSelectedLanguage(JSON.parse(l))
+}
 
 
 
@@ -378,6 +485,7 @@ const [attempts,setAttempts]=useState()
   function resetEditorValue(){
    // return editorRef.current.value=null
   }
+  /*
 
   setInterval(()=>{
     axios.get("https://leetcodetracker.onrender.com").then((response)=>{
@@ -385,7 +493,7 @@ const [attempts,setAttempts]=useState()
       console.log(response.data+" "+time.toString())
     })
   },360000)
-  
+  */
   if(!isLoading && problem!=null){
 
   
@@ -476,10 +584,7 @@ const [attempts,setAttempts]=useState()
       <div className="flex flex-row">
         <div className="px-4 py-2">
       
-          <LanguagesDropdown onSelectChange={(e)=>{
-            console.log(e.target.value.id)
-              onSelectChange(e.target.value)
-          }} />
+          <LanguagesDropdown handleSelectedLanguage={handleSelectedLanguage}/>
         </div>
         <div className="px-4 py-2">
           <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
@@ -554,6 +659,8 @@ const [attempts,setAttempts]=useState()
             const arr=problem.problem.attempts;
             console.log(solution)
             const setDocument=async()=>{
+              setSendingStreak(true)
+
               const  docRefer=doc(db,"problems",problem.id)
               //READ DATA
               try{
@@ -578,8 +685,10 @@ const [attempts,setAttempts]=useState()
                 
                  
                 
-                  if(d.id==problemId && solution!=null && (code!=null && code!=initialBoilerCode) ){
-                    console.log(solution)
+                  if(d.id==problemId && solution!=null && (code!=null && code!=initialBoilerCode)){
+                    console.log("FOUND")
+                    console.log(d)
+                    
                     setSendingStreak(true)
                   // problem.problem.attempts[newAttemptID]=getEditorValue()
                   problem.problem.attempts[newAttemptID]=code
@@ -590,50 +699,37 @@ const [attempts,setAttempts]=useState()
                   const attempts={}
                   var at=0
 
-                  Object.keys(problem.problem.attempts).map((key,i,attempts)=>{
-               
-                   //console.log(key)
-                   //console.log(m.problem.attempts[key])
-                   console.log(i+" "+key)
-                   
-                   var num=key
-                   console.log(bigAttempts)
-                   console.log("attemots length:"+attempts.length)
-                   if(problem.problem.attempts[key].date!=null){
-                   
-                   bigAttempts.attempts[index]={attempt:problem.problem.attempts[key],date:problem.problem.attempts[key].date}
-               
-                   }else{
-                    var cDate=new Date()
-                    cDate=cDate.toString().substring(0,15)
-                     bigAttempts.attempts[index]={attempt:problem.problem.attempts[key],date:cDate}
-   
-                   }
-                   at=Math.max(i,at)
-                   index++
-                  
-                 })
-                 index++
+                  var min = Object.keys(problem.problem.attempts.attempts).reduce(function (a, b) { return a > b ? a : b; });  
+                  console.log("LARGEST INDEX:"+min)
+                   bigAttempts.attempts[min+1]={attempt:code,date:currDate}
+                   console.log("NEW ATTEMPT")
+                   console.log(bigAttempts[min+1])
+
+
+
+           
 
                  const prev=examples
-                 console.log("prev")
-                 console.log(prev)
+             
                  const prom1=new Promise((resolve,reject)=>{
-                  console.log(prev)
+                  
                   Object.keys(prev).forEach((key)=>{
-                    console.log(prev[key])
+                  //  console.log(prev[key])
                   })
-                  resolve()
+                  console.log(bigAttempts)
+                  setTimeout(()=>{
+                    console.log("RESOLVE")
+                    console.log(bigAttempts[min+1])
+                      resolve()
+                  },300)
                  })
+
                  prom1.then(async()=>{
                   const cDate=new Date()
                   const currDate=cDate.toString().substring(0,15);
                   bigAttempts.attempts[index]={attempt:code,date:currDate}
+                  console.log("SETTING DOC")
                   console.log(bigAttempts)
-                  console.log("\n\n\n\n\n new attempt")
-                  console.log(attempts)
-                  console.log(bigAttempts.attempts)
-                  console.log("\n\n\ncode not null.solutuion niot nuklkk")
                  
                   await setDoc(docRefer, {
                     id:problem.id,
@@ -652,6 +748,7 @@ const [attempts,setAttempts]=useState()
                    level:level
                   
                  }).then((response)=>{
+                  console.log(response)
                    
                    
                    
@@ -660,14 +757,10 @@ const [attempts,setAttempts]=useState()
                  });
                   
                  })
-              
-                
-                
-                    
-               
-                  } 
-                  if(d.id==problemId  && (code==null || code==initialBoilerCode)){
+              } 
+                  if(d.id==problemId && solution!=null  && (code==null || code==initialBoilerCode)){
                    // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("CODE  NULL |SOLUTION NOT NULL")
                    setSendingStreak(true)
                     console.log("here")
                       const cDate=new Date()
@@ -678,7 +771,7 @@ const [attempts,setAttempts]=useState()
                     title:problem.problem.title,
                     dataStructure:problem.problem.dataStructure,
                     category:problem.problem.category,
-                    lastPracticed:currDate,
+                    lastPracticed:problem.problem.lastPracticed,
                     hints:problem.problem.hints,
                     no_attempts:problem.problem.no_attempts,
                     attempts:problem.problem.attempts,
@@ -690,7 +783,7 @@ const [attempts,setAttempts]=useState()
                     level:level
                    
                   }).then((response)=>{
-                    
+                    console.log(response)
                     setReload(!reload)
 
                   });
@@ -699,7 +792,7 @@ const [attempts,setAttempts]=useState()
                   } 
                   
                   if(d.id==problemId && solution==null && (code!=null  || code!=initialBoilerCode)){
-                    console.log("here1")
+                    console.log("SOLUTION NULL| CODE NOT NULL")
                     problem.problem.attempts[newAttemptID]=code
                     console.log("HERE\n\n\n\n")
                     var id=0
@@ -707,33 +800,41 @@ const [attempts,setAttempts]=useState()
                     const bigAttempts={attempts:{}}
                     const attempts={}
                     var at=0
- 
-                    Object.keys(problem.problem.attempts).map((key,i,attempts)=>{
-                 
-                     //console.log(key)
-                     //console.log(m.problem.attempts[key])
-                     console.log(i+" "+key)
-                     
-                     var num=key
-                     console.log(bigAttempts)
-                     if(problem.problem.attempts[key].date!=null){
-                      console.log(problem.problem.attempts[key].attempt)
-                      bigAttempts.attempts[index]={attempt:problem.problem.attempts[key].attempt,date:problem.problem.attempts[key].date}
-                     
-                     }else{
-                       bigAttempts.attempts[index]={attempt:problem.problem.attempts[key],date:"N/A"}
-     
-                     }
-                     at=Math.max(i,at)
-                     index++
-                    
-                   })
-                   index++
+                    var min = Object.keys(problem.problem.attempts.attempts).reduce(function (a, b) { return a > b ? a : b; }); 
+                    console.log("LARGEST INDEX:"+min)
+                     bigAttempts.attempts[min+1]={attempt:code,date:currDate}
                    
-                   bigAttempts.attempts[index]={attempt:code,date:currDate}
-                   console.log("\n\n\n\n\n new attempt")
-                   console.log(attempts)
-                   console.log(bigAttempts.attempts)
+                 
+
+                   setTimeout(async()=>{
+                              // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("SETTING DOCUMENT")
+                    console.log(bigAttempts)
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                     await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:currDate,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:bigAttempts,
+                    solution:problem.problem.solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+
+                   },400)
                   } 
 
                 }
@@ -752,7 +853,7 @@ const [attempts,setAttempts]=useState()
                    
                    const user=JSON.parse(sessionStorage.getItem("user"))
                    console.log(problem)
-                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
+                    axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
                       
                       console.log(response)
                       if(response.data.message!=null){
