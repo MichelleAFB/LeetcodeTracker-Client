@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate ,useLocation, Link} from 'react-router-dom'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 function Header({ourUser,visibility}) {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -14,23 +14,31 @@ function Header({ourUser,visibility}) {
     const prom=new Promise((resolve,reject)=>{
       const u=JSON.parse(sessionStorage.getItem("user"))
       console.log(u)
-     
+      if(ourUser==null){
         setUser(u)
+      }else{
+        setUser(ourUser)
+      }
+     
       
       setTimeout(()=>{
         resolve()
-      },1000)
+      },500)
     })
 
     prom.then(()=>{
-      if(location.pathname=='/'){
+      if(location.pathname=='/' ){
 
-      }else{
-      setIsLoading(false)
+      }else if(visibility || location.pathname!="/"){
+     // setIsLoading(false)
+        setIsLoading(false)
+      
       }
     })
 
   },[visibility])
+
+
 
   const navigate=useNavigate()
 

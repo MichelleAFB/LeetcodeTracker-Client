@@ -9,7 +9,7 @@ const LanguagesDropdown = ({ onSelectChange,handleSelectedLanguage }) => {
   const [languages,setLanguages]=useState()
   const[isLoading,setIsloading]=useState(true)
   const[ids,setIds]=useState()
-  const[language,setLanguage]=useState()
+  const[language,setLanguage]=useState({id:4,name:"Java"})
 
   const tryIt=async()=>{
     const axios = require('axios');
@@ -28,7 +28,7 @@ try {
 	const response = await axios.request(options);
 	console.log(response.data);
   return response.data
-} catch (error) {
+  } catch (error) {
 	console.error(error);
 }
   }
@@ -37,8 +37,22 @@ try {
     var l
     const arr=[]
     var id=[]
+    console.log("LANGUAGE DROP")
+    const options = {
+      method: 'GET',
+      url: 'https://judge0-ce.p.rapidapi.com/languages',
+      headers: {
+        'X-RapidAPI-Key': '00f165d168msh14ee358d2258223p12aa97jsne2c06db3d539',
+        'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'
+      }
+    };
     const prom=new Promise((resolve,reject)=>{
-      axios.get("https://ce.judge0.com/languages/").then((response)=>{
+      
+
+      axios.get("https://judge0-ce.p.rapidapi.com/languages",{header:{   'X-RapidAPI-Key': '00f165d168msh14ee358d2258223p12aa97jsne2c06db3d539',
+      'X-RapidAPI-Host': 'judge0-ce.p.rapidapi.com'},
+    }).then((response)=>{
+        console.log(response)
         setLanguages(response.data)
         console.log(response)
         response.data.map((l)=>{

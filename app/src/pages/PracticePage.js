@@ -59,6 +59,8 @@ const [attempts,setAttempts]=useState()
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
 
+  console.log(useParams())
+
   const onSelectChange = (sl) => {
     console.log( sl);
     //setLanguage(sl);
@@ -67,6 +69,7 @@ const [attempts,setAttempts]=useState()
   
 
   const {problemId}=useParams()
+  console.log(problemId,"\n"+typeof(problemId))
   console.log(problemId)
   console.log(Editor)
   const[show,setShow]=useState(false)
@@ -81,7 +84,7 @@ const [attempts,setAttempts]=useState()
   const[link,setLink]=useState()
   const[initialBoilerCode,setInitialBoilerCode]=useState()
   const[languages,setLanguages]=useState()
-  const [selectedLanguage,setSelectedLanguage]=useState({id:91,name:'Java (OpenJDK 17.0.6'})
+  const [selectedLanguage,setSelectedLanguage]=useState({id:4,name:'Jave (JDK (OpenJDK 14.0.1'})
   const[token,setToken]=useState()
   const[reload,setReload]=useState(true)
   const editorRef=useRef()
@@ -234,57 +237,17 @@ const [attempts,setAttempts]=useState()
   console.log(language)
 
   const handleCompile = async() => {
-    console.log(selectedLanguage.id)
     setProcessing(true);
-
-    
-    console.log(btoa(code))
-    const options = {
-      method: 'POST',
-      url: 'https://judge0-ce.p.rapidapi.com/submissions/batch',
-      params: {
-        base64_encoded: "true",
-        fields: "*"
-      },
-      headers: {
-        'content-type': 'application/json',
-        'Content-Type': 'application/json',
-        'X-RapidAPI-Key': '00f165d168msh14ee358d2258223p12aa97jsne2c06db3d539',
-        'X-RapidAPI-Host': process.env.REACT_APP_RAPID_API_HOST
-      },
-      data: {
-        submissions:[{
-          language_id: 4,
-          source_code: btoa(code),
-         stdin: btoa(customInput)
-        }]
-      }
-    };
-  
-    try {
-      const response = await axios.request(options);
-      console.log("\n\nSUCCESS")
-      console.log(response);
-      console.log(response.data[0])
-    checkStatus(response.data[0].token)
-    } catch (error) {
-      console.error(error);
-    }
-   /* console.log(btoa(code))
-    axios.get("https://ce.judge0.com/languages/"+selectedLanguage.id).then((response)=>{
-
-    console.log(response)
-  console.log(selectedLanguage.id)
+    console.log(selectedLanguage.id)
     const formData = {
-    //  language_id: 4,
+      language_id: selectedLanguage.id.toString(),
       // encode source code in base64
       source_code: btoa(code),
       stdin: btoa(customInput),
     };
-    
     const options = {
       method: 'POST',
-      url: 'https://judge0-extra-ce.p.rapidapi.com/submissions/'+selectedLanguage.id,
+      url: 'https://judge0-extra-ce.p.rapidapi.com/submissions',
       params: {
         base64_encoded: 'true',
         wait: 'true',
@@ -303,7 +266,7 @@ const [attempts,setAttempts]=useState()
       .request(options)
       .then(function (response) {
         console.log("res.data", response.data);
-        const token = resptokenonse.data.;
+        const token = response.data.token;
         
         checkStatus(token);
       })
@@ -323,64 +286,9 @@ const [attempts,setAttempts]=useState()
         setProcessing(false);
         console.log("catch block...", error);
       });
-    })
-    */
-
   };
-console.log("code:"+btoa(code))
+
   const checkStatus = async (token) => {
-    console.log("token is here:"+token)
-
-      const options = {
-      method: 'GET',
-      url: 'https://judge0-extra-ce.p.rapidapi.com/submissions/batch?tokens='+token+"&base64_encoded=true&fields=*",
-   
-      headers: {
-      'X-RapidAPI-Key': '00f165d168msh14ee358d2258223p12aa97jsne2c06db3d539',
-      'X-RapidAPI-Host': process.env.REACT_APP_RAPID_API_HOST
-    },
-    dataT:{
-      d:"https://judge0-extra-ce.p.rapidapi.com/submissions/batch?tokens"
-    }
-      };
-
-      //try {
-         axios.get(options).then((response)=>{
-          console.log("SUCCESS AXIOS")
-          console.log(response)
-          let statusId = response.data.status?.id;
-  
-
-        // Processed - we have a result
-        if (statusId === 1 || statusId === 2) {
-          // still processing
-          setTimeout(() => {
-           const st= checkStatus(token);
-           console.log(st)
-          }, 2000);
-          return;
-        } else {
-          console.log("SUCCESS FOR ALL")
-          setProcessing(false);
-          setOutputDetails(response.data);
-          showSuccessToast(`Compiled Successfully!`);
-          console.log("response.data", response.data);
-          return;
-        }
-
-
-         }).catch((err)=>{
-          console.log("ERROR:")
-          console.log(err)
-         });
-      /*} catch (err) {
-        console.log("FAIL")
-        console.log("err", err);
-        setProcessing(false);
-        showErrorToast();
-      }
-      */
-  /*  console.log("\n\ntoken:"+token)
     const options = {
       method: "GET",
       url: "https://judge0-extra-ce.p.rapidapi.com/submissions/"+ token,
@@ -414,7 +322,6 @@ console.log("code:"+btoa(code))
       setProcessing(false);
       showErrorToast();
     }
-    */
   };
 
   function handleThemeChange(th) {
@@ -585,8 +492,12 @@ function handleSelectedLanguage(l){
         <div className="px-4 py-2">
       
           <LanguagesDropdown handleSelectedLanguage={handleSelectedLanguage}/>
+          
+
         </div>
         <div className="px-4 py-2">
+        <LanguagesDropdown handleSelectedLanguage={handleSelectedLanguage}/>
+
           <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
         </div> 
         <div class="flex w-full justify-between">

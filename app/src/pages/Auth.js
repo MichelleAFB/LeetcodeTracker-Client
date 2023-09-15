@@ -8,10 +8,12 @@ import {auth, googleProvider} from '../firebase/firebase'
 import { createUserWithEmailAndPassword,signInWithPopup,signOut} from 'firebase/auth'
 import { db } from '../firebase/firebase'
 import {getDocs,collection,doc,setDoc,addDoc} from 'firebase/firestore'
+import {signInWithEmailAndPassword,getAuth} from 'firebase/auth'
+
 //routing
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
-import {useDispatch } from 'react-redux'
+import {useDispatch,connect} from 'react-redux'
 import { setUser,setHeaderVisibility } from '../redux/user/editUser-actions'
 function Auth() {
 
@@ -35,6 +37,8 @@ function Auth() {
     sessionStorage.clear()
     const prom=new Promise((resolve,reject)=>{
       axios.get("https://leetcodetracker.onrender.com").then((response)=>{
+        dispatch(setHeaderVisibility(false))
+        dispatch(setUser(false))
         console.log(response.data)
           sessionStorage.removeItem("user")
           sessionStorage.removeItem("signInType")
@@ -47,8 +51,7 @@ function Auth() {
     prom.then(()=>{
       setIsLoading(false)
       const prom1=new Promise((resolve1,reject1)=>{
-        dispatch(setHeaderVisibility(false))
-        dispatch(setUser(false))
+     
         setTimeout(()=>{
           setIsLoading(false)
         },300) 
@@ -56,6 +59,8 @@ function Auth() {
     })
   },[])
  const dispatch=useDispatch()
+
+
   const signIn=async()=>{
 
     try{
@@ -78,19 +83,20 @@ function Auth() {
                 Cookies.set("total_questions_today",JSON.stringify({total:0,userId:userData.userId}),{expires:1/24})
               }
             }
-          })
-          setTimeout(()=>{
-            resolve()
 
-          },200)
+          })
+         
         })
       
         prom.then(()=>{
           console.log(found)
+          dispatch(setHeaderVisibility(true))
 
           if(found){
+            console.log("SET HEADER VIS ")
             dispatch(setHeaderVisibility(true))
             setTimeout(()=>{
+
               navigate('/home')
 
             },200)
@@ -127,19 +133,42 @@ function Auth() {
                  
 
                 }
+
+                dispatch(setUser(added))
+                setTimeout(()=>{
+                  dispatch(setHeaderVisibility(true)).then(()=>{
+                    resolve1()
+  
+                  })
+                  //resolve1()
+                },800)
+                
+              }).catch(()=>{
+
+                const auth = getAuth();
+                signInWithEmailAndPassword(auth, email, password)
+                  .then((userCredential) => {
+                     // Signed in 
+                          const user = userCredential.user;
+    // ...
+                              }).catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
                 
               })
-
-              setTimeout(()=>{
-                resolve1()
-              },800)
+             
             })
             
 
             prom1.then(()=>{
-             navigate("/home")
+
             })
           }
+        }).catch((err)=>{
+
+          console.log("NOT FOUND")
+          console.log(Object.keys(err))
         })
 
     }catch(err){
@@ -149,7 +178,7 @@ function Auth() {
 
     
     await createUserWithEmailAndPassword(auth,email,password).then((response)=>{
-      console.log(response)
+      console.log("response 180",response.data)
       
       var userUid = auth.currentUser.uid;
       console.log(auth)
@@ -167,12 +196,54 @@ function Auth() {
       });
       
       */
+    }).catch(async(err)=>{
+      console.log(err.message)
+      if(err.message.includes("email-already-in-use")){
+        console.log("IN USE")
+        const data=await getDocs(usersCollectionRef)
+
+        data.docs.map((doc)=>{
+          //console.log(doc.data())
+          const userData=doc.data()
+         
+          if(userData.email==email && userData.password==password){
+            const prom3=new Promise((resolve3,reject3)=>{
+
+              found=true
+            sessionStorage.setItem("user",JSON.stringify(userData))
+            sessionStorage.setItem("signInType","signIn")
+            dispatch(setUser(userData))
+
+            setTimeout(()=>{
+                resolve3()
+            },700)
+              
+            })
+
+            prom3.then(()=>{
+              dispatch(setHeaderVisibility(true))
+              setTimeout(()=>{
+                navigate("/home")
+              },600)
+
+            })
+            
+
+          }
+
+        })
+
+      }
+   
+
+    }).catch((err)=>{
+      console.log("err",err)
     })
     
     
   }
 
-  console.log(Math.floor(Math.random()*1000))
+  //console.log(Math.floor(Math.random()*1000))
 
   const signInWithGoogle=async()=>{
   
@@ -208,9 +279,22 @@ function Auth() {
         
 
       }).then(async(user)=>{
+
+        dispatch(setUser(user))
+
+          setTimeout(()=>{
+             var header=dispatch(setHeaderVisibility(true)) 
+             console.log("header")
+             console.log(header)
+            
+ 
+            console.log("SETTING HEADER VIS 2")
+            navigate("/home")
+
+          },700)
+        })
     
-        navigate("/home")
-      })
+      
     }catch(err){
       console.log(err)
     }
@@ -391,4 +475,14 @@ if(!isLoading){
 
 */
 
-export default Auth
+const mapStateToProps = (state, props) => {
+  var visibility= state.user.visibility;
+  var user=state.user.user
+  console.log("visibility"+visibility)
+
+  return {
+   visibility:visibility,
+   user:user
+  };
+};
+export default (Auth)
