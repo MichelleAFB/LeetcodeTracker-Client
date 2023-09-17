@@ -59,19 +59,16 @@ const [attempts,setAttempts]=useState()
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
 
-  console.log(useParams())
+  
 
   const onSelectChange = (sl) => {
-    console.log( sl);
+    
     //setLanguage(sl);
   };
 
   
 
   const {problemId}=useParams()
-  console.log(problemId,"\n"+typeof(problemId))
-  console.log(problemId)
-  console.log(Editor)
   const[show,setShow]=useState(false)
   const [level,setLevel]=useState()
   const[showHint,setShowHint]=useState(false)
@@ -234,15 +231,15 @@ const [attempts,setAttempts]=useState()
       }
     }
   };
-  console.log(language)
-
+  
+console.log(selectedLanguage)
   const handleCompile = async() => {
     setProcessing(true);
-    console.log(selectedLanguage.id)
+    console.log("selectedLanguage",selectedLanguage.id)
     const formData = {
-      language_id: selectedLanguage.id.toString(),
+      language_id: selectedLanguage.id,
       // encode source code in base64
-      source_code: btoa(code),
+       source_code: btoa(code),
       stdin: btoa(customInput),
     };
     const options = {
@@ -375,8 +372,8 @@ const [attempts,setAttempts]=useState()
 
 
 function handleSelectedLanguage(l){
-  console.log("changing to ")
-  console.log(JSON.parse(l))
+  
+  console.log("changing to ",JSON.parse(l))
   setSelectedLanguage(JSON.parse(l))
 }
 
@@ -408,7 +405,7 @@ function handleSelectedLanguage(l){
     const oldAttempts=problem.problem.attempts
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
      
-    console.log(problem.problem)
+    
     
    
   return (
@@ -496,7 +493,6 @@ function handleSelectedLanguage(l){
 
         </div>
         <div className="px-4 py-2">
-        <LanguagesDropdown handleSelectedLanguage={handleSelectedLanguage}/>
 
           <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
         </div> 

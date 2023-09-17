@@ -320,7 +320,7 @@ if(isLoading){
         <main id='content' role='main' class='w-full max-w-md mx-auto '>
       <div class="flex w-full justify-center ">
           <div class="flex-col justify-end  ">
-            <p class="text-white text-center">Loading Server..</p>
+            <p class="text-white text-center mb-4">Loading Server..</p>
           <div class="loading-spinner-large"/>
       </div>
     </div>
