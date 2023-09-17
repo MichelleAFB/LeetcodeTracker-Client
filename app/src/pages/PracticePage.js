@@ -406,7 +406,7 @@ function handleSelectedLanguage(l){
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
      
     
-    
+    console.log("solution",solution)
    
   return (
     <div>
@@ -592,7 +592,7 @@ function handleSelectedLanguage(l){
                 
                  
                 
-                  if(d.id==problemId && solution!=null && (code!=null && code!=initialBoilerCode)){
+                  if(d.id==problemId && (solution!=null && solution!="solution")&& (code!=null && code!=initialBoilerCode)){
                     console.log("FOUND")
                     console.log(d)
                     
@@ -646,7 +646,7 @@ function handleSelectedLanguage(l){
                    lastPracticed:currDate,
                    hints:problem.problem.hints,
                    no_attempts:problem.problem.no_attempts+1,
-                   attempts:bigAttempts,
+                   attempts:bigAttempts.attempts,
                    solution:solution,
                    userId:problem.problem.userId,
                    boilerCode:boilerCode,
@@ -665,7 +665,7 @@ function handleSelectedLanguage(l){
                   
                  })
               } 
-                  if(d.id==problemId && solution!=null  && (code==null || code==initialBoilerCode)){
+                  if(d.id==problemId && (solution!=null && solution!="solution")  && (code==null || code==initialBoilerCode)){
                    // console.log(d.problem.hasOwnProperty(boilerCode))
                    console.log("CODE  NULL |SOLUTION NOT NULL")
                    setSendingStreak(true)
@@ -698,8 +698,8 @@ function handleSelectedLanguage(l){
                
                   } 
                   
-                  if(d.id==problemId && solution==null && (code!=null  || code!=initialBoilerCode)){
-                    console.log("SOLUTION NULL| CODE NOT NULL")
+                  if(d.id==problemId && (solution=="solution" || solution==null) && (code!=null  || code!=initialBoilerCode)){
+                   // console.log("SOLUTION NULL| CODE NOT NULL")
                     problem.problem.attempts[newAttemptID]=code
                     console.log("HERE\n\n\n\n")
                     var id=0
@@ -716,6 +716,8 @@ function handleSelectedLanguage(l){
                    setTimeout(async()=>{
                               // console.log(d.problem.hasOwnProperty(boilerCode))
                    console.log("SETTING DOCUMENT")
+                   console.log("SOLUTION NULL| CODE NOT NULL\n")
+                    
                     console.log(bigAttempts)
                       const cDate=new Date()
                       const currDate=cDate.toString().substring(0,15)
@@ -727,7 +729,7 @@ function handleSelectedLanguage(l){
                     lastPracticed:currDate,
                     hints:problem.problem.hints,
                     no_attempts:problem.problem.no_attempts,
-                    attempts:bigAttempts,
+                    attempts:bigAttempts.attempts,
                     solution:problem.problem.solution,
                     userId:problem.problem.userId, 
                     boilerCode:boilerCode,
@@ -760,7 +762,7 @@ function handleSelectedLanguage(l){
                    
                    const user=JSON.parse(sessionStorage.getItem("user"))
                    console.log(problem)
-                    axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
+                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
                       
                       console.log(response)
                       if(response.data.message!=null){
