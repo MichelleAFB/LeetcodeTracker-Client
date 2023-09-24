@@ -8,9 +8,9 @@ function Header({ourUser,visibility}) {
   const [user,setUser]=useState()
   const location=useLocation()
   console.log(location.pathname)
-
+  console.log()
   useEffect(()=>{
-
+    console.log("\n\nHeader RELODING",visibility)
     const prom=new Promise((resolve,reject)=>{
       const u=JSON.parse(sessionStorage.getItem("user"))
       console.log(u)
@@ -29,9 +29,12 @@ function Header({ourUser,visibility}) {
     prom.then(()=>{
       if(location.pathname=='/' ){
 
-      }else if(visibility || location.pathname!="/"){
+      }else if(visibility){
      // setIsLoading(false)
+     console.log("HEADER SHOULD SHOW")
+     if(user!=null){
         setIsLoading(false)
+     }
       
       }
     })
@@ -42,7 +45,7 @@ function Header({ourUser,visibility}) {
 
   const navigate=useNavigate()
 
-  if(!isLoading && user!=null){
+  if(!isLoading){
     console.log(user)
   return (
     <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">

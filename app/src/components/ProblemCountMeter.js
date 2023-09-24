@@ -39,7 +39,7 @@ function ProblemCountMeter({color,count}) {
    
      {
     count<100 && count>15 && count!=0?
-    <div class={`"Rectangle3 w-[43.4px] h-["+${count}+"px] left-[8.5px] bottom-[8px] absolute bg-green-500 rounded-b-[15px] border-black border-4"`}></div>
+    <div class={`"Rectangle3 w-[43.4px] h-["+${count}+"px] left-[8.5px] bottom-[8px] absolute bg-green-500 rounded-b-[15px] border-black border-4"`}>.</div>
     :
     <div>
   
@@ -47,10 +47,10 @@ function ProblemCountMeter({color,count}) {
    }
 
   { count <=15 && count>8 && count!=0?
-         <div class={"Rectangle3 w-[43.4px] h-[10px] left-[8.5px] bottom-[8px] absolute bg-green-500 rounded-b-[15px] border-black border-4"}></div>
+         <div class={"Rectangle3 w-[43.4px] h-[10px] left-[8.5px] bottom-[8px] absolute bg-green-500 rounded-b-[15px] border-black border-4"}>.</div>
       :
       <div>
-           <div class={"Rectangle3 w-[43.4px] h-["+count+"px] left-[8.5px] bottom-[8px] absolute bg-green-500 rounded-b-[15px] border-black border-4"}></div>
+           <div class={"Rectangle3 w-[43.4px] h-["+count+"px] left-[8.5px] bottom-[8px] absolute bg-green-500 rounded-b-[15px] border-black border-4"}>.</div>
       </div>
       }
      
@@ -100,7 +100,7 @@ function ProblemCountMeter({color,count}) {
        <div class="z-20   top-[20.50px] relative"><p class="text-sm font-bold">{JSON.parse(sessionStorage.getItem("orange"))}</p></div>   
        {
     count<100 && count>10 && count!=0?
-    <div class={`Rectangle3 w-[43.4px] h-[${count}px] left-[8.5px] bottom-[8px] absolute bg-orange-500 rounded-b-[15px] border-black border-4`}></div>
+    <div class={`Rectangle3 w-[43.4px] h-[${count}px] left-[8.5px] bottom-[8px] absolute bg-orange-500 rounded-b-[15px] border-black border-4`}>.</div>
     :
   <div></div>
     

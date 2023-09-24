@@ -48,6 +48,14 @@ const [attempts,setAttempts]=useState()
   const[boilerCode,setBoilerCode]=useState()
   const[useBoilerCode,setuseBoilerCode]=useState(false)
   const[showAllPrompts,setShowAllPrompt]=useState(false)
+
+  const[currentVariable,setCurrentVariable]=useState({dataType:null, auxDataType:null,arrayLength:null, arrayHeight:null,name:null,value:null})
+  const [useTestCase,setUseTestCase]=useState(false)
+  const[method,setMethod]=useState()
+  const[params,setParams]=useState([])
+  const[structure,setStructure]=useState([])
+  const[correctTestCaseAnswer,setCorrectTestCaseAnswer]=useState()
+
   const [language, setLanguage] = useState(
     {
       id: 4,
@@ -232,7 +240,6 @@ const [attempts,setAttempts]=useState()
     }
   };
   
-console.log(selectedLanguage)
   const handleCompile = async() => {
     setProcessing(true);
     console.log("selectedLanguage",selectedLanguage.id)
@@ -378,7 +385,7 @@ function handleSelectedLanguage(l){
 }
 
 
-
+console.log(params)
 
   function handleEditorDidMount(editor,manaco){
     editorRef.current=editor
@@ -406,7 +413,7 @@ function handleSelectedLanguage(l){
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
      
     
-    console.log("solution",solution)
+    
    
   return (
     <div>
@@ -824,6 +831,7 @@ function handleSelectedLanguage(l){
             >
               {processing ? "Processing..." : "Compile and Execute"}
             </button>
+           
           </div>
           {outputDetails && <OutputDetails outputDetails={outputDetails} />}
           
