@@ -32,7 +32,6 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
   useEffect(()=>{
   var last
     const prom=new Promise((resolve,reject)=>{
-      console.log(typeof(problem.problem.lastPracticed))
       const dd = problem.problem.lastPracticed.toString()
       const d=dd.split(" ")
       const date=d[0]+ " "+d[1]+" "+d[2]+" "+d[3]
@@ -49,7 +48,6 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
     prom.then(()=>{
       
       const prom1=new Promise((resolve1,reject1)=>{ 
-         // console.log("after:"+last)
          
           resolve1()
       })
@@ -127,8 +125,6 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
   function handleGreen(){
     setGreen(green+1)
     const count=JSON.parse(sessionStorage.getItem("green"))
-    console.log("green storage:"+count)
-    console.log("green:"+green) 
     sessionStorage.setItem("green",count+1)
     setHalt(false)
    }
@@ -136,8 +132,6 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
    function handleOrange(){
     setOrange(orange+1)
     const count=JSON.parse(sessionStorage.getItem("orange"))
-    console.log("gorange storage:"+count)
-    console.log("orange:"+orange)
     sessionStorage.setItem("orange",count+1)
 
     setHalt(false)
@@ -148,7 +142,6 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
     const count=JSON.parse(sessionStorage.getItem("red"))
  
     sessionStorage.setItem("red",count+1)
-    console.log("red:"+red)
     setHalt(false)
    }
   if(!isLoading ){

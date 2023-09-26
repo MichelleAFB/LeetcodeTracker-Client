@@ -8,7 +8,7 @@ function Header({ourUser,visibility}) {
   const [user,setUser]=useState()
   const location=useLocation()
   console.log(location.pathname)
-  console.log()
+  console.log("HEADER:",visibility)
   useEffect(()=>{
     console.log("\n\nHeader RELODING",visibility)
     const prom=new Promise((resolve,reject)=>{
@@ -42,10 +42,9 @@ function Header({ourUser,visibility}) {
   },[visibility])
 
 
-
   const navigate=useNavigate()
 
-  if(!isLoading){
+  if(visibility){
     console.log(user)
   return (
     <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
@@ -93,17 +92,8 @@ function Header({ourUser,visibility}) {
 }
 
 
-const mapStateToProps = (state, props) => {
-  var visibility= state.user.visibility
-  var user=state.user.user
-  console.log("visibility"+visibility)
-
-  return {
-   visibility:visibility,
-   ourUser:user
-  };
-};
 
 
 
-export default connect (mapStateToProps) (Header)
+
+export default  Header

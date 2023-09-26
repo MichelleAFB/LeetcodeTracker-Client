@@ -24,15 +24,17 @@ function Auth() {
   const[firstname,setFirstName]=useState()
   const[lastname,setLastName]=useState()
   const[timezone,setTimezone]=useState("CST")
+  
 
   //find user for regualr signin method
   const[userFound,setuserFound]=useState(false)
   
   const usersCollectionRef=collection(db,"users")
+ 
 
   const navigate=useNavigate() 
   
-
+console.log(setUser)
   useEffect(()=>{
     sessionStorage.clear()
     const prom=new Promise((resolve,reject)=>{
@@ -112,7 +114,7 @@ function Auth() {
                 const id=Math.floor(Math.random()*100000)
 
                 const added=async()=>{
-
+                  const today=new Date()
                   const added=await addDoc(collection(db,"users"),{
                 
                     email: email,
@@ -123,7 +125,11 @@ function Auth() {
                      onlock: false,
                      password: password,
                      userId:id,
-                     timezone:timezone
+                     timezone:timezone,
+                     timeCreated:today.toString(),
+                     challenges:{0:null},
+                    currentChallenge:null,
+                    userType:"Google"
                   })
 
                  const ad=added()
@@ -149,6 +155,7 @@ function Auth() {
                 signInWithEmailAndPassword(auth, email, password)
                   .then((userCredential) => {
                      // Signed in 
+                     console.log("userCredential",userCredential)
                           const user = userCredential.user;
     // ...
                               }).catch((error) => {
@@ -161,9 +168,6 @@ function Auth() {
             })
             
 
-            prom1.then(()=>{
-
-            })
           }
         }).catch((err)=>{
 
@@ -177,25 +181,104 @@ function Auth() {
     }
 
     
-    await createUserWithEmailAndPassword(auth,email,password).then((response)=>{
+    await createUserWithEmailAndPassword(auth,email,password).then(async(response)=>{
       console.log("response 180",response.data)
       
       var userUid = auth.currentUser.uid;
       console.log(auth)
       console.log(userUid)
-/*
-      db.collection('users').doc(userUid).set({
-         userId:userUid,
-          email: email,
-          emailVerified: false,
-          firstname: firstname,
-          lastname:lastname,
-          online: false,
-          onlock: false,
-          password: password
-      });
+      const today=new Date()
+      const added=await addDoc(collection(db,"users"),{
+                
+        email: email,
+         emailVerified: false,
+        firstname:"user",
+        lastname:"user",
+         online: false,
+         onlock: false,
+         password: password,
+        // userId:id, //TODO:CREATE AND SET USER ID ON ENTRY
+         timezone:timezone,
+         timeCreated:today.toString(),
+         challenges:{0:null},
+        currentChallenge:null,
+        userType:"Google"
+      })
+      console.log("\n\naddded",added._key.path.segments[1])
+      const  docRefer=doc(db,"users",added._key.path.segments[1])
+
+
+     const setUserData=await setDoc(docRefer,{
+      userId:added._key.path.segments[1],
+      email: email,
+      emailVerified: false,
+     firstname:"user",
+     lastname:"user",
+      online: false,
+      onlock: false,
+      password: password,
+     // userId:id, //TODO:CREATE AND SET USER ID ON ENTRY
+      timezone:timezone,
+      timeCreated:today.toString(),
+      challenges:{0:null},
+     currentChallenge:null,
+     userType:"Regular"
+      })
+      console.log("SETDOCUSER",setUserData)
+
+      const userData={userId:added._key.path.segments[1],
+      email: email,
+      emailVerified: false,
+     firstname:"user",
+     lastname:"user",
+      online: false,
+      onlock: false,
+      password: password,
+     // userId:id, //TODO:CREATE AND SET USER ID ON ENTRY
+      timezone:timezone,
+      timeCreated:today.toString(),
+      challenges:{0:null},
+     currentChallenge:null,
+     userType:"Regular"
+      }
+      const prom3=new Promise((resolve3,reject3)=>{
+             
+      const userData={userId:added._key.path.segments[1],
+        email: email,
+        emailVerified: false,
+       firstname:"user",
+       lastname:"user",
+        online: false,
+        onlock: false,
+        password: password,
+       // userId:id, //TODO:CREATE AND SET USER ID ON ENTRY
+        timezone:timezone,
+        timeCreated:today.toString(),
+        challenges:{0:null},
+       currentChallenge:null,
+       userType:"Regular"
+        }
+
+        found=true
+      sessionStorage.setItem("user",JSON.stringify(userData))
+      sessionStorage.setItem("signInType","signIn")
+      dispatch(setUser(userData))
+
+      setTimeout(()=>{
+          resolve3()
+      },700)
+        
+      })
+
+      prom3.then(()=>{
+        signIn()
+
+      })
+
       
-      */
+      
+      
+      
     }).catch(async(err)=>{
       console.log(err.message)
       if(err.message.includes("email-already-in-use")){
@@ -261,6 +344,7 @@ function Auth() {
         const las=f[f.length-1]
         console.log(user)
         const id=Math.floor(Math.random()*100000)
+        const today= new Date()
         await addDoc(collection(db,"users"),{
            userId:id,     
           email: email,
@@ -270,7 +354,11 @@ function Auth() {
            online: false,
            onlock: false,
            password: password,
-           timezone:timezone
+           timezone:timezone,
+           timeCreated:today.toString(),
+           challenges:[],
+           currentChallenge:null,
+           userType:"Google"
         })
 
         
@@ -289,7 +377,7 @@ function Auth() {
             
  
             console.log("SETTING HEADER VIS 2")
-            navigate("/home")
+           // navigate("/home")
 
           },700)
         })

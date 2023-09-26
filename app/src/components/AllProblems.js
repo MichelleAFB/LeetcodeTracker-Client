@@ -16,8 +16,7 @@ function AllProblems() {
 
     const getProblems=async()=>{
       axios.get("https://leetcodetracker.onrender.com/new-problems").then((response)=>{
-        console.log(response)
-        console.log(response)
+        
         setProblems(response.data.problems)
         setFiltered(response.data.problems)
         setTimeout(()=>{
@@ -29,7 +28,7 @@ function AllProblems() {
 
     const prom=new Promise((resolve,reject)=>{
       getProblems().then((response)=>{
-        console.log(response)
+      
         resolve()
       })
     })
@@ -66,10 +65,7 @@ function AllProblems() {
       
       
       const eve=ev.title
-      console.log("\n\n")
-      console.log(eve)
-      //console.log(eve)
-      console.log(evie.includes(str))
+      
       if(evie.includes(str)){ 
         evieSplit.map((o) => {
           if(o.includes(str)){

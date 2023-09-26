@@ -615,9 +615,9 @@ console.log(params)
 
                   var min = Object.keys(problem.problem.attempts.attempts).reduce(function (a, b) { return a > b ? a : b; });  
                   console.log("LARGEST INDEX:"+min)
-                   bigAttempts.attempts[min+1]={attempt:code,date:currDate}
+                   bigAttempts.attempts[Number(min)+1]={attempt:code,date:currDate}
                    console.log("NEW ATTEMPT")
-                   console.log(bigAttempts[min+1])
+                   console.log(bigAttempts[Number(min)+1])
 
 
 
@@ -641,7 +641,7 @@ console.log(params)
                  prom1.then(async()=>{
                   const cDate=new Date()
                   const currDate=cDate.toString().substring(0,15);
-                  bigAttempts.attempts[index]={attempt:code,date:currDate}
+                 // bigAttempts.attempts[index]={attempt:code,date:currDate}
                   console.log("SETTING DOC")
                   console.log(bigAttempts)
                  
@@ -716,7 +716,7 @@ console.log(params)
                     var at=0
                     var min = Object.keys(problem.problem.attempts.attempts).reduce(function (a, b) { return a > b ? a : b; }); 
                     console.log("LARGEST INDEX:"+min)
-                     bigAttempts.attempts[min+1]={attempt:code,date:currDate}
+                     bigAttempts.attempts[Number(min)+1]={attempt:code,date:currDate}
                    
                  
 

@@ -14,9 +14,19 @@ import Header from '../components/layout/Header'
 import StreakChart from '../components/StreakChart'
 import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editProblem-actions'
 
+import {setUser,setHeaderVisibility} from '../redux/user/editUser-actions'
 function Home({problem,visibility,leetCodeVisiblity}) {
+  const dispatch=useDispatch()
+  console.log(performance.getEntriesByType("resource"))
 
   useEffect(()=>{
+    if(sessionStorage.getItem("user")!=null){
+      dispatch(setUser(JSON.parse(sessionStorage.getItem("user"))))
+
+      setTimeout(()=>{
+        dispatch(setHeaderVisibility(true))
+      },500)
+    }
     //axios.get("https://leetcodetracker.onrender.com/generate-prompt")
     /*axios.post("https://leetcodetracker.onrender.com/remove-duplicates").then((response)=>{
       console.log(response)
@@ -24,7 +34,6 @@ function Home({problem,visibility,leetCodeVisiblity}) {
     */
 
   },[visibility,leetCodeVisiblity])
-  const dispatch=useDispatch()
 
   return (
     <div class="w-full flex min-h-screen ">

@@ -11,6 +11,7 @@ import {getDocs,collection,doc,updateDoc} from 'firebase/firestore'
 
 import axios from 'axios'
 import Streak from './Streak'
+import Challenges from './Challenges';
 
 function StreakChart() {
 
@@ -192,7 +193,7 @@ function StreakChart() {
       
       <p>{}</p>
     {streaks!=null?
-    <div class="flex flex-col w-full">
+    <div class="flex flex-col w-full p-10">
 
       
    
@@ -224,7 +225,8 @@ function StreakChart() {
       </button>
       </div>
       }
-    
+            <Challenges/>
+
       </div>:
       <p class="text-5xl">hi</p>
   }

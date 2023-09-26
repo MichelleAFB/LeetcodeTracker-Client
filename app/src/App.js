@@ -11,15 +11,32 @@ import Header from './components/layout/Header';
 import AddLeetcodeProblemModal from './components/AddLeetcodeProblemModal';
 import EditProblemModal from './components/EditProblemModal';
 import EditProblemModal2 from './components/EditProblemModal2';
-import {useState,useEffect} from 'react'
 import AnalyticsPage from './pages/AnalyticsPage';
-function App() {
+import {useState,useEffect} from "react"
+import {connect} from 'react-redux'
+function App({user,visibility}) {
+
+  const[isLoading,setIsLoading]=useState(true)
+  console.log(visibility)
+  useEffect(()=>{
+
+  },[visibility]) 
+
   return (
     <Router>
       <EditProblemModal/>
       <AddLeetcodeProblemModal/>
-        <Header/> 
+
+
+      {
+        JSON.parse(sessionStorage.getItem("user"))!=null?
+        <Header user={user} visibility={visibility}/>
+        :
+        <div></div>
+      }
       <Routes>
+       
+
         <Route path="/" element={<Auth/>}/>
         <Route path="/home" element={<Home/>}/>
         <Route path="/practice/:problemId" element={<PracticePage/>}/>
@@ -32,4 +49,15 @@ function App() {
   );
 }
 
-export default App;
+const mapStateToProps = (state, props) => {
+  var visibility= state.user.visibility;
+  var user=state.user.user
+  console.log("visibility in APP.JS"+visibility)
+
+  return {
+   visibility:visibility,
+   user:user
+  };
+};
+
+export default connect(mapStateToProps)(App);

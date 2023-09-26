@@ -15,7 +15,7 @@ export const editUserReducer = (state = initialState, action) => {
       };
 
     case actionTypes.SET_HEADER_VISIBILITY:
-      console.log("REDUX:SETTING EDIT user");
+      console.log("REDUX:SETTING EDIT user",action.payload);
       
       return {
         ...state,
