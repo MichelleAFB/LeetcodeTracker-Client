@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useEffect } from 'react'
-function ProblemCountMeter({color,count}) {
+function ProblemCountMeter({color,count,backgroundColor,hideCount,index}) {
 
   const[countString,setCountString]=useState()
   const[isLoading,setIsLoading]=useState(true)
@@ -30,12 +30,14 @@ function ProblemCountMeter({color,count}) {
     <div>
 
           
-      <div class="Frame1 w-[125px] h-[175px] relative bg-gray-400">
+      <div class={`Frame1 w-[125px] h-[175px] relative ${backgroundColor!=null? backgroundColor:"bg-gray-400"}`}>
         <div class="Group1 w-[62px] h-36 left-[33px] top-[9px] absolute ">
      <div class="Rectangle1 w-[58px] h-36 left-0 top-0 absolute bg-neutral-50 rounded-[25px]"></div>
      <div class="Rectangle2 w-[47px] h-[130px] left-[6px] top-[9px] absolute bg-white rounded-[20px] border-4 border-black"></div>
-     
-     <div class="z-20  top-[20.50px] relative"><p class="text-sm font-bold">{JSON.parse(sessionStorage.getItem("green"))}</p></div>    
+     {hideCount?
+     <div></div>:
+     <div class="z-20  top-[20.50px] relative"><p class="text-sm font-bold">{JSON.parse(sessionStorage.getItem("green"))}</p></div>  
+  }  
    
      {
     count<100 && count>15 && count!=0?
@@ -93,11 +95,15 @@ function ProblemCountMeter({color,count}) {
       <div>
   
             
-        <div class="Frame1 w-[125px] h-[175px] relative bg-gray-400">
+        <div class={`Frame1 w-[125px] h-[175px] relative ${backgroundColor!=null? backgroundColor:"bg-gray-400"}`}>
           <div class="Group1 w-[62px] h-36 left-[33px] top-[9px] absolute ">
        <div class="Rectangle1 w-[58px] h-36 left-0 top-0 absolute bg-neutral-50 rounded-[25px]"></div>
        <div class="Rectangle2 w-[47px] h-[130px] left-[6px] top-[9px] absolute bg-white rounded-[20px] border-4 border-black"></div>
+       {hideCount?
+       <div>
+        </div>:
        <div class="z-20   top-[20.50px] relative"><p class="text-sm font-bold">{JSON.parse(sessionStorage.getItem("orange"))}</p></div>   
+      }
        {
     count<100 && count>10 && count!=0?
     <div class={`Rectangle3 w-[43.4px] h-[${count}px] left-[8.5px] bottom-[8px] absolute bg-orange-500 rounded-b-[15px] border-black border-4`}>.</div>
@@ -153,11 +159,14 @@ function ProblemCountMeter({color,count}) {
       <div>
   
             
-        <div class="Frame1 w-[125px] h-[175px] relative bg-gray-400">
+        <div class={`Frame1 w-[125px] h-[175px] relative ${backgroundColor!=null? backgroundColor:"bg-gray-400"}`}>
           <div class="Group1 w-[62px] h-36 left-[33px] top-[9px] absolute ">
        <div class="Rectangle1 w-[58px] h-36 left-0 top-0 absolute bg-neutral-50 rounded-[25px]"></div>
        <div class="Rectangle2 w-[47px] h-[130px] left-[6px] top-[9px] absolute bg-white rounded-[20px] border-4 border-black"></div>
-       <div class="z-20   top-[20.50px] relative"><p class="text-sm font-bold">{JSON.parse(sessionStorage.getItem("red"))}</p></div>   
+       {hideCount?
+       <div>
+        </div>:<div class="z-20   top-[20.50px] relative"><p class="text-sm font-bold">{JSON.parse(sessionStorage.getItem("red"))}</p></div> 
+    }  
 
  
     
@@ -177,7 +186,10 @@ function ProblemCountMeter({color,count}) {
   
     
    }
+       {hideCount?
+       <div></div>:
         <div class={"Rectangle3 w-[43.4px] h-["+JSON.parse(sessionStorage.getItem("red")).toString()+"px] left-[8.5px] bottom-[8px] absolute bg-red-500 rounded-b-[15px] border-black border-4"}></div>
+      }
       
      <div></div>
        <div class="Line1 w-[25.02px] h-[0px] left-[25.99px] top-[125.50px] absolute border border-black"></div>

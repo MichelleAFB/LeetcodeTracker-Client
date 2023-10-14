@@ -13,11 +13,14 @@ import { useState } from 'react'
 //redux
 import { useDispatch } from 'react-redux'
 import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editProblem-actions'
-import { doc, deleteDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase'
+import { getDoc } from 'firebase/firestore'
 function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,handleOldest}) {
-
-
+  const u=JSON.parse(sessionStorage.getItem("user"))
+  const us=doc(db,"users",u.userId)
+  
+  const[user,setUser]=useState()
   const[isLoading,setIsLoading]=useState(true)
   const[dateLast,setDateLast]=useState() 
   const[lengthLast,setLengthLast]=useState()
@@ -31,24 +34,26 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
 
   useEffect(()=>{
   var last
-    const prom=new Promise((resolve,reject)=>{
+    const prom=new Promise(async(resolve,reject)=>{
       const dd = problem.problem.lastPracticed.toString()
       const d=dd.split(" ")
       const date=d[0]+ " "+d[1]+" "+d[2]+" "+d[3]
+      const u=await getDoc(us)
+      setUser(u.data())
      
 
       last=date
       setDateLast(date)
       setTimeout(()=>{
         resolve()
-      },300)
+      },400)
       
     })
 
     prom.then(()=>{
       
       const prom1=new Promise((resolve1,reject1)=>{ 
-         
+         //console.log(problem.problem.title," ",problem.problem.lastPracticed," dateSet",dateLast)
           resolve1()
       })
 
@@ -69,8 +74,8 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
     var Length=-1
 
 
-    console.log(problem.problem.title)
-    console.log("PERIOD")
+   // console.log(problem.problem.title)
+   // console.log("PERIOD")
     const months = ["","Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul","Aug", "Sep", "Oct", "Nov", "Dec"];
 
     const dateArr=dateNew.split(" ")
@@ -108,10 +113,7 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
 
   }
 
-  const fix=(problem1,problem2)=>{
-    console.log(problem1)
-    console.log(problem2)
-  }
+  
 
 
   const deleteProblem=async(problem)=>{
@@ -144,7 +146,39 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
     sessionStorage.setItem("red",count+1)
     setHalt(false)
    }
+
+
+
+   const updateIndex=async(problemRef,timeIndex)=>{
+    
+    console.log("poblem id",problemRef)
+    try{
+    await updateDoc(problemRef,{
+      id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:problem.problem.lastPracticed,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:problem.problem.solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:problem.problem.boilerCode,
+                    prompt:problem.problem.prompt,
+                    examples:problem.problem.examples,
+                    level:problem.problem.level,
+                    index:timeIndex
+     
+    })
+  }catch(err){
+    console.log("could not set time index",err)
+  }
+    
+  }
+   try{
   if(!isLoading ){
+
 
     
 
@@ -177,11 +211,18 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
       index++
    }
    
-    console.log(Object.keys(problem.problem.attempts))
-    if(index<7 && problem.problem.no_attempts!=0){
+
+    
+    if(user.healthyIndex!=null ? user.healthyIndex.end>index && problem.problem.attempts.length!=0 :index<7 && problem.problem.no_attempts!=0){
     
       handleOldest(problem,index)
-     
+      problem.problem.index=index
+
+    const problemRef=doc(db,"problems",problem.id)
+    if(problem.problem.index==null || problem.problem.index!=index){
+    updateIndex(problemRef,index)
+    }
+
       
       return (
         <div className='p-5 bg-white rounded shadow m-3'>
@@ -254,7 +295,7 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
        
     
           <button class="bg-gray-300 p-3 rounded-sm w-full" onClick={()=>{
-              navigate("/practice/"+problem.id)
+              navigate("/practice/"+problem.id+"/"+index)
           }}>
             Practice
           </button>
@@ -264,8 +305,14 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
         }
    
   
-if(index>7 && index<14){
+if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user.criticalIndex.start):(index>=7 && index<14)){
   handleOldest(problem,index)
+  problem.problem.index=index
+
+  const problemRef=doc(db,"problems",problem.id)
+    if(problem.problem.index==null || problem.problem.index!=index){
+    updateIndex(problemRef,index)
+    }
 
  
   return (
@@ -338,7 +385,7 @@ if(index>7 && index<14){
    
 
       <button class="bg-gray-300 p-3 rounded-sm w-full" onClick={()=>{
-          navigate("/practice/"+problem.id)
+          navigate("/practice/"+problem.id+"/"+index)
       }}>
         Practice
       </button>
@@ -347,9 +394,14 @@ if(index>7 && index<14){
       )
     }
       
-if(index>14 || problem.problem.no_attempts==0){
- 
+if(user.criticalIndex!=null ? user.criticalIndex.start >=index || problem.problem.attempts.length==0: (index>=14  || problem.problem.attempts.length==0)){
+// console.log(index,problem.problem.title)
   handleOldest(problem,index)
+  problem.problem.index=index
+  const problemRef=doc(db,"problems",problem.id)
+    if(problem.problem.index==null || problem.problem.index!=index){
+    updateIndex(problemRef,index)
+    }
 
   return (
     <div className='p-5 bg-red-400 rounded shadow m-3'>
@@ -422,7 +474,7 @@ if(index>14 || problem.problem.no_attempts==0){
 
       <button class="bg-gray-300 p-3 rounded-sm w-full" onClick={()=>{
         console.log(typeof(problem.id.toString()))
-         navigate("/practice/"+problem.id.toString())
+         navigate("/practice/"+problem.id.toString()+"/"+index)
       }}>
         Practice
       </button>
@@ -430,6 +482,15 @@ if(index>14 || problem.problem.no_attempts==0){
   </div>
       )
     }
+  }
+}catch(err){
+    return(
+      <div class="flex w-full p-3 bg-purple-400">
+        problem
+      </div>
+    )
+  }finally{
+    //console.log(err)
   }
 }
 

@@ -34,7 +34,6 @@ function Auth() {
 
   const navigate=useNavigate() 
   
-console.log(setUser)
   useEffect(()=>{
     sessionStorage.clear()
     const prom=new Promise((resolve,reject)=>{
@@ -80,28 +79,30 @@ console.log(setUser)
               sessionStorage.setItem("signInType","signIn")
               dispatch(setUser(userData))
 
-              const todaysQuestions=Cookies.get("total_questions_today")
-              if(todaysQuestions==null){
-                Cookies.set("total_questions_today",JSON.stringify({total:0,userId:userData.userId}),{expires:1/24})
-              }
+              
             }
 
           })
+          setTimeout(()=>{
+            resolve()
+          },500)
          
         })
       
         prom.then(()=>{
-          console.log(found)
-          dispatch(setHeaderVisibility(true))
+        
+
 
           if(found){
-            console.log("SET HEADER VIS ")
+            console.log("FOUND")
             dispatch(setHeaderVisibility(true))
+            sessionStorage.setItem("headerVisibility","true")
+
             setTimeout(()=>{
 
-              navigate('/home')
+             navigate('/home')
 
-            },200)
+            },500)
           }else{
 
             const prom1=new Promise((resolve1,reject1)=>{
@@ -142,6 +143,8 @@ console.log(setUser)
 
                 dispatch(setUser(added))
                 setTimeout(()=>{
+                  sessionStorage.setItem("headerVisibility",true)
+
                   dispatch(setHeaderVisibility(true)).then(()=>{
                     resolve1()
   
@@ -306,7 +309,7 @@ console.log(setUser)
             prom3.then(()=>{
               dispatch(setHeaderVisibility(true))
               setTimeout(()=>{
-                navigate("/home")
+              //  navigate("/home")
               },600)
 
             })

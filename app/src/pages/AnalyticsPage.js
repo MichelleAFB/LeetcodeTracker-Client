@@ -5,7 +5,7 @@ import Challenges from '../components/Challenges'
 
 function AnalyticsPage() {
   return (
-    <div class="flex w-full h-screen justify-center mt-5">
+    <div class="flex w-full h-screen justify-center ">
      
     
       <StreakChart/>

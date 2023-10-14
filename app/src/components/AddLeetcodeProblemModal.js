@@ -279,7 +279,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       hints:"none",
                       no_attempts:0,
                       level:ourProblem.difficulty,
-                      attempts:{attempt:"N/A",date:currDate},
+                      attempts:[{attempt:"N/A",date:currDate}],
                       solution:"N/A",
                       userId:user.userId,
                       leetcodeId:(ourProblem.problemID!=null? ourProblem.questionId:-1),

@@ -67,7 +67,8 @@ const [attempts,setAttempts]=useState()
   const enterPress = useKeyPress("Enter");
   const ctrlPress = useKeyPress("Control");
 
-  
+  const {timeIndex}=useParams()
+  console.log("tineIndex:",timeIndex)
 
   const onSelectChange = (sl) => {
     
@@ -523,7 +524,8 @@ console.log(params)
             boilerCode:code,
             prompt:prompt,
             examples:examples,
-            level:level
+            level:level,
+            index:timeIndex
            
           }).then((response)=>{
             setBoilerCode(code)
@@ -605,7 +607,7 @@ console.log(params)
                     
                     setSendingStreak(true)
                   // problem.problem.attempts[newAttemptID]=getEditorValue()
-                  problem.problem.attempts[newAttemptID]=code
+                 // problem.problem.attempts.push({attempt:code,date:currDate})
            
                   var id=0
                   var index=0
@@ -613,11 +615,7 @@ console.log(params)
                   const attempts={}
                   var at=0
 
-                  var min = Object.keys(problem.problem.attempts.attempts).reduce(function (a, b) { return a > b ? a : b; });  
-                  console.log("LARGEST INDEX:"+min)
-                   bigAttempts.attempts[Number(min)+1]={attempt:code,date:currDate}
-                   console.log("NEW ATTEMPT")
-                   console.log(bigAttempts[Number(min)+1])
+                  
 
 
 
@@ -627,13 +625,10 @@ console.log(params)
              
                  const prom1=new Promise((resolve,reject)=>{
                   
-                  Object.keys(prev).forEach((key)=>{
-                  //  console.log(prev[key])
-                  })
-                  console.log(bigAttempts)
+                  
+                  var today=new Date()
+                  problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
                   setTimeout(()=>{
-                    console.log("RESOLVE")
-                    console.log(bigAttempts[min+1])
                       resolve()
                   },300)
                  })
@@ -653,13 +648,14 @@ console.log(params)
                    lastPracticed:currDate,
                    hints:problem.problem.hints,
                    no_attempts:problem.problem.no_attempts+1,
-                   attempts:bigAttempts.attempts,
+                   attempts:problem.problem.attempts,
                    solution:solution,
                    userId:problem.problem.userId,
                    boilerCode:boilerCode,
                    prompt:prompt,
                    examples:examples,
-                   level:level
+                   level:level,
+                   index:timeIndex
                   
                  }).then((response)=>{
                   console.log(response)
@@ -694,7 +690,8 @@ console.log(params)
                     boilerCode:boilerCode,
                     prompt:prompt,
                     examples:examples,
-                    level:level
+                    level:level,
+                    index:timeIndex
                    
                   }).then((response)=>{
                     console.log(response)
@@ -707,16 +704,15 @@ console.log(params)
                   
                   if(d.id==problemId && (solution=="solution" || solution==null) && (code!=null  || code!=initialBoilerCode)){
                    // console.log("SOLUTION NULL| CODE NOT NULL")
-                    problem.problem.attempts[newAttemptID]=code
+                   // problem.problem.attempts[newAttemptID]=code
                     console.log("HERE\n\n\n\n")
                     var id=0
                     var index=0
-                    const bigAttempts={attempts:{}}
+                    var bigAttempts={attempts:{}}
                     const attempts={}
                     var at=0
-                    var min = Object.keys(problem.problem.attempts.attempts).reduce(function (a, b) { return a > b ? a : b; }); 
-                    console.log("LARGEST INDEX:"+min)
-                     bigAttempts.attempts[Number(min)+1]={attempt:code,date:currDate}
+                    var today=new Date()
+                    problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
                    
                  
 
@@ -736,13 +732,14 @@ console.log(params)
                     lastPracticed:currDate,
                     hints:problem.problem.hints,
                     no_attempts:problem.problem.no_attempts,
-                    attempts:bigAttempts.attempts,
+                    attempts:problem.problem.attempts,
                     solution:problem.problem.solution,
                     userId:problem.problem.userId, 
                     boilerCode:boilerCode,
                     prompt:prompt,
                     examples:examples,
-                    level:level
+                    level:level,
+                    index:timeIndex
                    
                   }).then((response)=>{
                     console.log(response)
@@ -839,8 +836,35 @@ console.log(params)
       
       </div>
       <div class="flex flex-col p-3 rounded-md bg-yellow-700 m-2">
-        <p class="text-center text-white font-bold text-2xl">Solution</p>
-        <textarea class="whitespace-pre-wrap p-3 mt-2 rounded-md" name="textarea" rows="5" cols="40" placeholder="//Solution" onChange={(e)=>{
+        
+        <div class="flex w-full ">       
+         <button class="bg-green-500 p-2 flex justify-center m-2 rounded-md w-1/2" onClick={()=>{
+          setSeeSolution(!seeSolution)
+          setSeeAttempts(false)
+        }}>
+          <p class="text-white font-bold">See Solution</p>
+        </button>
+    
+        <button class="bg-orange-400  p-2 flex justify-center m-2 rounded-md w-1/2" onClick={()=>{
+          setSeeAttempts(!seeAttempts)
+          setSeeSolution(false)
+          console.log(problem.problem.attempts)
+        }}>
+          <p class="text-white text-center font-bold">See Attempts</p>
+        </button>
+        </div>
+
+        {
+          seeSolution? 
+          <div class="flex-col bg-white rounded">
+            <p class="text-2xl font-bold text-center">Solution</p>
+            <p class="whitespace-pre-wrap text-white font-bold m-2">{problem.problem.solution.length<3?"No solution":problem.problem.solution}</p>
+            </div>:<p></p>
+        }
+        {seeSolution?
+        <div class="flex-col  w-full">
+          <p class="text-center text-white font-bold text-2xl">Add Solution</p>
+        <textarea class="whitespace-pre-wrap p-3 mt-2 rounded-md flex w-full" name="textarea" rows="5" cols="40" placeholder="//Solution" onChange={(e)=>{
           console.log(e.target.value)
           if(e.target.value.length>0){
             
@@ -849,59 +873,52 @@ console.log(params)
           }
           console.log(solution)
         }}></textarea>
-        <button class="bg-green-500" onClick={()=>{
-          setSeeSolution(!seeSolution)
-        }}>
-          <p class="text-white">See Solution</p>
-        </button>
+        </div>
+        :
+        <div></div>
+      }
+
+
         {
-          seeSolution? <p class="whitespace-pre-wrap text-white font-bold m-2">{problem.problem.solution}</p>:<p></p>
-        }
-        <button class="bg-orange-400" onClick={()=>{
-          setSeeAttempts(!seeAttempts)
-        }}>
-          <p class="text-white">See Attempts</p>
-        </button>
-        {
-          seeAttempts && attempts!=null? 
-          <div class="bg-white">
-            {
-            Object.keys(attempts).map((k)=>{
-              console.log(attempts)
+          seeAttempts && problem.problem.attempts!=null? 
+          <div>
             
-              const at=attempts[k]
-                if(at!=null){
+            <div class="flex w-full bg-white">
+              <div class=" h-[60vh] overflow-y-scroll overflow-hidden w-full">
               
-              if(at!=null && typeof(at.attempt)!="object" ){
-                console.log(at)
-                console.log(typeof(at.attempt))
-               
+            {
+            problem.problem.attempts.map((a)=>{
+              console.log(a)
               return(
-                <div class="flex flex-col bg-gray-200 rounded-md p-2 m-1">
-              <p class="text-center font-bold">{at.date}</p>
-              <p class="text-sm whitespace-pre-wrap ">{at.attempt}</p>
-            </div>
+                <div class="flex-col w-full p-3">
+                  <p class="font-bold text-center">{a.date}</p>
+                  <p class=" whitespace-pre">{a.attempt}</p>
+                </div>
               )
-              }
-            }else{
-              console.log(attempts)
-            }
             })
             
            
             }
+              </div>
+            </div>
+         
         
           </div>:<div>
-            {
-              console.log(problem.problem.attempts.size)
-            }
+            
           </div>
         }
+
+
+
+
+         
+        
       </div>
          
       </div>
     </div>
   )
+  console.log(problem.problem.attempts)
 }else{
   return(<div></div>)
 }

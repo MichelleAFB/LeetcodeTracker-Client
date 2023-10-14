@@ -454,6 +454,8 @@ function EditProblemModal({ourProblem,visibility}) {
                             category:category,
                             lastPracticed:problem.problem.lastPracticed,
                             hints:hints,
+                            link:(link!=null ? link:null),
+
                             no_attempts:problem.problem.no_attempts,
                             attempts:problem.problem.attempts,
                             solution:problem.problem.solution,

@@ -207,7 +207,7 @@ function AddProblem() {
                   category:category,
                   lastPracticed:currentDate.toString(),
                   no_attempts:0,
-                  attempts:{0:"attempt",date:currDate},
+                  attempts:[{attempt:"N/A",date:currDate}],
                   hints:hints,
                   link,link,
                   prompt:prompt,

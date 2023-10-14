@@ -225,7 +225,6 @@ function StreakChart() {
       </button>
       </div>
       }
-            <Challenges/>
 
       </div>:
       <p class="text-5xl">hi</p>

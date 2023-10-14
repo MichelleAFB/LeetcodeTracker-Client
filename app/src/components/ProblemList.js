@@ -11,6 +11,7 @@ import {
   UnorderedList,
 } from '@chakra-ui/react'
 import ProblemListItem from './ProblemListItem'
+import { getDoc } from 'firebase/firestore'
 
 //outside
 import axios from 'axios'
@@ -22,6 +23,7 @@ function ProblemList() {
   const[isLoading,setIsLoading]=useState(true)
 
   //search options
+  const [ourUser,setOurUser]=useState()
   const[dataStructure,setDataStructure]=useState()
   const[category,setCategory]=useState()
   const[searchByDataStructure,setSearchByDataStructure]=useState(false)
@@ -41,15 +43,23 @@ function ProblemList() {
   
   const[full,setFull]=useState()
   const fuller=[]
+  const[userDefinedIndex,setUserDefiniedIndex]=useState(false)
   useEffect(()=>{
     sessionStorage.setItem("green",0)
     sessionStorage.setItem("red",0)
     sessionStorage.setItem("orange",0)
     const dataArr=[]
-    const prom=new Promise((resolve,reject)=>{
+    const prom=new Promise(async(resolve,reject)=>{
     var RED=0
     var ORANGE=0
     var GREEN=0
+    var u=JSON.parse(sessionStorage.getItem("user"))
+    const userRef=doc(db,"users",u.userId)
+    var use=await getDoc(userRef)
+    use=use.data()
+    console.log(use)
+    setOurUser(use)
+
       const getProblemsList=async()=>{
 
         //READ DATA
@@ -101,20 +111,41 @@ function ProblemList() {
               index++
            }
            setTimeout(()=>{
+            if(use.healthyIndex==null){
             if(index<7){
               GREEN=GREEN+1
               sessionStorage.setItem("green",GREEN)
              
 
             }
-            if(index>7 && index<14){
+            if(index>=7 && index<14){
               ORANGE=ORANGE+1
               sessionStorage.setItem("orange",ORANGE)
 
             }
-            if(index>14){
+            if(index>=14){
               RED=RED+1
               sessionStorage.setItem("red",RED)
+
+            }
+            }else{
+              
+              if(index<=use.healthyIndex.end){
+                GREEN=GREEN+1
+                sessionStorage.setItem("green",GREEN)
+               
+  
+              }
+              if(index>=use.decliningIndex.start && index<use.decliningIndex.end){
+                ORANGE=ORANGE+1
+                sessionStorage.setItem("orange",ORANGE)
+  
+              }
+              if(index>=use.criticalIndex.start){
+                RED=RED+1
+                sessionStorage.setItem("red",RED)
+  
+              }
 
             }
            },50)
@@ -287,12 +318,39 @@ setTimeout(()=>{
       if(evie.includes(str)){ 
         evieSplit.map((o) => {
           if(o.includes(str)){
+            if(red){
+            console.log("MATCHHHH",ev)
             //console.log(evie.includes(str))
+            if(ev.problem.index!=null){
+              if(ev.problem.index>=14 ){
+                if(!fil.includes(ev))
+                 fil.push(ev)
+              }
+            }
+            }else if(green){
+              if(ev.problem.index!=null){
+                if(ev.problem.index<7){
+                  if(!fil.includes(ev))
+                   fil.push(ev)
+                }
+              }
+
+            }else if(orange){
+              if(ev.problem.index!=null){
+                if(ev.problem.index<=7 && ev.problem.index<14){
+                  if(!fil.includes(ev))
+                   fil.push(ev)
+                }
+              }
+
+            }else if(!red && !green && !orange){
+              if(!fil.includes(ev)){
+                fil.push(ev)
+              }
+
+            }
           
-            console.log("\n\n")
-            if(!fil.includes(ev))
-            fil.push(ev)
-          }
+         }
         })
         
       }
@@ -309,6 +367,9 @@ setTimeout(()=>{
     console.log("filter not working")
   )   
 }
+
+
+
 const handleSearchByCategory = (e) => {
   if(e.target.value==null || e.target.value==""){
     const fil=problems
@@ -491,6 +552,8 @@ const handleSearchByRed= () => {
 }
 
 
+
+
 const handleSearchByOrange= () => {
 
   const fil=[]
@@ -634,24 +697,19 @@ const handleSearchByGreen= () => {
     setFiltered(fil)
     console.log("filtered should be")
     console.log(filtered)
-}).catch(
-  console.log("filter not working")
+}).catch((err)=>{
+  console.log("filter not working",err)
+
+}
 )   
 }
 
   
-function fixIds(problems,user){
-  axios.post("https://leetcodetracker.onrender.com/idss",{problems:problems,user:user.userId}).then((response)=>{
 
-  })
-}
 const user=JSON.parse(sessionStorage.getItem("user"))
 
    
-  function fix(problem1,problem2){
-    console.log(problem1.problem.attempts)
-    console.log(problem2.attempts)
-  }
+  
 
   function handleOldest(p,index){
     //console.log("Handling oldest:"+index+" problem:"+p.problem.title)
@@ -729,7 +787,12 @@ const user=JSON.parse(sessionStorage.getItem("user"))
              })
             }}>
            <ProblemCountMeter  count={JSON.parse(sessionStorage.getItem("green"))} color={"green"} />
-           <p  class="text-center text-sm font-bold">{" < 7 days ago"}</p>
+           {user.decliningIndex!=null?
+           <p  class="text-center text-sm font-bold">{` < ${user.decliningIndex.start} days ago`}</p>
+           :
+           <p  class="text-center text-sm font-bold">{` < 7 days ago`}</p>
+
+           }
            
           </button>
 
@@ -741,8 +804,8 @@ const user=JSON.parse(sessionStorage.getItem("user"))
             setGreen(false)
           }}>
            <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("orange"))} color={"orange"}/>
-           <p  class="text-center text-xs font-bold">{" < 14 days ago"}</p>
-           <p  class="text-center text-xs font-bold">{" > 7 days ago"}</p>
+           <p  class="text-center text-xs font-bold">{` < ${user.criticalIndex.start}days ago`}</p>
+           <p  class="text-center text-xs font-bold">{` > ${user.decliningIndex.start} days ago`}</p>
           </button>
           :
           <button class="flex-col p-2"onClick={()=>{
@@ -900,14 +963,14 @@ const user=JSON.parse(sessionStorage.getItem("user"))
       <input type="text" class="p-3 w-full  rounded-md"onFocus={()=>{
         setSearch(true)
       }} onChange={(e)=>{
-        if(e.currentTarget.value!=null){
+        if(e.currentTarget.value!=null || e.currentTarget.value.length>0){
           const prom=new Promise((resolve,reject)=>{
             setSearchText(e.target.data)
             handleSearch(e)
            
             setTimeout(()=>{
               resolve()
-            },500)
+            },300)
           })
 
           prom.then(()=>{
@@ -915,6 +978,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
             console.log(filtered)
           })
         }else{
+          console.log("setting search false")
           setSearch(false)
         }
       }}/>
@@ -1066,7 +1130,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
 
       }
       {search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null?
-       <div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+       <div class="h-[55vh] overflow-y-scroll overflow-hidden  m-4 p-3">
        { filtered.map((p)=>{
         console.log(p)
          return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
@@ -1133,6 +1197,17 @@ if(problems!=null && !red && !orange && !green&& !search && !searchByCategory &&
 </div>)
 
 }
+if(problems!=null && red && !orange && !green&& search && !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+ 
+  return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+  { filtered.map((p)=>{
+   console.log(p)
+    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+    })
+  }
+</div>)
+
+}
  if( problems==null){
 
   console.log(problems)
@@ -1147,32 +1222,4 @@ return (
 }
 
 
-/****
- *   <CardBody>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell head={true}>Date</TableCell>
-                  <TableCell head={true}>ID</TableCell>
-                  <TableCell head={true}>Status</TableCell>
-                  <TableCell head={true}>Amount</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {orders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell>{order.createdAt}</TableCell>
-                    <TableCell>{order.id}</TableCell>
-                    <TableCell>
-                      <Badge color={statusColorMap[order.status]}>
-                        {order.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{order.amount}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardBody>
- */
 export default ProblemList

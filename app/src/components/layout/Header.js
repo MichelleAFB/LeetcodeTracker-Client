@@ -29,7 +29,7 @@ function Header({ourUser,visibility}) {
     prom.then(()=>{
       if(location.pathname=='/' ){
 
-      }else if(visibility){
+      }else if(visibility || visibility=="true"){
      // setIsLoading(false)
      console.log("HEADER SHOULD SHOW")
      if(user!=null){
@@ -43,6 +43,10 @@ function Header({ourUser,visibility}) {
 
 
   const navigate=useNavigate()
+
+  function checkStatus(){
+
+  }
 
   if(visibility){
     console.log(user)
@@ -58,10 +62,16 @@ function Header({ourUser,visibility}) {
         <div class="flex-col w-1/6 mr-0 justify-end">
          <div class="flex-col justify-end">
             <button class="justify-end flex">
-              <p class="text-end text-lg text-white">{user.firstname} {user.lastname}</p>
+              <p class="text-end text-lg text-white m-0">{user.firstname} {user.lastname}</p>
            </button>
-           <p class="text-end"></p>
-           <button class="justify-end flex" onClick={()=>{
+           
+           <button class="justify-end flex m-0" onClick={()=>{
+            setIsLoading(true)
+            navigate("/settings")
+           }}>
+              <p class="text-end text-white">Settings</p>
+             </button>
+           <button class="justify-end flex m-0" onClick={()=>{
             setIsLoading(true)
             navigate("/")
            }}>
@@ -76,6 +86,8 @@ function Header({ourUser,visibility}) {
         <Link class="text-white font-bold" to="/home">Your Problems</Link>
 
         <Link class="text-white font-bold" to="/analytics">Your Stats</Link>
+
+        <Link class="text-white font-bold" to="/challenges">Your Challenges</Link>
 
       </div>
       </div>
