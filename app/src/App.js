@@ -34,7 +34,13 @@ function App({user,visibility}) {
       <SettingsModal/>
 
 
-      <Header/>
+      {
+        JSON.parse(sessionStorage.getItem("user"))!=null?
+        <Header user={user} visibility={visibility}/>
+        :
+        <Header user={user} visibility={JSON.parse(sessionStorage.getItem("headerVisibility"))}/>
+
+      }
       <Routes>
        
 
