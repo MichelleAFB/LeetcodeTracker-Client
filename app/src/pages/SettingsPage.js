@@ -5,6 +5,7 @@ import Billing from '../components/Settings/Billing'
 import { useState } from 'react'
 function SettingsPage() {
   const[environmentVariables,setEnvironmentVariables]=useState(true)
+  
   const [billing,setBilling]=useState(false)
   return (
     <div class="flex h-screen">
