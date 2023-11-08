@@ -1207,6 +1207,14 @@ if(problems!=null && red && !orange && !green&& search && !searchByCategory && !
   }
 </div>)
 
+}else{
+  return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+  { filtered.map((p)=>{
+   console.log(p)
+    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+    })
+  }
+</div>)
 }
  if( problems==null){
 

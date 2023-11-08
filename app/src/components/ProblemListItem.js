@@ -210,10 +210,9 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
       
       index++
    }
-   
 
     
-    if(user.healthyIndex!=null ? user.healthyIndex.end>index && problem.problem.attempts.length!=0 :index<7 && problem.problem.no_attempts!=0){
+    
     
       handleOldest(problem,index)
       problem.problem.index=index
@@ -222,8 +221,12 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
     if(problem.problem.index==null || problem.problem.index!=index){
     updateIndex(problemRef,index)
     }
+    console.log(problem.problem.title)
+      console.log(user)
+    console.log(index)
 
-      
+
+    if(   user.healthyIndex!=null? (index<=user.healthyIndex.end ):(index<=7 )){
       return (
         <div className='p-5 bg-white rounded shadow m-3'>
           <div class="flex w-full justify-end">
@@ -302,8 +305,8 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
         
       </div>
           )
+        
         }
-   
   
 if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user.criticalIndex.start):(index>=7 && index<14)){
   handleOldest(problem,index)
@@ -394,7 +397,8 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
       )
     }
       
-if(user.criticalIndex!=null ? user.criticalIndex.start >=index || problem.problem.attempts.length==0: (index>=14  || problem.problem.attempts.length==0)){
+if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 )){
+  console.log("UNHEALTHY")
 // console.log(index,problem.problem.title)
   handleOldest(problem,index)
   problem.problem.index=index

@@ -825,9 +825,12 @@ setTimeout(()=>{
            if(startDate.toString().substring(0,15)==curr.toString().substring(0,15)){
          
              const ourDates=getDatesArray(startDate,endDate)
-              currentChallenge.length=ourDates.length
+             console.log(currentChallenge)
+
+              newChallenge.length=ourDates.length
+              console.log(currentChallenge)
               setTimeout(()=>{
-                axios.post("https://leetcodetracker.onrender.com/create-new-challenge",{challenge:newChallenge,userId:user.userId,current:true}).then(async(response)=>{
+                axios.post("http://localhost:3022/create-new-challenge",{challenge:newChallenge,userId:user.userId,current:true}).then(async(response)=>{
                   console.log(response)
                   if(response.data.challenge!=null){
                     newChallenge.challengeId=response.data.challenge._id
