@@ -46,8 +46,8 @@ function Billing() {
         setIsLoading(false)
 
       },200)
-      /*if(user!=null){
-        fetch("http://localhost:3022/payment/create-payment-intent", {
+      if(user!=null){
+        fetch("https://leetcodetracker.onrender.com/payment/create-payment-intent", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ items: [{ id: "xl-tshirt" }] }),
@@ -62,7 +62,7 @@ function Billing() {
             },200)
           });
       }
-      */
+      
     })
 
   },[])// starts with pk_
@@ -117,7 +117,7 @@ function Billing() {
                                                         setTimeout(()=>{
                           
                                                       
-                                                      fetch("http://localhost:3022/payment/checkout/"+user.userId+"/premium", {
+                                                      fetch("https://leetcodetracker.onrender.com/payment/checkout/"+user.userId+"/premium", {
                                                       method: "POST",
                                                       headers: { "Content-Type": "application/json" },
                                                       body: JSON.stringify({ items: [{ id: process.env.REACT_APP_PREMIUM_ID_TEST,quantity:1 }] }),
@@ -159,7 +159,7 @@ function Billing() {
                               setTimeout(()=>{
 
                             
-                            fetch("http://localhost:3022/payment/checkout/"+user.userId+"/diamond", {
+                            fetch("https://leetcodetracker.onrender.com/payment/checkout/"+user.userId+"/diamond", {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
                             body: JSON.stringify({ items: [{ id: process.env.REACT_APP_DIAMOND_ID_TEST,quantity:1 }] }),
