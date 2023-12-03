@@ -13,17 +13,16 @@ import axios from 'axios'
 import Streak from './Streak'
 import Challenges from './Challenges';
 
-function StreakChart() {
+function StreakChart({allStreaks,streaks}) {
 
   const [problems,setProblems]=useState()
-  const[streaks,setStreaks]=useState()
+ // const[streaks,setStreaks]=useState()
   const[streakGroups,setStreakGroup]=useState()
-  const[isLoading,setIsLoading]=useState(true)
+  const[isLoading,setIsLoading]=useState(false)
   const[seeAllStreaks,setSeeAllStreaks]=useState(false)
-  const[allStreaks,setAllStreaks]=useState()
-
+  /*const[allStreaks,setAllStreaks]=useState()*/
   useEffect(()=>{
-    const dataArr=[]
+   /* const dataArr=[]
     const problemsListCollectionRef=collection(db,"problems")
     const arr=[] 
     const user=JSON.parse(sessionStorage.getItem("user"))
@@ -60,6 +59,7 @@ function StreakChart() {
     setIsLoading(false)
    
    })
+   */
   },[])
 
 
@@ -156,16 +156,7 @@ function StreakChart() {
 
 
   console.log(months)
-  if(isLoading){
-    return(
-    <div class="h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-      <div class="flex-col justify-end  ">
-          <div class="loading-spinner"/>
-      </div>
-    
-    </div>
-    )
-  }
+  
   if(!isLoading && streaks!=null){
   
     console.log(problems)
@@ -188,11 +179,34 @@ function StreakChart() {
       ],
     };
     */
+
+    console.log("streaks",streaks)
+    console.log("allstreaks",allStreaks)
   return (
-    <div class="m-5 flex h-[500px] w-full  border-gray-300 border-b-2 m p-5 "> 
+    <div class="m-5 flex h-[500px] w-full  border-gray-300 border-t-2 m p-5 "> 
       
       <p>{}</p>
-    {streaks!=null?
+    {allStreaks.length>0 && streaks.length==0 ?
+    <div class="flex flex-col w-full p-10">
+
+      
+   
+      
+      <div class="flex-col p-5 w-full">
+           <p class="text-4xl">Your Streaks</p>
+      <div class="flex w-full overflow-x-scroll  overflow-hidden">
+        {allStreaks.map((st)=>{
+          return(<Streak streaks={st}/>)
+        })
+          
+        }
+      </div>
+     
+      </div>
+      </div>:
+      <p class="text-5xl"></p>
+  }
+   {allStreaks.length>0 && streaks.length>0 ?
     <div class="flex flex-col w-full p-10">
 
       
@@ -200,7 +214,7 @@ function StreakChart() {
       {seeAllStreaks?
       
       <div class="flex-co p-5l">
-           <p class="text-4xl">Your Streaks</p>
+           <p class="text-4xl">Your Streaks hi</p>
       <div class="flex w-full overflow-x-scroll  overflow-hidden">
         {allStreaks.map((st)=>{
           return(<Streak streaks={st}/>)
@@ -227,12 +241,18 @@ function StreakChart() {
       }
 
       </div>:
-      <p class="text-5xl">hi</p>
+      <p class="text-5xl"></p>
+  }
+  {allStreaks.length==0 && streaks.length==0 ?
+    <div class="flex flex-col w-full p-10">
+      <p class="text-5xl">No streaks yet..</p>
+      </div>:
+      <p class="text-5xl"></p>
   }
     </div>
   )
     }else if(!isLoading && streaks==null){
-      return(<div>No Streaks Yet</div>) 
+      return(<div></div>) 
     }
 }
 

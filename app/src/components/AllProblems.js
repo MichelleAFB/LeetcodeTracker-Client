@@ -15,7 +15,7 @@ function AllProblems() {
   useEffect(()=>{
 
     const getProblems=async()=>{
-      axios.get("https://leetcodetracker.onrender.com/new-problems").then((response)=>{
+      axios.get("http://localhost:3022/problems").then((response)=>{
         
         setProblems(response.data.problems)
         setFiltered(response.data.problems)
@@ -106,14 +106,17 @@ function AllProblems() {
   { search && filtered!=null?
       <div class=" h-screen overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
         {filtered.map((p)=>{
+          if(p.prompt!=null){
           return(<AllProblemsItem problem={p}/>)
+          }
         })}
       </div>
       :
       <div class=" h-full overflow-y-scroll overflow-hidden z-10 bg-gray-100 m-4 p-3">
         {problems.map((p)=>{
-          return(<AllProblemsItem problem={p}/>)
-        })}
+if(p.prompt!=null){
+  return(<AllProblemsItem problem={p}/>)
+  }        })}
       </div>
       }
     </div>

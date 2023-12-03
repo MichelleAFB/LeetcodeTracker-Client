@@ -110,7 +110,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       <main id='content' role='main' class='w-full max-w-lg mx-auto h-[80vh] overflow-y-scroll overflow-hidden rounded-md'>
       
         <div class=' bg-white  rounded-md shadow-lg bg-white dark:border-gray-700 mb-5 flex flex-col p-5'>
-        <button class="bg-red-500 p-3 rounded-md w-1/4 justify-end" onClick={()=>{
+        <button class="bg-red-500 pl-2 pr-2 pt-1 rounded-md w-1/4 justify-end" onClick={()=>{
           const prom=new Promise((resolve,reject)=>{
             sessionStorage.removeItem("currentProblem")
             setTimeout(()=>{
@@ -136,6 +136,38 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
             </div>
 
             <div class="flex flex-col m-3 p-3">
+              
+              <div class="flex w-full">
+                <p class="text-md font-bold">Difficulty:</p>
+                {ourProblem.level}
+                {
+                  ourProblem.difficulty=="Easy"?
+                  <p class="text-green-400 font-bold ml-2">{ourProblem.difficulty}</p>
+                  :
+                  <p></p>
+                }
+                {
+                  ourProblem.difficulty=="Medium"?
+                  <p class="text-orange-400 font-bold ml-2">{ourProblem.difficulty}</p>
+                  :
+                  <p></p>
+                }
+                {
+                  ourProblem.difficulty=="Hard"?
+                  <p class="text-red-500 font-bold ml-2">{ourProblem.difficulty}</p>
+                  :
+                  <p></p>
+                }
+              </div>
+              <div class="flex w-full">
+                <p class="font-bold">Acceptance Rate:</p>
+              {
+                  ourProblem.acRate!=null?
+                  <p class="text-purple-400 font-bold ml-2">{ourProblem.acRate.toString().substring(0,5)}</p>
+                  :
+                  <p></p>
+                }
+              </div>
               {showPrompt?
               <div class="p-3 m-3 border-gray-500 border-2 rounded-md">
                 <p class="text-sm whitespace-pre-wrap ">
@@ -144,6 +176,20 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
              </div>:
              <p></p>
              }
+             <div class="flex-w-full">
+              {
+                ourProblem.topicTags.length>0?
+                <div class="flex w-fuLl">
+                  {
+                    ourProblem.topicTags.map((t)=>{
+                      return(<p class="text-gray-400 font-bold m-2">{t}</p>)
+                    })
+                  }
+                </div>:
+                <div>
+                </div>
+              }
+             </div>
             
               <div class="flex flex-col">
                     <select

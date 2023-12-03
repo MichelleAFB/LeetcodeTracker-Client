@@ -40,7 +40,7 @@ export function MonthChart() {
 
     const prom=new Promise((resolve,reject)=>{
       const user=JSON.parse(sessionStorage.getItem("user"))
-      axios.get("http://localhost:3022/monthCharts/"+user.userId).then((response)=>{
+      axios.get("https://leetcodetracker.onrender.com/monthCharts/"+user.userId).then((response)=>{
         if(response.data.success){
             setMonths(response.data.months)
             setComplete(true)
@@ -102,8 +102,9 @@ export function MonthChart() {
     
   return (
   <div class="flex w-full justify-center p-5">
-    
-    <div class="flex-col w-1/2">
+    <p class="text-5xl">Problems by Month</p>
+
+    <div class="flex-col w-2/3">
       <p class="mb-4 font-bold text-xl text-center">Total Problems per Month</p>
         <Pie data={data} width={200} height={200} />
       </div>

@@ -469,7 +469,7 @@ if(!isLoading){
           
           </div>
           <div class="flex justify-center mt-2">
-            <button class="bg-green-600 rounded-md p-3" onClick={signInWithGoogle}>
+            <button class="bg-green-600 rounded-md pr-3 pl-3 pt-2" onClick={signInWithGoogle}>
                 <p class="text-white font-semibold">Create with Google</p>
              </button>
             
@@ -493,7 +493,7 @@ if(!isLoading){
                }}/>
           </div>
           <div class="flex justify-center">
-             <button class="bg-green-600 rounded-md p-3 m-2" onClick={signIn}>
+             <button class="bg-green-600 rounded-md pr-3 pl-3 pt-2 m-2" onClick={signIn}>
               <p class="text-white">Sign In</p>
              </button>
           </div>
