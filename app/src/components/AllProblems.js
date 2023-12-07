@@ -15,7 +15,7 @@ function AllProblems() {
   useEffect(()=>{
 
     const getProblems=async()=>{
-      axios.get("http://localhost:3022/problems").then((response)=>{
+      axios.get("https://leetcodetracker.onrender.com/problems").then((response)=>{
         
         setProblems(response.data.problems)
         setFiltered(response.data.problems)
