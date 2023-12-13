@@ -215,7 +215,33 @@ setTimeout(()=>{
   const[searchText,setSearchText]=useState()
   const[search,setSearch]=useState(false)
   const[filtered,setFiltered]=useState()
+  
 
+  const sort=(problems)=>{
+      console.log("PROBLEMS",problems)
+      const sendProblems=[]
+      var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+      "Aug","Sep","Oct","Nov","Dec"];
+      var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
+    
+      problems.map((p)=>{
+        var date=p.problem.lastPracticed.split(" ")
+  
+
+        date=new Date(date[3],monthnum[months.indexOf(date[1])-1],date[2])
+        var dayDate=new Date(date)
+        sendProblems.push({id:p.id,last:dayDate})
+      })
+      setTimeout(()=>{
+        console.log("PROBLEMS",sendProblems)
+
+        axios.post("http://localhost:3022/sort-problems",{problems:sendProblems}).then((response)=>{
+          console.log(response)
+        })
+
+      },1000)
+   
+  }
   function  myDecoStyle(value) {
     console.log(value+" pixels")
     return "Rectangle3 w-[43.4px] h-["+value+"px] left-[8.5px] top-[93px] absolute bg-red-500 rounded-b-[15px] border-black border-4";
@@ -736,6 +762,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
     )
   }
   if(!isLoading && problems!=null){
+    sort(problems)
     console.log("\n\nfull")
     console.log(full)
 
@@ -753,6 +780,11 @@ const user=JSON.parse(sessionStorage.getItem("user"))
    console.log(oldest)
   return (
     <div class="bg-gray-400 w-full  p-3 z-10">
+    <button class="p-3 w-1/2 bg-green-400" onClick={()=>{
+      sort(problems)
+    }}>
+      Click
+    </button>
       <p class="text-xl text-center font-bold">
         Your Questions ({problems.length})
       </p>
