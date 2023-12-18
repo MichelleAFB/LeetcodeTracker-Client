@@ -136,6 +136,14 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
             </div>
 
             <div class="flex flex-col m-3 p-3">
+              <div class="flex w-full m-3">
+              {
+                  ourProblem.link!=null?
+                  <p class="text-green-400 font-bold ml-2">{ourProblem.link}</p>
+                  :
+                  <p></p>
+                }
+              </div>
               
               <div class="flex w-full">
                 <p class="text-md font-bold">Difficulty:</p>

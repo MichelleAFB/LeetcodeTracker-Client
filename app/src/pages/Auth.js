@@ -422,7 +422,7 @@ if(isLoading){
 }
 if(!isLoading){
   return (
-    <div class="bg-gray-300 rounded-md p-3 h-screen p-5 justify-center align-middle">
+    <div class="bg-gray-300 rounded-md p-3 h-full flex-col p-5 justify-center align-middle">
       <div class="w-full h-1/6"></div>
       <p class="text-4xl text-center mb-5 text-purple-500">LeetcodeTracker</p>
       <div class="flex flex-col m-3 bg-gray-500 p-3 rounded-md justify-center ">
