@@ -84,7 +84,7 @@ export function MonthChart() {
       })
       console.log(years.reverse())
      
-      axios.get("hhttps://leetcodetracker.onrender.com/monthCharts/"+user.userId+"/"+selectedYear).then((response)=>{
+      axios.get("https://leetcodetracker.onrender.com/monthCharts/"+user.userId+"/"+selectedYear).then((response)=>{
         if(response.data.success){
           console.log(response.data)
             setMonths(response.data.months)
