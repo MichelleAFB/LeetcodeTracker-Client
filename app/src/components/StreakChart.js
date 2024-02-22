@@ -180,8 +180,7 @@ function StreakChart({allStreaks,streaks}) {
     };
     */
 
-    console.log("streaks",streaks)
-    console.log("allstreaks",allStreaks)
+ 
   return (
     <div class="m-5 flex h-[500px] w-full  border-gray-300 border-t-2 m p-5 "> 
       

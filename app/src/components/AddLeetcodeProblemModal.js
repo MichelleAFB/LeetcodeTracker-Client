@@ -278,6 +278,10 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       hints:problemData.problem.hints,
                       no_attempts:problemData.problem.no_attempts,
                       level:ourProblem.difficulty,
+                      tags:ourProblem.topicTags,
+                      page:ourProblem.page,
+                      topicTags:ourProblem.topicTags,
+
                       attempts:problemData.problem.attempts,
                       solution:problemData.problem.solution,
                       userId:problemData.problem.userId,
@@ -332,7 +336,12 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       lastPracticed:currDate,
                       hints:"none",
                       no_attempts:0,
+                      tags:ourProblem.topicTags,
+                      topicTags:ourProblem.topicTags,
+
                       level:ourProblem.difficulty,
+                      page:ourProblem.page,
+
                       attempts:[{attempt:"N/A",date:currDate}],
                       solution:"N/A",
                       userId:user.userId,

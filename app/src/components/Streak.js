@@ -83,7 +83,7 @@ function Streak({streaks}) {
  if(!isLoading && streaks.length!=0){
   //console.log(streaks)
  
-  console.log(streaks)
+ 
   
   return (
     <div class="flex h-[500px]  w-full m-2 border-l-2 border-gray-500 p-3 z-1  ">

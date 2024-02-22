@@ -188,6 +188,7 @@ console.log(btoa(customInput))
       } else {
         setProcessing(false);
         setOutputDetails(response.data);
+        console.log(response)
         showSuccessToast(`Compiled Successfully!`);
         console.log("response.data", response.data);
         return;

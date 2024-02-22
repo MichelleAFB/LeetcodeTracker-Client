@@ -1,11 +1,14 @@
 
 import{useState,useEffect} from 'react'
+import {db} from '../../firebase/firebase'
+import {doc,updateDoc,getDoc} from 'firebase/firestore'
 function UserInfo(){
     const [user,setUser]=useState(JSON.parse(sessionStorage.getItem("user")))
     const[firstname,setFirstname]=useState(user.firstname)
     const [lastname,setLastname]=useState(user.lastname)
     const[email,setEmail]=useState(user.email)
     const [phone,setPhone]=useState(user.phone)
+
     return(
         <div class="flex w-full p-5">
             <div class="flex-col w-full">
@@ -60,7 +63,43 @@ function UserInfo(){
     
                  </div>
                  <div class="flex w-full justify-center">
-                    <button class="bg-green-500 p-3 rounded-sm m-2">
+                    <button class="bg-green-500 pr-2 pl-2 pt-2 rounded-sm m-2" onClick={async()=>{
+                        const id=user.userId
+                        const userRef=doc(db,"users",user.userId)
+                        const u= await getDoc(userRef)
+                        console.log(u)
+                        /*if(firstname!=null && firstname!=user.firstname){
+                            await updateDoc(userRef,{
+                                firstname:firstname
+                            })
+                        }
+                        if(lastname!=null && lastname!=user.lastname){
+                            await updateDoc(userRef,{
+                              lastname:lastname
+                            })
+                        }
+                       /* if(email!=null && email!=user.email){
+                            await updateDoc(userRef,{
+                              email:email
+                            })
+                        }
+                        
+                        if(phone!=null && phone!=user.phone){
+                            await updateDoc(userRef,{
+                              phone:phone
+                            })
+                        }
+                        */
+                        const update={
+                            firstname:firstname!=null && firstname!=user.firstname ? firstname:user.firstname,
+                            lastname:lastname!=null && lastname!=user.lastname ? lastname:user.lastname,
+                            phone:phone!=null && phone!=user.phone? phone:user.phone,
+                            email:email!=null && email!=user.email? email:user.email
+                        }
+                        console.log(update)
+                     
+
+                    }}>
                         <p class="text-white">Submit</p>
                     </button>
                  </div>
