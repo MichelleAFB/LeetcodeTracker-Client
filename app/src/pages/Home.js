@@ -41,7 +41,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
     <div class="w-full flex min-h-screen ">
       <div class="flex-col">
         <div class="flex w-full">
-        <AllUsers/>
+    
         </div>
         <div class="flex w-full">     
          <div class=" w-1/2 flex-col bg-gray-400 p-5 z-1 ">

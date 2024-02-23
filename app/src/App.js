@@ -18,7 +18,9 @@ import {connect} from 'react-redux'
 import ChallengesPage from './pages/ChallengesPage';
 import SettingsPage from './pages/SettingsPage';
 import UpdateUserSuccess from './pages/UpdateUserSuccess';
+import AllUsers from './components/AllUsers';
 import SettingsModal from './components/SettingsModal';
+
 function App({user,visibility}) {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -42,12 +44,13 @@ function App({user,visibility}) {
         <Header user={user} visibility={JSON.parse(sessionStorage.getItem("headerVisibility"))}/>
 
       }
+      <AllUsers/>
       <Routes>
        
 
         <Route path="/" element={<Auth/>}/>
         <Route path="/home" element={<Home/>}/>
-        <Route path="/practice/:problemId/:timeIndex" element={<PracticePage/>}/>
+        <Route path="/practice/:problemId/:timeIndex/:id" element={<PracticePage/>}/>
         <Route path="/analytics" element={<AnalyticsPage/>}/>
         <Route path="/challenges" element={<ChallengesPage/>}/>
         <Route path="/settings" element={<SettingsPage/>}/>

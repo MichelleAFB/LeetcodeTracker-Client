@@ -94,7 +94,7 @@ const [attempts,setAttempts]=useState()
   const[token,setToken]=useState()
   const[reload,setReload]=useState(true)
   const editorRef=useRef()
-
+  const id=useParams().id
   const problemsListCollectionRef=collection(db,"problems")
 
   
@@ -505,6 +505,7 @@ console.log(params)
           <ThemeDropdown handleThemeChange={handleThemeChange} theme={theme} />
         </div> 
         <div class="flex w-full justify-between">
+          {id==null?
         <button class="bg-purple-600 rounded-md p-3 m-3 flex " onClick={()=>{
         
         
@@ -568,6 +569,9 @@ console.log(params)
       }}> 
         <p class="text-white font-bold">Add Boiler Code</p>
       </button>
+      :<div></div>
+      }
+      {id==null?
       <button class="bg-cyan-600 rounded-md p-3 w-1/3 m-2" onClick={(e)=>{
             e.preventDefault()
             
@@ -798,6 +802,8 @@ console.log(params)
           }}>
            <p class="font-bold text-white ">Submit</p> 
           </button>
+          :<div></div>
+          }
        
    
         </div>
@@ -861,7 +867,7 @@ console.log(params)
             <p class="whitespace-pre-wrap text-white font-bold m-2">{problem.problem.solution.length<3?"No solution":problem.problem.solution}</p>
             </div>:<p></p>
         }
-        {seeSolution?
+        {seeSolution && id==null?
         <div class="flex-col  w-full">
           <p class="text-center text-white font-bold text-2xl">Add Solution</p>
         <textarea class="whitespace-pre-wrap p-3 mt-2 rounded-md flex w-full" name="textarea" rows="5" cols="40" placeholder="//Solution" onChange={(e)=>{

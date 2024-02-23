@@ -16,12 +16,13 @@ import { getDoc } from 'firebase/firestore'
 //outside
 import axios from 'axios'
 import ProblemCountMeter from './ProblemCountMeter'
+import { useParams } from 'react-router-dom'
 
-function ProblemList() {
+function ProblemList({id}) {
 
   const[problems,setProblems]=useState()
   const[isLoading,setIsLoading]=useState(true)
-
+  
   //search options
   const [ourUser,setOurUser]=useState()
   const[dataStructure,setDataStructure]=useState()
@@ -76,7 +77,7 @@ function ProblemList() {
           thinger.id=doc.id     
               
         
-          if(doc.data().userId==user.userId){
+          if(id==null? doc.data().userId==user.userId:doc.data().userId==id){
             titles.push(thing.title) 
 
             setTimeout(()=>{
@@ -867,7 +868,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
             setRed(false)
           }}>
            <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("red"))} color={"red"}/>
-           <p  class="text-center text-sm font-bold"> >14 days ago</p>
+           <p  class="text-center text-sm font-bold"> ${">14 days ago"}</p>
 
           </button>
           :
@@ -888,7 +889,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
              })
             }}>
            <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen}  count={JSON.parse(sessionStorage.getItem("red"))} color={"red"} />
-           <p  class="text-center text-sm font-bold"> >14 days ago</p>
+           <p  class="text-center text-sm font-bold">${" >14 days ago"}</p>
           </button>
 
           }
@@ -1124,7 +1125,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.dataStructure==dataStructure){
-           return(<ProblemListItem problem={p} handleOldest={handleOldest}/>)
+           return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
           }
            })
          }
@@ -1138,7 +1139,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
           const cDate=new Date()
           const currDate=cDate.toString().substring(0,15)
           if(p.problem.lastPracticed.substring(0,15)==currDate){
-           return(<ProblemListItem problem={p} handleOldest={handleOldest}/>)
+           return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
           }
            })
          }
@@ -1150,7 +1151,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.category==category){
-           return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+           return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
           }
            })
          }
@@ -1161,7 +1162,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
        <div class="h-[55vh] overflow-y-scroll overflow-hidden  m-4 p-3">
        { filtered.map((p)=>{
         console.log(p)
-         return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+         return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
          })
        }
     </div>:
@@ -1172,7 +1173,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
         !search && !searchByCategory && !searchByDataStructure?
         <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
         {filtered.map((p)=>{
-         return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+         return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
         })}
      </div>:
      <div></div> 
@@ -1186,7 +1187,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
     return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
     { filtered.map((p)=>{
      console.log(p)
-      return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+      return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
       })
     }
  </div>)
@@ -1197,7 +1198,7 @@ if(problems!=null && !red && orange && !green&& !search&& !searchByCategory && !
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
-    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+    return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
 </div>)
@@ -1208,7 +1209,7 @@ if(problems!=null && !red && !orange && green&& !search&& !searchByCategory && !
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
-    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+    return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
 </div>)
@@ -1219,7 +1220,7 @@ if(problems!=null && !red && !orange && !green&& !search && !searchByCategory &&
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
-    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+    return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
 </div>)
@@ -1230,7 +1231,7 @@ if(problems!=null && red && !orange && !green&& search && !searchByCategory && !
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
-    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+    return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
 </div>)
@@ -1239,7 +1240,7 @@ if(problems!=null && red && !orange && !green&& search && !searchByCategory && !
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
-    return(<ProblemListItem problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+    return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
 </div>)

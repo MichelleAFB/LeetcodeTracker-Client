@@ -16,7 +16,14 @@ import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editPr
 import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 import { db } from '../firebase/firebase'
 import { getDoc } from 'firebase/firestore'
-function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,handleOldest}) {
+function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,handleOldest}) {
+ /*
+    if id arguement is present, it means it is another user viewing this users problem list. and attempting to
+    try to solve the question.disable edit or delete capability. In practice page disable submit and boiler plate
+    modification
+
+ */
+ 
   const u=JSON.parse(sessionStorage.getItem("user"))
   const us=doc(db,"users",u.userId)
   
@@ -245,30 +252,36 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
            
           </div>
           <div class="flex justify-end w-full">
-            <button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
+          {id==null?<button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
                 
-              deleteProblem(problem).then((response)=>{
-                alert("SUCCESS: deleted problem:"+problem.problem.title)
-              })
-              }}>
-                <p class="text-end text-white">Remove</p>
-              </button>
-              <button class="bg-gray-300 rounded-md p-2 justify-self-end m-2" onClick={()=>{
-                
-                setEdit(!edit)
-                const prom=new Promise((resolve,reject)=>{
-                  console.log("dispatching")
-                    dispatch(setProblem(problem))
-                    sessionStorage.setItem('editProblem',JSON.stringify(problem))
-                    resolve()
+                deleteProblem(problem).then((response)=>{
+                  alert("SUCCESS: deleted problem:"+problem.problem.title)
                 })
-    
-                prom.then(()=>{
-                  dispatch(setEditProblemVisibility(true))
-                })
-              }}>
-                <p class="text-end">Edit</p>
-              </button>
+                }}>
+                  <p class="text-end text-white">Remove</p>
+                </button>
+                :
+                <div></div>
+        }
+         {id==null? <button class="bg-gray-300 rounded-md p-2 justify-self-end" onClick={()=>{
+            
+            setEdit(!edit)
+            const prom=new Promise((resolve,reject)=>{
+              console.log("dispatching")
+                dispatch(setProblem(problem))
+                sessionStorage.setItem('editProblem',JSON.stringify(problem))
+                resolve()
+            })
+
+            prom.then(()=>{
+              dispatch(setEditProblemVisibility(true))
+            })
+          }}>
+            <p class="text-end">Edit</p>
+          </button>
+          :
+          <div></div>
+        }
             </div>
         </div>
        
@@ -296,7 +309,12 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
        
     
           <button class="bg-gray-300 p-3 rounded-sm w-full" onClick={()=>{
+            const userId=id
+            if(id==null){
               navigate("/practice/"+problem.id+"/"+index)
+            }else{
+              navigate("/practice/"+problem.id+"/"+index+"/"+id)
+            }
           }}>
             Practice
           </button>
@@ -335,7 +353,7 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
         
       </div>
       <div class="flex justify-end w-full">
-      <button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
+      {id==null?<button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
                 
                 deleteProblem(problem).then((response)=>{
                   alert("SUCCESS: deleted problem:"+problem.problem.title)
@@ -343,7 +361,10 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
                 }}>
                   <p class="text-end text-white">Remove</p>
                 </button>
-          <button class="bg-gray-300 rounded-md p-2 justify-self-end" onClick={()=>{
+                :
+                <div></div>
+        }
+         {id==null? <button class="bg-gray-300 rounded-md p-2 justify-self-end" onClick={()=>{
             
             setEdit(!edit)
             const prom=new Promise((resolve,reject)=>{
@@ -359,6 +380,9 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
           }}>
             <p class="text-end">Edit</p>
           </button>
+          :
+          <div></div>
+        }
         </div>
     </div>
   
@@ -424,7 +448,7 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
         
       </div>
       <div class="flex justify-end w-full">
-      <button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
+      {id==null?<button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
                 
                 deleteProblem(problem).then((response)=>{
                   alert("SUCCESS: deleted problem:"+problem.problem.title)
@@ -432,7 +456,10 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
                 }}>
                   <p class="text-end text-white">Remove</p>
                 </button>
-          <button class="bg-gray-300 rounded-md p-2 justify-self-end" onClick={()=>{
+                :
+                <div></div>
+        }
+         {id==null? <button class="bg-gray-300 rounded-md p-2 justify-self-end" onClick={()=>{
             
             setEdit(!edit)
             const prom=new Promise((resolve,reject)=>{
@@ -448,6 +475,9 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
           }}>
             <p class="text-end">Edit</p>
           </button>
+          :
+          <div></div>
+        }
         </div>
     </div>
     

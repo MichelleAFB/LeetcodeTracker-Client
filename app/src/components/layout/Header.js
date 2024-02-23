@@ -10,10 +10,10 @@ function Header({ourUser,visibility}) {
   console.log(location.pathname)
   console.log("HEADER:",visibility)
   useEffect(()=>{
-    console.log("\n\nHeader RELODING",visibility)
+
     const prom=new Promise((resolve,reject)=>{
       const u=JSON.parse(sessionStorage.getItem("user"))
-      console.log(u)
+ 
       if(ourUser==null){
         setUser(u)
       }else{
@@ -31,7 +31,7 @@ function Header({ourUser,visibility}) {
 
       }else if(visibility || visibility=="true"){
      // setIsLoading(false)
-     console.log("HEADER SHOULD SHOW")
+
      if(user!=null){
         setIsLoading(false)
      }

@@ -7,8 +7,9 @@ import axios from 'axios'
 import {auth, googleProvider} from '../firebase/firebase'
 import { createUserWithEmailAndPassword,signInWithPopup,signOut} from 'firebase/auth'
 import { db } from '../firebase/firebase'
-import {getDocs,collection,doc,setDoc,addDoc} from 'firebase/firestore'
+import {getDocs,collection,setDoc,addDoc, getDoc} from 'firebase/firestore'
 import {signInWithEmailAndPassword,getAuth} from 'firebase/auth'
+import { doc } from 'firebase/firestore'
 
 //routing
 import { useNavigate } from 'react-router-dom'
@@ -65,21 +66,46 @@ function Auth() {
   const signIn=async()=>{
 
     try{
-      
+
         const data=await getDocs(usersCollectionRef)
 
         var found=false
         const prom=new Promise((resolve,reject)=>{
-          data.docs.map((doc)=>{
+          data.docs.map(async(d)=>{
             //console.log(doc.data())
-            const userData=doc.data()
-           
+            const userData=d.data()
+            console.log(userData)
+            console.log(d )
+            
             if(userData.email==email && userData.password==password){
+              console.log("\n\n")
+          
+              const foundUser=doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
+              try{
+              const updated=await setDoc(foundUser,
+               { email: email,
+                emailVerified: false,
+               firstname:"user",
+               lastname:"user",
+                online: false,
+                onlock: false,
+                password: password,
+                userId:d._key.path.segments[d._key.path.segments.length-1],
+                timezone:timezone,
+                challenges:{0:null},
+               currentChallenge:null,
+               userType:"Google",
+               lastLogin: new Date()})
+              console.log(updated)
+            }catch(err){
+              console.log("\n\n\nERR:",err)
+            }
               found=true
               sessionStorage.setItem("user",JSON.stringify(userData))
               sessionStorage.setItem("signInType","signIn")
               dispatch(setUser(userData))
-
+              console.log(userData)
+            /*STOP*/
               
             }
 
@@ -101,7 +127,7 @@ function Auth() {
 
             setTimeout(()=>{
 
-             navigate('/home')
+             //navigate('/home')
 
             },500)
           }else{
@@ -131,7 +157,8 @@ function Auth() {
                      timeCreated:today.toString(),
                      challenges:{0:null},
                     currentChallenge:null,
-                    userType:"Google"
+                    userType:"Google",
+                    lastLogin: new Date()
                   })
 
                  const ad=added()
@@ -206,7 +233,8 @@ function Auth() {
          timeCreated:today.toString(),
          challenges:{0:null},
         currentChallenge:null,
-        userType:"Google"
+        userType:"Google",
+        lastLogin: new Date()
       })
       console.log("\n\naddded",added._key.path.segments[1])
       const  docRefer=doc(db,"users",added._key.path.segments[1])
@@ -226,7 +254,8 @@ function Auth() {
       timeCreated:today.toString(),
       challenges:{0:null},
      currentChallenge:null,
-     userType:"Regular"
+     userType:"Regular",
+     lastLogin: new Date()
       })
       console.log("SETDOCUSER",setUserData)
 
@@ -243,7 +272,8 @@ function Auth() {
       timeCreated:today.toString(),
       challenges:{0:null},
      currentChallenge:null,
-     userType:"Regular"
+     userType:"Regular",
+     lastLogin: new Date()
       }
       const prom3=new Promise((resolve3,reject3)=>{
              
@@ -260,7 +290,8 @@ function Auth() {
         timeCreated:today.toString(),
         challenges:{0:null},
        currentChallenge:null,
-       userType:"Regular"
+       userType:"Regular",
+       lastLogin: new Date()
         }
 
         found=true
@@ -292,7 +323,7 @@ function Auth() {
         data.docs.map((doc)=>{
           //console.log(doc.data())
           const userData=doc.data()
-         
+         userData.lastLogin= new Date()
           if(userData.email==email && userData.password==password){
             const prom3=new Promise((resolve3,reject3)=>{
 
@@ -362,7 +393,8 @@ function Auth() {
            timeCreated:today.toString(),
            challenges:[],
            currentChallenge:null,
-           userType:"Google"
+           userType:"Google",
+           lastLogin: new Date()
         })
 
         

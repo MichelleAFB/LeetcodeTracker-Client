@@ -10,7 +10,12 @@ function AllUsersItem({u}){
             <div class="flex">
                 <button class="p-1 flex" onClick={()=>{
                     console.log(user)
+                    console.log(u)
+                    if(user.userId.stringValue!=null){
                     navigate("/user/"+user.userId.stringValue)
+                    }else{
+                        navigate("/user/"+user.userId.integerValue)
+                    }
                 }}>
                     <p class="font-bold hover:text-green-400">{user.firstname.stringValue} {user.lastname.stringValue}</p>
                 </button>
