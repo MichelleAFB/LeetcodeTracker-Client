@@ -82,19 +82,13 @@ function Auth() {
           
               const foundUser=doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
               try{
+                console.log(new Date(d._document.createTime.seconds*1000))
               const updated=await setDoc(foundUser,
-               { email: email,
-                emailVerified: false,
-               firstname:"user",
-               lastname:"user",
-                online: false,
-                onlock: false,
-                password: password,
-                userId:d._key.path.segments[d._key.path.segments.length-1],
-                timezone:timezone,
-                challenges:{0:null},
-               currentChallenge:null,
-               userType:"Google",
+               { 
+            
+             
+           
+    
                lastLogin: new Date()})
               console.log(updated)
             }catch(err){

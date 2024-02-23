@@ -59,7 +59,7 @@ function UserInfo(){
                             }} class={`rounded-sm p-2 bg-white ${user.phone!=null || user.phone!="" || user.phone!=''?"border-red-300":"border-red-300"} border`}/>
                     </div>
                     <div class="flex w-full p-2 align-bottom">
-                        <p class="font-bold mr-1">Created:<span class="font-normal">{user.timeCreated.toString()}</span></p>
+                        <p class="font-bold mr-1">Created:<span class="font-normal">{user.timeCreated!=null? user.timeCreated.toString():"" }</span></p>
     
                  </div>
                  <div class="flex w-full justify-center">
