@@ -51,6 +51,7 @@ function Header({ourUser,visibility}) {
   if(visibility){
     console.log(user)
   return (
+    <div class="w-full  ">
     <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
       <div class="flex-col w-full ">
         <div class="w-full flex p-4">
@@ -91,6 +92,7 @@ function Header({ourUser,visibility}) {
 
       </div>
       </div>
+    </div>
     </div>
   )
   }else{

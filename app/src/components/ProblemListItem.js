@@ -221,9 +221,7 @@ function ProblemListItem({problem,green,red,orange,setRed,setGreen,setOrange,han
     if(problem.problem.index==null || problem.problem.index!=index){
     updateIndex(problemRef,index)
     }
-    console.log(problem.problem.title)
-      console.log(user)
-    console.log(index)
+   
 
 
     if(   user.healthyIndex!=null? (index<=user.healthyIndex.end ):(index<=7 )){
@@ -398,7 +396,7 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
     }
       
 if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 )){
-  console.log("UNHEALTHY")
+
 // console.log(index,problem.problem.title)
   handleOldest(problem,index)
   problem.problem.index=index

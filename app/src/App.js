@@ -12,6 +12,7 @@ import AddLeetcodeProblemModal from './components/AddLeetcodeProblemModal';
 import EditProblemModal from './components/EditProblemModal';
 import EditProblemModal2 from './components/EditProblemModal2';
 import AnalyticsPage from './pages/AnalyticsPage';
+import User from './pages/User'
 import {useState,useEffect} from "react"
 import {connect} from 'react-redux'
 import ChallengesPage from './pages/ChallengesPage';
@@ -51,6 +52,7 @@ function App({user,visibility}) {
         <Route path="/challenges" element={<ChallengesPage/>}/>
         <Route path="/settings" element={<SettingsPage/>}/>
         <Route path="/payment/success/:subscription" element={<UpdateUserSuccess/>}/>
+        <Route path="/user/:id" element={<User/>}/>
 
       
         

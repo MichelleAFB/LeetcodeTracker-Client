@@ -16,6 +16,7 @@ import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editPr
 import { db } from '../firebase/firebase'
 import { getDocs,docs, collection,updateDoc,doc,getDoc } from 'firebase/firestore'
 import {setUser,setHeaderVisibility} from '../redux/user/editUser-actions'
+import AllUsers from '../components/AllUsers'
 function Home({problem,visibility,leetCodeVisiblity}) {
   const dispatch=useDispatch()
   console.log(performance.getEntriesByType("resource"))
@@ -38,7 +39,12 @@ function Home({problem,visibility,leetCodeVisiblity}) {
 
   return (
     <div class="w-full flex min-h-screen ">
-      <div class=" w-1/2 flex-col bg-gray-400 p-5 z-1 ">
+      <div class="flex-col">
+        <div class="flex w-full">
+        <AllUsers/>
+        </div>
+        <div class="flex w-full">     
+         <div class=" w-1/2 flex-col bg-gray-400 p-5 z-1 ">
         
       <AddProblem/>
         <ProblemList/>
@@ -52,10 +58,11 @@ function Home({problem,visibility,leetCodeVisiblity}) {
           <p class="ml-4 mt-5 text-4xl z-10">Add More Problems</p>
             <  AllProblems/>
          </div>
-       
+         </div>
+
   
         </div>
-    
+        </div>
       </div>
     </div>
   )

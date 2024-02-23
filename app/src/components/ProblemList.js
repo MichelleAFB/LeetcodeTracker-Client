@@ -218,7 +218,7 @@ setTimeout(()=>{
   
 
   const sort=(problems)=>{
-      console.log("PROBLEMS",problems)
+    
       const sendProblems=[]
       var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
       "Aug","Sep","Oct","Nov","Dec"];
@@ -233,9 +233,9 @@ setTimeout(()=>{
         sendProblems.push({id:p.id,last:dayDate})
       })
       setTimeout(()=>{
-        console.log("PROBLEMS",sendProblems)
+    
 
-        axios.post("http://localhost:3022/sort-problems",{problems:sendProblems}).then((response)=>{
+        axios.post("https://leetcodetracker.onrender.com/sort-problems",{problems:sendProblems}).then((response)=>{
           console.log(response)
         })
 
@@ -243,7 +243,7 @@ setTimeout(()=>{
    
   }
   function  myDecoStyle(value) {
-    console.log(value+" pixels")
+  
     return "Rectangle3 w-[43.4px] h-["+value+"px] left-[8.5px] top-[93px] absolute bg-red-500 rounded-b-[15px] border-black border-4";
  }
 
@@ -258,7 +258,7 @@ setTimeout(()=>{
         const userType=JSON.parse(sessionStorage.getItem("userType"))
 
       const data=await getDocs(problemsListCollectionRef)
-      console.log(data)
+   
       data.docs.map((doc)=>{
         //console.log(doc.data())
         var thing=doc.data()
@@ -272,11 +272,7 @@ setTimeout(()=>{
           setTimeout(()=>{
            // console.log(title)
             ful.push({title:thinger.title,userId:thinger.userId,id:thinger.id}) 
-            console.log({title:thinger.title,userId:thinger.userId,id:thinger.id})
-       
-
          
-
           },10)
         
          
