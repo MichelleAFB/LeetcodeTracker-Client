@@ -127,7 +127,7 @@ function Auth() {
 
             setTimeout(()=>{
 
-             //navigate('/home')
+             navigate('/home')
 
             },500)
           }else{
