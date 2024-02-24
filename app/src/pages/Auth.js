@@ -7,7 +7,7 @@ import axios from 'axios'
 import {auth, googleProvider} from '../firebase/firebase'
 import { createUserWithEmailAndPassword,signInWithPopup,signOut} from 'firebase/auth'
 import { db } from '../firebase/firebase'
-import {getDocs,collection,setDoc,addDoc, getDoc} from 'firebase/firestore'
+import {getDocs,collection,setDoc,addDoc, getDoc, updateDoc} from 'firebase/firestore'
 import {signInWithEmailAndPassword,getAuth} from 'firebase/auth'
 import { doc } from 'firebase/firestore'
 
@@ -83,12 +83,8 @@ function Auth() {
               const foundUser=doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
               try{
                 console.log(new Date(d._document.createTime.seconds*1000))
-              const updated=await setDoc(foundUser,
+              const updated=await updateDoc(foundUser,
                { 
-            
-             
-           
-    
                lastLogin: new Date()})
               console.log(updated)
             }catch(err){

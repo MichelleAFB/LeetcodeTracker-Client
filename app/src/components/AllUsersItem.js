@@ -4,7 +4,7 @@ import { Link } from "react-router-dom"
 function AllUsersItem({u}){
     const navigate=useNavigate()
     const[user,setUser]=useState(u._document.data.value.mapValue.fields)
-
+    const self=JSON.parse(sessionStorage.getItem("user"))
     return(
         <div class="p-2 flex-col">
             <div class="flex">

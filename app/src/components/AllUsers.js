@@ -1,4 +1,4 @@
-import { getDocs,collection } from "firebase/firestore";
+import { getDocs,collection,doc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useEffect,useState } from "react";
 import AllUsersItem from "./AllUsersItem";
@@ -16,7 +16,15 @@ function AllUsers() {
     var allUsers=collection(db,"users")
     allUsers=await getDocs(allUsers)
     console.log(allUsers.docs)
-    setUsers(allUsers.docs)
+    console.log("HERE")
+    const us=allUsers.docs.map(async(d)=>{
+      console.log(d)
+      const u=await doc(d._id)
+      console.log(u)
+      return await doc(d._id)
+    })
+    console.log(us)
+    setUsers(us)
    setTimeout(()=>{
     resolve()
    },300)
