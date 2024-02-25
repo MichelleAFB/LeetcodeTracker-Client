@@ -35,7 +35,7 @@ import LanguagesDropdown from "../components/components/LanguagesDropdown";
 
 const javascriptDefault = `// some comment`;
  
-function PracticePage() {
+function PracticePageOtherUser() {
 
 const[sendingstreak,setSendingStreak]=useState(false)
 const [attempts,setAttempts]=useState()
@@ -643,7 +643,7 @@ console.log(params)
                   console.log("SETTING DOC")
                   console.log(bigAttempts)
                  
-                  await updateDoc(docRefer, {
+                  await setDoc(docRefer, {
                     id:problem.id,
                    title:problem.problem.title,
                    dataStructure:problem.problem.dataStructure,
@@ -929,4 +929,4 @@ console.log(params)
 }
 }
 
-export default PracticePage
+export default PracticePageOtherUser

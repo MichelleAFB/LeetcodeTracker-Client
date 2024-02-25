@@ -410,8 +410,11 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
    
 
       <button class="bg-gray-300 p-3 rounded-sm w-full" onClick={()=>{
-          navigate("/practice/"+problem.id+"/"+index)
-      }}>
+if(id==null){
+  navigate("/practice/"+problem.id+"/"+index)
+}else{
+  navigate("/practice/"+problem.id+"/"+index+"/"+id)
+}      }}>
         Practice
       </button>
     
@@ -506,8 +509,11 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
 
       <button class="bg-gray-300 p-3 rounded-sm w-full" onClick={()=>{
         console.log(typeof(problem.id.toString()))
-         navigate("/practice/"+problem.id.toString()+"/"+index)
-      }}>
+        if(id==null){
+          navigate("/practice/"+problem.id+"/"+index)
+        }else{
+          navigate("/practice/"+problem.id+"/"+index+"/"+id)
+        }      }}>
         Practice
       </button>
     

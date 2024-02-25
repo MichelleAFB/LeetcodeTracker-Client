@@ -19,8 +19,10 @@ function AllUsers() {
     console.log("HERE")
     const us=allUsers.docs.filter(async(d)=>{
       console.log(d.data())
-      console.log(d.createTime)
-      return d.data()
+      const u=doc(d)
+      console.log(u.data())
+      
+      return u
     })
     console.log(us)
     setUsers(us)
@@ -45,10 +47,14 @@ function AllUsers() {
     return (
       <div class="flex  p-2 justify-between">
         {users.map((u)=>{
-              
+              console.log(u.data())
+              const self=JSON.parse(sessionStorage.getItem("user"))
+              if(u.data().userId!=self.userId){
                 return(
-                    <AllUsersItem u={u}/>
+                   
+        <AllUsersItem u={u}/>
                 )
+              }
         })}
       </div>
     )

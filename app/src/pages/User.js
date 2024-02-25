@@ -54,6 +54,19 @@ function User(){
     }
     if(!isLoading){
         if(!notFound){
+
+            /*
+ <button class="bg-pink-400 p-2" onClick={async()=>{
+                    const ref=collection(db,"problems")
+                    const problem=await getDocs(ref)
+                    problem.docs.map((c)=>{
+                        console.log(c._document.data.value.mapValue.fields.userId.stringValue)
+                    })
+                }}>
+                    <p>Switch</p>
+                </button>
+
+            */
     return(
         <div class="w-full flex min-h-screen ">
            <div class="flex-col w-full bg-gray-300 p-3">
@@ -63,15 +76,7 @@ function User(){
                     <p class="text-md font-semibold">joined {createTime.toLocaleString('en-EN',{month:'long'})} {createTime.getUTCFullYear()}</p>
 
                 </div>
-                <button class="bg-pink-400 p-2" onClick={async()=>{
-                    const ref=collection(db,"problems")
-                    const problem=await getDocs(ref)
-                    problem.docs.map((c)=>{
-                        console.log(c._document.data.value.mapValue.fields.userId.stringValue)
-                    })
-                }}>
-                    <p>Switch</p>
-                </button>
+               
             </div>
             <div class="flex w-full">
                 <div class="flex w-1/2">
