@@ -49,12 +49,22 @@ function AllUsers() {
         {users.map((u)=>{
               console.log(u.data())
               const self=JSON.parse(sessionStorage.getItem("user"))
+              try{
               if(u.data().userId!=self.userId){
                 return(
                    
         <AllUsersItem u={u}/>
                 )
               }
+            }catch(err){
+            
+                return(
+                   
+                  <AllUsersItem u={u}/>
+                          )
+              
+
+            }
         })}
       </div>
     )

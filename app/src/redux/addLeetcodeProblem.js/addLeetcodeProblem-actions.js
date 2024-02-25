@@ -2,7 +2,8 @@ import * as actionTypes from "./addLeetcodeProblem-types";
 
 const initialState = {
  problem:null,
- visibility:false
+ visibility:false,
+ reload:false
 };
 
 export const leetcodeProblemReducer = (state = initialState, action) => {
@@ -21,6 +22,13 @@ export const leetcodeProblemReducer = (state = initialState, action) => {
         ...state,
         visibility: action.payload.visibility,
       };
+      case actionTypes.ADD_LEETCODE_PROBLEM_RELOAD:
+        console.log("ADD LEETCODE RELOAD");
+        
+        return {
+          ...state,
+          reload: !state.reload,
+        };
     
 
     default:

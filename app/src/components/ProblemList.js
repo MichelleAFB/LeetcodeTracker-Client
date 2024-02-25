@@ -17,8 +17,10 @@ import { getDoc } from 'firebase/firestore'
 import axios from 'axios'
 import ProblemCountMeter from './ProblemCountMeter'
 import { useParams } from 'react-router-dom'
+import IonIcon from '@reacticons/ionicons'
+import { connect } from 'react-redux'
 
-function ProblemList({id}) {
+function ProblemList({id,reload}) {
 
   const[problems,setProblems]=useState()
   const[isLoading,setIsLoading]=useState(true)
@@ -211,7 +213,7 @@ setTimeout(()=>{
     })
     
 
-  },[])
+  },[reload])
 
   const[searchText,setSearchText]=useState()
   const[search,setSearch]=useState(false)
@@ -778,7 +780,13 @@ const user=JSON.parse(sessionStorage.getItem("user"))
    */
   return (
     <div class="bg-gray-400 w-full  p-3 z-10">
-    
+      <div class="flex w-full justify-end">
+        <button class="" onClick={()=>{
+          
+        }}>
+          <IonIcon name="refresh-outline" fill="white" size="medium"/>
+        </button>
+      </div>
       <p class="text-xl text-center font-bold">
         Your Questions ({problems.length})
       </p>
@@ -1256,4 +1264,12 @@ return (
 }
 
 
-export default ProblemList
+const mapStateToProps = (state, props) => {
+  var reload= state.leetcodeProblem.reload
+
+  return {
+   reload:reload
+  };
+};
+
+export default connect(mapStateToProps)(ProblemList)

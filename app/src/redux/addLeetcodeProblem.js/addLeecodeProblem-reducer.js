@@ -18,3 +18,11 @@ export function setLeetcodeProblemVisibility(visibility) {
     },
   };
 }
+
+
+export function addLeetcodeProblemReload() {
+  return {
+    type: actionTypes.ADD_LEETCODE_PROBLEM_RELOAD,
+    
+  };
+}

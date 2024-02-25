@@ -54,10 +54,9 @@ function Home({problem,visibility,leetCodeVisiblity}) {
 
         <div>
        
-         <div class="mt-10 border-box block">
-          <p class="ml-4 mt-5 text-4xl z-10">Add More Problems</p>
+          <p class=" mt-5 text-4xl z-10">Add More Problems</p>
             <  AllProblems/>
-         </div>
+         
          </div>
 
   

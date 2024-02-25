@@ -4,6 +4,7 @@ import {useState,useEffect} from 'react'
 //outside
 import axios from 'axios'
 import AllProblemsItem from './AllProblemsItem'
+import { connect } from 'react-redux'
 
 function AllProblems() {
 
@@ -94,7 +95,7 @@ function AllProblems() {
 
   if(!isLoading && problems!=null){
   return ( 
-    <div class="flex h-screen w-full flex-col border-gray-100 bg-gray-100 border-b-2rounded-md m-4 p-3 z-auto">
+    <div class="flex h-screen w-full flex-col border-gray-100 bg-gray-100 border-b-2 rounded-md m-4 p-3 z-auto">
       <p class="text-2xl text-center font-bold">Problems from Leetcode</p>
       <p class="font-bold text-center text-purple-500 text-xl">{problems.length} Questions</p> 
       <input type="text" class="flex w-full p-2 rounded-md" onFocus={()=>{
@@ -104,7 +105,7 @@ function AllProblems() {
       }}/>
       
   { search && filtered!=null?
-      <div class=" h-screen overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
+      <div class=" h-full overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
         {filtered.map((p)=>{
           if(p.prompt!=null){
           return(<AllProblemsItem problem={p}/>)
@@ -127,5 +128,7 @@ if(p.prompt!=null){
     )
   }
 }
+
+
 
 export default AllProblems

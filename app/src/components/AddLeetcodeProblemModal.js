@@ -1,11 +1,10 @@
 import { map } from '@firebase/util';
 import {useState,useEffect} from 'react'
-
 //outside
 import axios from 'axios';
 
 import { useDispatch,connect } from 'react-redux';
-import { setLeetcodeProblemVisibility } from '../redux/addLeetcodeProblem.js/addLeecodeProblem-reducer';
+import { addLeetcodeProblemReload, setLeetcodeProblemVisibility } from '../redux/addLeetcodeProblem.js/addLeecodeProblem-reducer';
 
 //firbase
 import { db } from '../firebase/firebase'
@@ -280,9 +279,9 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       no_attempts:problemData.problem.no_attempts,
                       level:ourProblem.difficulty,
                       tags:ourProblem.topicTags,
-                      page:ourProblem.page,
+                      page:ourProblem.page!=null? ourProblem.page:1,
                       topicTags:ourProblem.topicTags,
-                      acRate:ourProblem.acRate,
+                      acRate:ourProblem.acRate!=null? ourProblem.acRate:0.0,
                       attempts:problemData.problem.attempts,
                       solution:problemData.problem.solution,
                       userId:problemData.problem.userId,
@@ -339,9 +338,9 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       no_attempts:0,
                       tags:ourProblem.topicTags,
                       topicTags:ourProblem.topicTags,
-                      acRate:ourProblem.acRate,
+                      acRate:ourProblem.acRate!=null ? ourProblem.acRate:0.0,
                       level:ourProblem.difficulty,
-                      page:ourProblem.page,
+                      page:ourProblem.page!=null? ourProblem.page:1,
 
                       attempts:[{attempt:"N/A",date:currDate}],
                       solution:"N/A",
@@ -360,7 +359,9 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                      
                     }).then((response)=>{
                       alert("SUCCESS:ADDED LEETCODE PROBLEM " )
-                   
+                      dispatch(addLeetcodeProblemReload())
+                      dispatch(setLeetcodeProblemVisibility(false))
+
                   
                       
                       

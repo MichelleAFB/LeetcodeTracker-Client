@@ -878,6 +878,21 @@ console.log(params)
           }
           console.log(solution)
         }}></textarea>
+        <button class="bg-green-600 p-2 w-full flex rounded-md mt-2" onClick={async()=>{
+          const ref= doc(db,"problems",problem.id)
+          try{
+          await updateDoc(ref,{
+            solution:solution
+          })
+          alert("SUCCESS: solution set for problem "+problem.problem.title+" !!")
+        }catch(err){
+          console.log(err)
+        }
+
+
+        }}>
+          <p class="text-white  font -bold text-center">Submit</p>
+        </button>
         </div>
         :
         <div></div>
