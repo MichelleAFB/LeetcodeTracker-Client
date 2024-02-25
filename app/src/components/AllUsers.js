@@ -17,11 +17,10 @@ function AllUsers() {
     allUsers=await getDocs(allUsers)
     console.log(allUsers.docs)
     console.log("HERE")
-    const us=allUsers.docs.map(async(d)=>{
-      console.log(d)
-      const u=await doc(d._id)
-      console.log(u)
-      return await doc(d._id)
+    const us=allUsers.docs.filter(async(d)=>{
+      console.log(d.data())
+      console.log(d.createTime)
+      return d.data()
     })
     console.log(us)
     setUsers(us)

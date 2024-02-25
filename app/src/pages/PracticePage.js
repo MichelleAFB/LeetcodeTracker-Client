@@ -413,7 +413,7 @@ console.log(params)
     const oldAttempts=problem.problem.attempts
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
      
-    
+    console.log(problem.problem)
     
    
   return (
@@ -444,6 +444,13 @@ console.log(params)
           problem.problem.level=="Easy"?
           <p class="text-xl text-center text-green-300 font-bold">
             {problem.problem.level}
+          </p>:
+          <p></p>
+        }
+             {
+          problem.problem.acRate=="Easy"?
+          <p class="text-xl text-center text-green-300 font-bold">
+            {problem.problem.acRate}
           </p>:
           <p></p>
         }

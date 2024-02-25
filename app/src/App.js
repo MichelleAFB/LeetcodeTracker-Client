@@ -51,6 +51,7 @@ function App({user,visibility}) {
         <Route path="/" element={<Auth/>}/>
         <Route path="/home" element={<Home/>}/>
         <Route path="/practice/:problemId/:timeIndex/:id" element={<PracticePage/>}/>
+        <Route path="/practice/:problemId/:timeIndex" element={<PracticePage/>}/>
         <Route path="/analytics" element={<AnalyticsPage/>}/>
         <Route path="/challenges" element={<ChallengesPage/>}/>
         <Route path="/settings" element={<SettingsPage/>}/>

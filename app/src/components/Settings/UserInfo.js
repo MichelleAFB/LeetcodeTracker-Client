@@ -1,14 +1,14 @@
 
 import{useState,useEffect} from 'react'
 import {db} from '../../firebase/firebase'
-import {doc,updateDoc,getDoc} from 'firebase/firestore'
+import {doc,updateDoc,getDoc,collection} from 'firebase/firestore'
 function UserInfo(){
     const [user,setUser]=useState(JSON.parse(sessionStorage.getItem("user")))
     const[firstname,setFirstname]=useState(user.firstname)
     const [lastname,setLastname]=useState(user.lastname)
     const[email,setEmail]=useState(user.email)
     const [phone,setPhone]=useState(user.phone)
-
+    console.log(user)
     return(
         <div class="flex w-full p-5">
             <div class="flex-col w-full">
@@ -59,7 +59,7 @@ function UserInfo(){
                             }} class={`rounded-sm p-2 bg-white ${user.phone!=null || user.phone!="" || user.phone!=''?"border-red-300":"border-red-300"} border`}/>
                     </div>
                     <div class="flex w-full p-2 align-bottom">
-                        <p class="font-bold mr-1">Created:<span class="font-normal">{user.timeCreated!=null? user.timeCreated.toString():"" }</span></p>
+                        <p class="font-bold mr-1">Created:<span class="font-normal">{user.timeCreated!=null? Object.keys(user.timeCreated).length>0? new Date(user.timeCreated.seconds*1000).toString().substring(0,15):user.timeCreated.toString():"" }</span></p>
     
                  </div>
                  <div class="flex w-full justify-center">
@@ -96,9 +96,11 @@ function UserInfo(){
                             phone:phone!=null && phone!=user.phone? phone:user.phone,
                             email:email!=null && email!=user.email? email:user.email
                         }
-                        console.log(update)
-                     
-
+                       const ref=doc(db,"users",user.userId)
+                       const up=await updateDoc(ref,update)
+                        console.log(up)
+                        const upd=doc(db,"users",user.userId)
+                        console.log(upd)
                     }}>
                         <p class="text-white">Submit</p>
                     </button>
