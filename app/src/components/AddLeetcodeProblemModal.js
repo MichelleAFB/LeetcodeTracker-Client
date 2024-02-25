@@ -20,6 +20,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
   const[dataStructure,setDataStructure]=useState("ArrayList") 
   const[alreadyExists,setAlreadyExists]=useState()
   const[updateFirebaseId,setUpdateFireBaseId]=useState(false)
+  const[acRate,setAcRate]=useState()
   const dispatch=useDispatch()
 
   const problemsListCollectionRef=collection(db,"problems")
@@ -68,6 +69,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
           setPrompt(ourProblem.prompt)
           setDataStructure(problemData.problem.dataStructure)
           setCategory(problemData.problem.category)
+          setAcRate(ourProblem.problem.acRate)
         }
         setTimeout(()=>{
           resolve()
@@ -99,8 +101,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       setCategory(problemData.category)
     }
     */
-   console.log("prompt:"+prompt)
-   console.log("dataStructue:"+dataStructure)
+   console.log(problemData)
     
   return (
     <div class='bg-gray-200' data-testId="modal-public">
@@ -139,7 +140,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
               <div class="flex w-full m-3">
               {
                   ourProblem.link!=null?
-                  <p class="text-green-400 font-bold ml-2">{ourProblem.link}</p>
+                  <p class="text-black font-bold"><p class="text-green-400 font-bold ml-2">l{ourProblem.link}</p></p>
                   :
                   <p></p>
                 }
@@ -281,7 +282,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       tags:ourProblem.topicTags,
                       page:ourProblem.page,
                       topicTags:ourProblem.topicTags,
-
+                      acRate:ourProblem.acRate,
                       attempts:problemData.problem.attempts,
                       solution:problemData.problem.solution,
                       userId:problemData.problem.userId,
@@ -338,7 +339,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       no_attempts:0,
                       tags:ourProblem.topicTags,
                       topicTags:ourProblem.topicTags,
-
+                      acRate:ourProblem.acRate,
                       level:ourProblem.difficulty,
                       page:ourProblem.page,
 

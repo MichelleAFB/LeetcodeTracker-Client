@@ -448,12 +448,13 @@ console.log(params)
           <p></p>
         }
              {
-          problem.problem.acRate=="Easy"?
+          problem.problem.acRate!=null?
           <p class="text-xl text-center text-green-300 font-bold">
             {problem.problem.acRate}
           </p>:
           <p></p>
         }
+        <p>{problem.problem.acRate}</p>
         {
           problem.problem.examples!=null && problem.problem.examples.length>0?
           <div class="flex justify-Around m-2">
@@ -519,21 +520,10 @@ console.log(params)
         const setData=async(p)=>{
           console.log(code)
           const  docRefer=doc(db,"problems",p.id)
-          await setDoc(docRefer, {
-            title:p.problem.title,
-            dataStructure:p.problem.dataStructure,
-            category:p.problem.category,
-            hints:p.problem.hints,
-            lastPracticed:p.problem.lastPracticed,
-            no_attempts:p.problem.no_attempts,
-            attempts:p.problem.attempts,
-            solution:solution,
-            userId:p.problem.userId,
+          await updateDoc(docRefer, {
+         
             boilerCode:code,
-            prompt:prompt,
-            examples:examples,
-            level:level,
-            index:timeIndex
+         
            
           }).then((response)=>{
             setBoilerCode(code)

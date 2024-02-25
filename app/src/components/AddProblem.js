@@ -23,6 +23,7 @@ function AddProblem() {
   const[examples,setExamples]=useState([])
   const[currentExample,setCurrentExample]=useState()
   const[isLoading,setIsLoading]=useState(true)
+  const[acRate,setAcRate]=useState()
 
   const[show,setShow]=useState(false)
   useEffect(()=>{
@@ -101,6 +102,7 @@ function AddProblem() {
               setLevel(e.target.value)
             }}/>
           </div>
+     
           <div class="flex p-3 m2">
             <label>Prompt:</label>
             <textarea rows="5" cols="50" class="white-space-prewrap" onChange={(e)=>{
