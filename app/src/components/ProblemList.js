@@ -760,28 +760,25 @@ const user=JSON.parse(sessionStorage.getItem("user"))
   }
   if(!isLoading && problems!=null){
     sort(problems)
-    console.log("\n\nfull")
-    console.log(full)
 
     const redPX= JSON.parse(sessionStorage.getItem("red"))
-
-    console.log(redCount+" px")
-
     
    if(problems==null){
     
 
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
-   console.log("oldest:")
-   console.log(oldest)
-  return (
-    <div class="bg-gray-400 w-full  p-3 z-10">
-    <button class="p-3 w-1/2 bg-green-400" onClick={()=>{
+   /*
+<button class="p-3 w-1/2 bg-green-400" onClick={()=>{
       sort(problems)
     }}>
       Click
     </button>
+
+   */
+  return (
+    <div class="bg-gray-400 w-full  p-3 z-10">
+    
       <p class="text-xl text-center font-bold">
         Your Questions ({problems.length})
       </p>

@@ -763,7 +763,7 @@ setTimeout(()=>{
        }
 
        }else{
-         const oldChallenges=u.data().challenges
+         var oldChallenges=u.data().challenges
          const max = Object.keys(oldChallenges).reduce(function (a, b) { return a > b ? a : b; });
          var message=""
          const ind=Number(max)+1
@@ -776,7 +776,7 @@ setTimeout(()=>{
              return a
            }
          })
-     
+         if(oldChallenges.length>0){
          const duplicateTime = oldChallenges.map((a)=>{
            if(a!=null){
            // console.log()
@@ -811,9 +811,16 @@ setTimeout(()=>{
            }
           }
          })
-
-        
+        }
+        try{
+          if(oldChallenges.length>0){
          oldChallenges.push(newChallenge)
+          }else if(oldChallenges.length==0){
+            oldChallenges=[newChallenge]
+          }
+        }catch(err){
+
+        }
 
           setTimeout(async()=>{
            if(message.length>1){
