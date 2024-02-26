@@ -9,7 +9,7 @@ function User(){
     const [createTime,setCreateTime]=useState()
     const[notFound,setNotFound]=useState(false)
     const[isLoading,setIsLoading]=useState(true)
-
+    const[lastLogin,setLastLogin]=useState()
     console.log(typeof(id))
 
     useEffect(()=>{
@@ -23,6 +23,7 @@ function User(){
             if(us._document!=null){
                 console.log(us._document)
             setUser(us._document.data.value.mapValue.fields)
+            setLastLogin( new Date(us._document.data.value.mapValue.fields.lastLogin.timestampValue))
             setCreateTime(new Date(us._document.createTime.timestamp.seconds*1000))
             setTimeout(()=>{
                 resolve()
@@ -72,7 +73,7 @@ function User(){
            <div class="flex-col w-full bg-gray-300 p-3">
             <div class="flex w-full">
                 <div class="flex-col">
-                    <p class="text-4xl font-bold">{user.firstname.stringValue} {user.lastname.stringValue}</p>
+                    <p class="text-4xl font-bold">{user.firstname.stringValue} {user.lastname.stringValue} <span class="text-purple-500 text-xs"> Last active {lastLogin!=null?lastLogin.toString().substring(0,15):"N/A"}</span></p>
                     <p class="text-md font-semibold">joined {createTime.toLocaleString('en-EN',{month:'long'})} {createTime.getUTCFullYear()}</p>
 
                 </div>

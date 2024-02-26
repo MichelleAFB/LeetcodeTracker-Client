@@ -20,8 +20,41 @@ function StreakChart({allStreaks,streaks}) {
   const[streakGroups,setStreakGroup]=useState()
   const[isLoading,setIsLoading]=useState(false)
   const[seeAllStreaks,setSeeAllStreaks]=useState(false)
+  const[allYears,setAllYears]=useState()
+  const[selectedYear,setSelectedYear]=useState(Number(new Date().getUTCFullYear()))
+  const[useSelectedMonth,setUseSelectedMonth]=useState(false)
+  const[selectedMonth,setSelectedMonth]=useState(new Date().toLocaleString("en-US",{month:"long"}).substring(0,3))
   /*const[allStreaks,setAllStreaks]=useState()*/
   useEffect(()=>{
+    const years=[]
+    const prom=new Promise(async(resolve,reject)=>{
+      const user=JSON.parse(sessionStorage.getItem("user"))
+      const usersCollectionRef=collection(db,"users")
+      const userDoc=await getDocs(usersCollectionRef,user.userId)
+      userDoc.docs.map((d)=>{
+   
+        const data=d.data()
+        if(data.userId==user.userId){
+        const create=new Date(d._document.createTime.timestamp.seconds*1000)
+        var today=Number(new Date().getUTCFullYear())
+        var first=Number(create.getUTCFullYear())
+        while(today>=first){
+          years.push(today)
+          today--
+        }
+        setTimeout(()=>{
+          setAllYears(years)
+          setTimeout(()=>{
+            resolve()
+          },200)
+         },500)
+      }
+      })
+    })
+
+    prom.then(()=>{
+      setIsLoading(false)
+    })
    /* const dataArr=[]
     const problemsListCollectionRef=collection(db,"problems")
     const arr=[] 
@@ -60,7 +93,7 @@ function StreakChart({allStreaks,streaks}) {
    
    })
    */
-  },[])
+  },[selectedYear])
 
 
   const [may,setMay]=useState()
@@ -159,10 +192,7 @@ function StreakChart({allStreaks,streaks}) {
   
   if(!isLoading && streaks!=null){
   
-    console.log(problems)
-    console.log("")
-
-    console.log(streaks)
+ 
    /* const data = {
       labels:problems.map((p)=> {return p.day}),
       datasets: [
@@ -195,6 +225,7 @@ function StreakChart({allStreaks,streaks}) {
            <p class="text-4xl">Your Streaks</p>
       <div class="flex w-full overflow-x-scroll  overflow-hidden">
         {allStreaks.map((st)=>{
+          console.log(st)
           return(<Streak streaks={st}/>)
         })
           
@@ -213,10 +244,79 @@ function StreakChart({allStreaks,streaks}) {
       {seeAllStreaks?
       
       <div class="flex-co p-5l">
-           <p class="text-4xl">Your Streaks hi</p>
+      
+           <p class="text-4xl">Your Streaks </p>
+      <div class="flex justify-around">
+                <select class="bg-gray-500 p-1 rounded-sm text-white" default={selectedYear} onChange={(e)=>{
+                setSelectedYear(e.target.value)
+              }}>
+                {
+                  allYears.map((y)=>{
+                
+                    return(<option class="text-white"><span class="text-white">
+                      {y}
+                      </span></option>)
+                  })
+                }
+
+              </select>
+              {
+                useSelectedMonth?
+                <button class="flex p-2 border-gray bg-green-500 border-2 rounded-[25px] p-2"  onClick={()=>{
+                  setUseSelectedMonth(!useSelectedMonth)
+                }}>
+
+                </button>
+                :
+                <button class="flex p-2 border-gray border-2 rounded-[25px] p-2" onClick={()=>{
+                  setUseSelectedMonth(!useSelectedMonth)
+                }}>
+                  
+                </button>
+              }
+              {
+                useSelectedMonth?
+              <select class="bg-gray-500 text-white p-2" value={selectedMonth} onChange={(e)=>{
+                setSelectedMonth(e.target.value)
+              }}>
+                <option value={"Jan"}> January</option>
+                <option value={"Feb"}>February</option>
+                <option value={"Mar"}>March</option>
+                <option value={"Apr"}>April</option>
+                <option value={"May"}>May</option>
+                <option value={"Jun"}>June</option>
+                <option value={"Jul"}>July</option>
+                <option value={"August"}>Aug</option>
+                <option value={"Sep"}>September</option>
+                <option value={"Oct"}>October</option>
+                <option value={"Nov"}>November</option>
+                <option value={"Dec"}>December</option>
+
+              </select>
+                :
+              <p></p>
+              }
+      </div>
+
       <div class="flex w-full overflow-x-scroll  overflow-hidden">
         {allStreaks.map((st)=>{
+          console.log(selectedMonth)
+          const validYear=st.map((s)=>{
+   
+            if(s.day.includes(selectedYear.toString())){
+              if(useSelectedMonth && s.day.includes(selectedMonth)){
+              return true;
+              }else{
+                return true
+              }
+            }
+          })
+          console.log("validYear",validYear.includes(true))
+          if(validYear.includes(true)){
+          
           return(<Streak streaks={st}/>)
+          
+          }
         })
           
         }

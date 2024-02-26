@@ -11,6 +11,8 @@ function AnalyticsPage() {
   const [isLoading,setIsLoading]=useState(true)
   const[streaks,setStreaks]=useState()
   const[allStreaks,setAllStreaks]=useState()
+
+
     const [months,setMonths]=useState()
     const [currentStreaks,setCurrentStreaks]=useState()
 
@@ -19,9 +21,7 @@ function AnalyticsPage() {
     const problemsListCollectionRef=collection(db,"problems")
     const arr=[] 
     const user=JSON.parse(sessionStorage.getItem("user"))
-    console.log(Number(user.userId))
-    console.log(typeof(user.userId))
-    console.log(typeof(parseInt(user.userId)))
+    const years=[]
   const prom1=new Promise((resolve1,reject1)=>{
     axios.get("https://leetcodetracker.onrender.com/current-streak/"+user.userId,{userId:parseInt(user.userId)}).then(async(response)=>{
       const data=await response.data
@@ -29,14 +29,16 @@ function AnalyticsPage() {
       
       console.log(response)
       if(response.data.streaks!=null){
-      axios.get("https://leetcodetracker.onrender.com/sort-streaks/"+user.userId,{message:"hi",userId:user.userId}).then((response1)=>{
+      axios.get("https://leetcodetracker.onrender.com/sort-streaks/"+user.userId,{message:"hi",userId:user.userId}).then(async(response1)=>{
         setAllStreaks(response1.data.streaks)
         const str=response.data.streaks 
         setStreaks(response.data.streaks)
         console.log(response1)
         setTimeout(()=>{
-         resolve1()
-        },700)
+          resolve1()
+        },500)
+
+     
       })
     }else{
       resolve1()
@@ -88,9 +90,10 @@ function AnalyticsPage() {
   return (
     <div class="flex w-full h-screen justify-center ">
      <div class="flex-col  w-4/5">
+ 
         
       <MonthChart/>
-      <StreakChart allStreaks={allStreaks} streaks={streaks}/>
+      <StreakChart allStreaks={allStreaks} streaks={streaks} />
      </div>
       
 

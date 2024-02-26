@@ -55,7 +55,7 @@ export function MonthChart() {
       const usersCollectionRef=collection(db,"users")
      const info=await getDocs(usersCollectionRef)
      
-     console.log(info.docs)
+  
       info.docs.map((o)=>{
         try{
       /*    console.log(Object.keys(o))
@@ -63,16 +63,16 @@ export function MonthChart() {
           console.log(o._document.data.value.mapValue.fields.userId)
           console.log("\n\n")*/
         if(o._document.data.value.mapValue.fields.userId.stringValue.toString()==user.userId){
-        console.log("here")
+      
           const d=new Date(o._document.createTime.timestamp.seconds *1000)
         setCreationDate(d.getUTCFullYear())
         var i=0
         var currYear=new Date()
         currYear= Number(currYear.getUTCFullYear())
         var created=Number(d.getUTCFullYear())
-        console.log(currYear)
+      
         while(created<=currYear){
-          console.log(currYear)
+     
           years.push(currYear)
           currYear--
           
@@ -82,7 +82,7 @@ export function MonthChart() {
       console.log(err)
     }
       })
-      console.log(years.reverse())
+   
      
       axios.get("https://leetcodetracker.onrender.com/monthCharts/"+user.userId+"/"+selectedYear).then((response)=>{
         if(response.data.success){
@@ -147,7 +147,7 @@ export function MonthChart() {
         },
       ],
     };
-    console.log("cuurent year:",selectedYear)
+
     var i=0
   return (
   <div class="flex w-full justify-center p-5 align-center">
@@ -157,13 +157,13 @@ export function MonthChart() {
 
       <p class="mb-4 font-bold text-xl text-center">Total Problems per Month</p>
       <select class="p-2 ml-12 bg-gray-800 rounded-sm text-white justify-center" default={selectedYear.toString()} placeholder={"2024"} onChange={(e)=>{
-          console.log("CHANGING YEAR:"+e.target.value)
+       
          
             const user=JSON.parse(sessionStorage.getItem("user"))
             axios.get("https://leetcodetracker.onrender.com/monthCharts/"+user.userId+"/"+e.target.value).then((response)=>{
               if(response.data.success){
                 setSelectedYear(e.target.value)
-                console.log(response.data)
+      
                   setMonths(response.data.months)
                   setComplete(true)
               }
@@ -171,7 +171,7 @@ export function MonthChart() {
           }} >
     {
       allYears.map((d)=>{
-        console.log(i,d)
+
         i++
         return(
           <option class="text-white" value={d}><p class="text-white">{d}</p></option>

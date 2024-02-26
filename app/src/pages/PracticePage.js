@@ -863,7 +863,7 @@ console.log(params)
           seeSolution? 
           <div class="flex-col bg-white rounded">
             <p class="text-2xl font-bold text-center">Solution</p>
-            <p class="whitespace-pre-wrap text-white font-bold m-2">{problem.problem.solution.length<3?"No solution":problem.problem.solution}</p>
+            <p class="whitespace-pre-wrap text-black font-bold m-2">{problem.problem.solution.length<3?"No solution":problem.problem.solution}</p>
             </div>:<p></p>
         }
         {seeSolution && userId==null?
@@ -878,7 +878,7 @@ console.log(params)
           }
           console.log(solution)
         }}></textarea>
-        <button class="bg-green-600 p-2 w-full flex rounded-md mt-2" onClick={async()=>{
+        <button class="bg-green-600 p-2 w-full flex rounded-md mt-2 justify-center" onClick={async()=>{
           const ref= doc(db,"problems",problem.id)
           try{
           await updateDoc(ref,{
