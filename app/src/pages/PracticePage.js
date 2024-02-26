@@ -452,11 +452,11 @@ console.log(params)
              {
           problem.problem.acRate!=null?
           <p class="text-xl text-center text-green-300 font-bold">
-            {problem.problem.acRate}
+            {problem.problem.acRate.toString().substring(0,5)}%
           </p>:
           <p></p>
         }
-        <p>{problem.problem.acRate}</p>
+     
         {
           problem.problem.examples!=null && problem.problem.examples.length>0?
           <div class="flex justify-Around m-2">
@@ -769,7 +769,7 @@ console.log(params)
                    
                    const user=JSON.parse(sessionStorage.getItem("user"))
                    console.log(problem)
-                    axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
+                    axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
                       
                       console.log(response)
                       if(response.data.message!=null){

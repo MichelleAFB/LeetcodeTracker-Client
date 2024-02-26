@@ -9,16 +9,26 @@ import { db } from '../firebase/firebase';
 import { getDocs } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
 import RemoveProblemFromStreak from './RemoveProblemFromStreak';
-function Streak({streaks}) {
+function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear}) {
   Chart.register(CategoryScale);
+  console.log(selectedYear)
 
   const[isLoading,setIsLoading]=useState(true)
   
+  
   const [problems,setProblems]=useState()
-
+  console.log("\n",streaks)
   useEffect(()=>{
-    setIsLoading(false)
-  },[])
+    const prom=new Promise(async(resolve,reject)=>{
+      resolve()
+      })
+
+
+    prom.then(()=>{
+      setIsLoading(false)
+    })
+ 
+  },[useSelectedMonth,selectedMonth,selectedYear])
 
 
 
@@ -43,13 +53,41 @@ function Streak({streaks}) {
 
  
   const data= {
-    labels:streaks.map((m) => {return m.day}),
+    labels:streaks.map((m) => {
+      if(useSelectedMonth && m.day.includes(selectedMonth) && m.day.includes(selectedYear)){
+        return m.day
+      }else{
+        if(useSelectedMonth==false && m.day.includes(selectedYear)){
+          return m.day
+        }
+      }
+    }),
     datasets: [
       {
         base:0,
         xAxisId:"Problems",
-        label: streaks.map((d)=>{return d.day}),
-        data: streaks.map((m) => m.problems!=null? m.problems.length:0),
+        label: streaks.filter((d)=>{
+          if(useSelectedMonth){
+          if( d.day.includes(selectedMonth) && d.day.includes(selectedYear.toString())){
+          return d.day
+        }
+      }else if(!useSelectedMonth){
+        if(d.day.includes(selectedYear.toString())){
+          return d.day
+        }
+      }
+        }),
+        data: streaks.map((m) => {
+          if(useSelectedMonth ){
+          if( m.day.includes(selectedMonth) && m.day.includes(selectedYear.toString()) && m.problems.length>0 ){ 
+          return m.problems.length
+        }
+      }else if(!useSelectedMonth){
+        if(m.day.includes(selectedYear.toString())){
+          return m.problems.length
+        }
+      }
+      }),
         backgroundColor: "rgba(50, 270, 100, 0.5)",
       },
     ],
@@ -102,14 +140,20 @@ function Streak({streaks}) {
               return(
                 <div class="flex-col m-2 mb-1 ">
                 <p class="text-md font-bold">
-                {s.day}
+                {useSelectedMonth && s.day.includes(selectedMonth) && s.day.includes(selectedYear.toString())? s.day:<p>{
+                    !useSelectedMonth && s.day.includes(selectedYear)? s.day:""
+                }
+                
+                </p>
+                }
                 </p>
           
                 <ul class={`h-full ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
                   {
                     s.problems.map((p)=>{
                       if(p!=null){
-                 
+                 console.log(p)
+                 if(!useSelectedMonth && s.day.includes(selectedYear.toString())){
                    if(Object.keys(p).includes("problem")){
                       return(<RemoveProblemFromStreak p={p.problem} s={s}/>)
                    }else if(!Object.keys(p).includes("problem")){
@@ -117,12 +161,18 @@ function Streak({streaks}) {
 
                    }
 
-                      }else{
-                        console.log("\n\nnull problem")
-                        console.log(p)
+                      }else if(useSelectedMonth && s.day.includes(selectedMonth) && s.day.includes(selectedYear.toString())){
+                        if(Object.keys(p).includes("problem")){
+                          return(<RemoveProblemFromStreak p={p.problem} s={s}/>)
+                       }else if(!Object.keys(p).includes("problem")){
+                           return(<RemoveProblemFromStreak p={p} s={s}/>)
+    
+                       }
                       }
+                    }
                      
                       })
+                    
                   }
                 </ul>
                 
