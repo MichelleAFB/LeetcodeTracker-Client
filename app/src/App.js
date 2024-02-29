@@ -20,6 +20,7 @@ import SettingsPage from './pages/SettingsPage';
 import UpdateUserSuccess from './pages/UpdateUserSuccess';
 import AllUsers from './components/AllUsers';
 import SettingsModal from './components/SettingsModal';
+import EditChallengeModal from './components/EditChallengeModal';
 
 function App({user,visibility}) {
 
@@ -35,6 +36,7 @@ function App({user,visibility}) {
       <EditProblemModal/>
       <AddLeetcodeProblemModal/>
       <SettingsModal/>
+      <EditChallengeModal/>
 
 
       {

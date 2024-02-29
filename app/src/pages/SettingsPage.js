@@ -22,12 +22,16 @@ function SettingsPage() {
           <button class="flex w-full" onClick={()=>{
               setEnvironmentVariables(true)
               setBilling(false)
+              setUserInfo(false)
+
           }}>
             <p class="font-semibold text-center">Environment</p>
           </button>
           <button class="flex w-full" onClick={()=>{
             setBilling(true)
             setEnvironmentVariables(false)
+            setUserInfo(false)
+
           }}>
             <p class="font-semibold text-center">Billing</p>
           </button>

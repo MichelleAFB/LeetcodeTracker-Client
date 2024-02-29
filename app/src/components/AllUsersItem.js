@@ -3,7 +3,7 @@ import {useState} from 'react'
 import { Link } from "react-router-dom"
 function AllUsersItem({u}){
     const navigate=useNavigate()
-    console.log(u)
+ 
     const[user,setUser]=useState(u.data())
     const self=JSON.parse(sessionStorage.getItem("user"))
     return(

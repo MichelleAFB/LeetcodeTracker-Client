@@ -16,6 +16,8 @@ import axios from 'axios';
 import { getDatasetAtEvent } from 'react-chartjs-2';
 import { Button, Popover, PopoverHeader, PopoverBody } from "reactstrap";
 import DeleteChallengeComponent from './DeleteChallengeComponent';
+import { useDispatch } from 'react-redux';
+import { setEditChallengeVisibility,setChallenge } from '../redux/editChallenge.js/editChallenge-actions';
 
 function Challenges() {
 
@@ -38,7 +40,8 @@ function Challenges() {
   const[updateChallenge,setUpdateChallenge]=useState("NOT DONE")
   const[streaks,setStreaks]=useState()
   const[isOpen,setIsOpen]=useState(false)
-
+  const[editChallenge,setEditChallenge]=useState()
+  const dispatch=useDispatch()
   const selectionRange={
     startDate:startDate,
     endDate:endDate,
@@ -63,9 +66,9 @@ function Challenges() {
             setCurrentChallenge(response.data.currentChallenge)
         }
 
-          console.log(response)
+        
           cha=response.data.currentChallenge
-          console.log(response.data.currentChallenge)
+      
           
           setStreaks(response.data.streaks)
           ourStreaks=response.data.streaks
@@ -138,7 +141,6 @@ function Challenges() {
               })
               i++
 
-              console.log("ourstreaks length:"+ourStreaks.length+"  arr length:"+arr.length +" i:"+i)
             if(i==ourStreaks.length){
               setTimeout(()=>{
                 setChallenges(arr)
@@ -318,10 +320,6 @@ const checkStatus2=async(streaks,challenge,challenges)=>{
 
     console.log("check these streaks",prevStreaks)
     if(prevStreaks.length>0){
-      console.log("CHECK STREAKS")
-      console.log("check if challenge has used up all passes but for checking streakproblem length")
-      console.log("attempted streaks length",3,"initialPasses",challenge.initialPasses ,"extra day for zero passes:",1,"length of days-1(for today)",challengeDates.length)
-      console.log("attempts+passes:",(prevStreaks.length+challenge.initialPasses+1), "total dates:",challengeDates.length,"\n\n")
 
       if((prevStreaks.length+challenge.initialPasses+1)<challengeDates.length){
         const failedStreaks=prevStreaks.filter((s)=>{
@@ -330,10 +328,7 @@ const checkStatus2=async(streaks,challenge,challenges)=>{
             return s
           }
         })
-        console.log("FAIL THE CHALLENGE: total days attempted"+prevStreaks.length,"total passes + 1 day at 0:initial passes",challenge.initialPasses +" and 1 day at 0 passes:1", "total days:"+challengeDates.length)
-       
-
-        console.log("FAIL THE CHALLENGE")
+ 
           const index=challenges.filter((c)=>{
             if(c.title==challenge.title){
               return challenges.indexOf(c)
@@ -345,13 +340,13 @@ const checkStatus2=async(streaks,challenge,challenges)=>{
 
           
       axios.post("https://leetcodetracker.onrender.com/update-challenge/"+ourUser.userId,{challenge:challenge}).then(async(response)=>{
-        console.log(response)
+    
         if(response.data.success){
           const update=await updateDoc(userRef,{
           currentChallenge:challenge,
           challenges:challenges
       }) 
-      console.log(update)
+   
       const chall=response.data.challenge
       alert(
         chall.title+"\nprevious challenge status:\n passes"+challenge.passes+"\nused passes:"+challenge.usedPasses+"\n challenge success status:"+challenge.success+
@@ -1004,6 +999,7 @@ if(!isLoading){
     </>
   )
 }
+
     console.log("challenges",challenges)
     return(
       <div class="flex-col  rounded-md p-3 w-full  ">
@@ -1016,8 +1012,28 @@ if(!isLoading){
             showCurrentChallenge?
             <div>
                 <div class="bg-gray-200 rounded-md p-2 flex-col m-2">
+                  <div class="flex w-full justify-between">
                   <p class="text-xl font-bold">Current Challenge:{currentChallenge!=null ? 
                   <span class="text-green-500">{currentChallenge.title}</span>:<span>No current Challenge</span>}</p>
+                 {currentChallenge!=null?
+                  <button class="p-2 rounded-sm bg-gray-400 m-2" onClick={()=>{
+                    console.log(currentChallenge)
+                    const prom=new Promise((resolve,reject)=>{
+                      dispatch(setChallenge(currentChallenge))
+                      setTimeout(()=>{
+                        resolve()
+                      },500)
+                    })
+
+                    prom.then(()=>{
+                      dispatch(setEditChallengeVisibility(true))
+                    })
+                  }}>
+                    <p class="text-white font-bold">Edit</p>
+                  </button>
+                  :<div></div>
+                  }
+                  </div>
                   <FullCalendar
                        plugins={[dayGridPlugin]}
                        handleMouseEnter={()=>{

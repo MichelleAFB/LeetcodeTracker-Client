@@ -9,7 +9,8 @@ import { db } from '../firebase/firebase';
 import { getDocs } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
 import RemoveProblemFromStreak from './RemoveProblemFromStreak';
-function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear}) {
+
+function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelectedYear}) {
   Chart.register(CategoryScale);
   console.log(selectedYear)
 
@@ -28,7 +29,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear}) {
       setIsLoading(false)
     })
  
-  },[useSelectedMonth,selectedMonth,selectedYear])
+  },[useSelectedMonth,selectedMonth,selectedYear,useSelectedYear])
 
 
 
@@ -38,16 +39,29 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear}) {
     type:"bar",
    // width: 200,
    // height: 100,
+   scale: {
+    ticks: {
+      stepSize: 1
+    }
+  },
     plugins: {
       legend: {
         position: "top",
         margin:"3px",
+        labels:["hi","hi"],
+        title:streaks.map((s)=>{
+          return(s.day)
+        })
+
         
       },
       title: {
         display: true,
         text: "Problems Practiced",
       },
+      tootip:{
+        title:"Problem"
+      }
     },
   };
 
@@ -66,7 +80,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear}) {
       {
         base:0,
         xAxisId:"Problems",
-        label: streaks.filter((d)=>{
+        labels: streaks.filter((d)=>{
           if(useSelectedMonth){
           if( d.day.includes(selectedMonth) && d.day.includes(selectedYear.toString())){
           return d.day
@@ -120,19 +134,19 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear}) {
 
  if(!isLoading && streaks.length!=0){
   //console.log(streaks)
- 
+ console.log("useSelectedYear",useSelectedYear)
  
   
   return (
-    <div class="flex h-[500px]  w-full m-2 border-l-2 border-gray-500 p-3 z-1  ">
+    <div class="flex h-[550px]  w-full m-2 border-l-2 border-gray-500 p-3 z-1  ">
       <div class={streaks.length>4?"flex w-full":"flex w-full"}>
       { 
       streaks!=null ?
       <div class=" flex-col z-1 ">
-        <div class="h-1/2">
+        <div class="h-1/3">
             <Bar class="z-l"options={options} data={data} height={null} width={null} />
             </div>
-            <div class="flex  w-[470px] overflow-x-scroll overflow-hidden h-1/2 pt-6" >
+            <div class="flex  w-[470px] overflow-x-scroll overflow-hidden h-2/3 pt-6" >
           
             {streaks.map((s)=>{
               if(s!=null || s!={}){
@@ -140,41 +154,119 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear}) {
               return(
                 <div class="flex-col m-2 mb-1 ">
                 <p class="text-md font-bold">
-                {useSelectedMonth && s.day.includes(selectedMonth) && s.day.includes(selectedYear.toString())? s.day:<p>{
-                    !useSelectedMonth && s.day.includes(selectedYear)? s.day:""
-                }
-                
-                </p>
-                }
-                </p>
-          
-                <ul class={`h-full ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
+                {useSelectedYear && useSelectedMonth && s.day.includes(selectedMonth) && s.day.includes(selectedYear.toString())? 
+                <div>
+                    <p>{s.day}</p>
+                    <ul class={`h-[250px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
                   {
                     s.problems.map((p)=>{
+                    
                       if(p!=null){
-                 console.log(p)
-                 if(!useSelectedMonth && s.day.includes(selectedYear.toString())){
+              if(useSelectedYear){
+                 if(!useSelectedMonth  && s.day.includes(selectedYear.toString())){
                    if(Object.keys(p).includes("problem")){
+                   
                       return(<RemoveProblemFromStreak p={p.problem} s={s}/>)
                    }else if(!Object.keys(p).includes("problem")){
-                       return(<RemoveProblemFromStreak p={p} s={s}/>)
+                       return(<div><RemoveProblemFromStreak p={p} s={s}/></div>)
 
                    }
 
                       }else if(useSelectedMonth && s.day.includes(selectedMonth) && s.day.includes(selectedYear.toString())){
                         if(Object.keys(p).includes("problem")){
-                          return(<RemoveProblemFromStreak p={p.problem} s={s}/>)
+                          return(<div>hi1<RemoveProblemFromStreak p={p} s={s}/></div>)
                        }else if(!Object.keys(p).includes("problem")){
                            return(<RemoveProblemFromStreak p={p} s={s}/>)
     
                        }
                       }
+                    }else{
+                      if(Object.keys(p).includes("problem")){
+                        console.log(p.problem.title)
+                        return(<div><RemoveProblemFromStreak p={p} s={s}/></div>)
+                      }
+                    }
                     }
                      
                       })
                     
                   }
                 </ul>
+                    
+                </div>:<p>{
+                   
+                }
+                
+                </p>
+                }
+                    {useSelectedYear && !useSelectedMonth && s.day.includes(selectedYear.toString())? 
+                      <div>
+                      <p>{s.day}</p>
+                      <ul class={`h-[250px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
+                    {
+                      s.problems.map((p)=>{
+                      
+                        if(p!=null){
+                if(useSelectedYear){
+                   if(!useSelectedMonth  && s.day.includes(selectedYear.toString())){
+                     if(Object.keys(p).includes("problem")){
+                     
+                        return(<RemoveProblemFromStreak p={p.problem} s={s}/>)
+                     }else if(!Object.keys(p).includes("problem")){
+                         return(<div><RemoveProblemFromStreak p={p} s={s}/></div>)
+  
+                     }
+  
+                        }else if(useSelectedMonth && s.day.includes(selectedMonth) && s.day.includes(selectedYear.toString())){
+                          if(Object.keys(p).includes("problem")){
+                            return(<div>hi1<RemoveProblemFromStreak p={p} s={s}/></div>)
+                         }else if(!Object.keys(p).includes("problem")){
+                             return(<RemoveProblemFromStreak p={p} s={s}/>)
+      
+                         }
+                        }
+                      }else{
+                        if(Object.keys(p).includes("problem")){
+                       
+                          return(<div><RemoveProblemFromStreak p={p} s={s}/></div>)
+                        }
+                      }
+                      }
+                       
+                        })
+                      
+                    }
+                  </ul>
+                      
+                  </div>
+                    :<p>{
+    
+                }
+                
+                </p>
+                }
+                
+                 {!useSelectedYear ?   
+                 <div>
+                    <p>{s.day}</p>
+                    <ul class={`h-[250px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
+                  {
+                    s.problems.map((p)=>{
+               
+                      if(p!=null){
+                        return(<div><RemoveProblemFromStreak p={p} s={s}/></div>)
+                    }   
+                 })
+                    
+                  }
+                </ul>
+                    
+                </div>:<p>
+                </p>
+                }
+                </p>
+          
+             
                 
                
 

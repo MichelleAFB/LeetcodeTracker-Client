@@ -24,8 +24,10 @@ function StreakChart({allStreaks,streaks}) {
   const[selectedYear,setSelectedYear]=useState(Number(new Date().getUTCFullYear()))
   const[useSelectedMonth,setUseSelectedMonth]=useState(false)
   const[selectedMonth,setSelectedMonth]=useState(new Date().toLocaleString("en-US",{month:"long"}).substring(0,3))
+  const[useSelectedYear,setUseSelectedYear]=useState(true)
   /*const[allStreaks,setAllStreaks]=useState()*/
   console.log(selectedYear)
+  
   useEffect(()=>{
     const years=[]
     const prom=new Promise(async(resolve,reject)=>{
@@ -213,16 +215,16 @@ function StreakChart({allStreaks,streaks}) {
 
  
   return (
-    <div class="m-5 flex h-[500px] w-full  border-gray-300 border-t-2 m p-5 "> 
+    <div class="m-5 flex  w-full  border-gray-300 border-t-2 m p-5 "> 
       
       <p>{}</p>
     {allStreaks.length>0 && streaks.length==0 ?
-    <div class="flex flex-col w-full p-10">
+    <div class="flex flex-col w-full p-5">
 
       
    
       
-      <div class="flex-col p-5 w-full">
+      <div class="flex-col p-2 w-full">
            <p class="text-4xl">Your Streaks</p>
       <div class="flex w-full overflow-x-scroll  overflow-hidden">
         {allStreaks.map((st)=>{
@@ -238,13 +240,13 @@ function StreakChart({allStreaks,streaks}) {
       <p class="text-5xl"></p>
   }
    {allStreaks.length>0 && streaks.length>0 ?
-    <div class="flex flex-col w-full p-10">
+    <div class="flex flex-col w-full p-5">
 
       
    
       {seeAllStreaks?
       
-      <div class="flex-co p-5l">
+      <div class="flex-col p-2">
       
            <p class="text-4xl">Your Streaks </p>
       <div class="flex justify-around">
@@ -263,13 +265,13 @@ function StreakChart({allStreaks,streaks}) {
               </select>
               {
                 useSelectedMonth?
-                <button class="flex p-2 border-gray bg-green-500 border-2 rounded-[55px] p-2"  onClick={()=>{
+                <button class="flex p-2 border-gray bg-green-500 border-2 rounded-[75%] p-2"  onClick={()=>{
                   setUseSelectedMonth(!useSelectedMonth)
                 }}>
 
                 </button>
                 :
-                <button class="flex p-2 border-gray border-2 rounded-[55px] p-2" onClick={()=>{
+                <button class="flex p-2 border-gray border-2 rounded-[75%] p-2" onClick={()=>{
                   setUseSelectedMonth(!useSelectedMonth)
                 }}>
                   
@@ -287,7 +289,7 @@ function StreakChart({allStreaks,streaks}) {
                 <option value={"May"}>May</option>
                 <option value={"Jun"}>June</option>
                 <option value={"Jul"}>July</option>
-                <option value={"August"}>Aug</option>
+                <option value={"Aug"}>Aug</option>
                 <option value={"Sep"}>September</option>
                 <option value={"Oct"}>October</option>
                 <option value={"Nov"}>November</option>
@@ -301,29 +303,39 @@ function StreakChart({allStreaks,streaks}) {
 
       <div class="flex w-full overflow-x-scroll  overflow-hidden">
         {allStreaks.map((st)=>{
-          console.log(selectedYear)
+         
           const validYear=st.map((s)=>{
-   
-            if(s.day.includes(selectedYear.toString())){
+            if(useSelectedYear){
+            if(s.day.includes(selectedYear.toString()) && useSelectedMonth==false){
+           
               if(useSelectedMonth && s.day.includes(selectedMonth)){
               return true;
               }else{
                 return true
               }
+            }else if(s.day.includes(selectedYear.toString()) && useSelectedMonth && s.day.includes(selectedMonth)){
+              return true
             }
+          }else {
+
+            return true
+          }
           })
-          console.log("validYear",validYear.includes(true))
-          if(validYear.includes(true)){
+    
+          if(validYear.includes(true) ){
           
-          return(<Streak streaks={st} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear}/>)
+          return(<Streak streaks={st} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>)
           
           }
+         
         })
           
         }
       </div>
       <button class="bg-green-700 p-3 rounded-md m-2" onClick={()=>{
         setSeeAllStreaks(!seeAllStreaks)
+        setUseSelectedYear(false)
+        setUseSelectedMonth(false)
       }}>
         <p class="text-white">See Current Streak</p>
       </button>
@@ -331,7 +343,7 @@ function StreakChart({allStreaks,streaks}) {
       :
       <div class="flex-col w-full p-10">
            <p class="text-4xl">Your Current Streak</p>
-      <Streak streaks={streaks} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear}/>
+      <Streak streaks={streaks} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>
       <button class="bg-green-700 p-3 rounded-md m-2" onClick={()=>{
         setSeeAllStreaks(!seeAllStreaks)
       }}>

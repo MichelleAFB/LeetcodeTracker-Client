@@ -90,17 +90,26 @@ function UserInfo(){
                             })
                         }
                         */
-                        const update={
-                            firstname:firstname!=null && firstname!=user.firstname ? firstname:user.firstname,
-                            lastname:lastname!=null && lastname!=user.lastname ? lastname:user.lastname,
-                            phone:phone!=null && phone!=user.phone? phone:user.phone,
-                            email:email!=null && email!=user.email? email:user.email
+                    
+                        const ref=doc(db,"users",user.userId)
+                        if(firstname!=null){
+                            const up=await updateDoc(ref,{firstname:firstname})
                         }
-                       const ref=doc(db,"users",user.userId)
-                       const up=await updateDoc(ref,update)
-                        console.log(up)
+                        if(lastname!=null){
+                            const up=await updateDoc(ref,{lastname:lastname})
+                        }
+                        if(phone!=null){
+                            const up=await updateDoc(ref,{phone,phone})
+                        }
+                        if(email!=null){
+                            const up=await updateDoc(ref,{email:email})
+                        }
+                    
+                  
+                      
                         const upd=doc(db,"users",user.userId)
                         console.log(upd)
+                        alert("Successfully updated your info!")
                     }}>
                         <p class="text-white">Submit</p>
                     </button>

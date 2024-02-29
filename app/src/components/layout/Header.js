@@ -60,11 +60,16 @@ function Header({ourUser,visibility}) {
           <p class="text-purple-800 text-4xl">LeetcodeTracker</p>
         
         </div>
-        <div class="flex-col w-1/6 mr-0 justify-end">
+        <div class="flex-col w-1/5 mr-0 justify-end">
          <div class="flex-col justify-end">
-            <button class="justify-end flex">
-              <p class="text-end text-lg text-white m-0">{user.firstname} {user.lastname}</p>
-           </button>
+        
+           <div class="group relative m-12 flex w-2/3 justify-center">
+           <button class="justify-end flex w-full m-2">
+              <p class="text-md text-white m-0">{user.firstname} {user.lastname}</p>
+           </button>  
+           <span class="absolute top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">✨ You hover me!</span>
+                
+          </div>
            
            <button class="justify-end flex m-0" onClick={()=>{
             setIsLoading(true)

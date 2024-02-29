@@ -1,9 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import axios from 'axios';
 import { db } from '../firebase/firebase';
 import { getDocs } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
+import {useState} from 'react'
 function RemoveProblemFromStreak({s,p}) {
+  const[isLoading,setIsLoading]=useState(true)
+  const[problem,setProblem]=useState()
+  useEffect(()=>{
+    const prom=new Promise((resolve,reject)=>{
+      if(p!=null){
+        setProblem(p)
+        setTimeout(()=>{
+          resolve()
+        },40)
+    
+      }
+    })
+    prom.then(()=>{
+      setIsLoading(false)
+    })
+  },[p])
 
   async function remove(e,s,p){
   e.preventDefault()
@@ -30,7 +47,7 @@ function RemoveProblemFromStreak({s,p}) {
    })
   }
   
- 
+ if(problem!=null){
   return (
     <div class="flex">
                         <form onSubmit={(e)=>{
@@ -41,8 +58,9 @@ function RemoveProblemFromStreak({s,p}) {
                           <p class="text-white">x</p>
                         </button>
                         </form>
-                        <p class="text-xs m-2">-{p.title} </p></div>
+                        <p class="text-xs m-2">-{problem.title} </p></div>
   )
+                      }
 }
 
 export default RemoveProblemFromStreak

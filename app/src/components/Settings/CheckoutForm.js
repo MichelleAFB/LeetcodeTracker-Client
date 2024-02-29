@@ -6,6 +6,7 @@ import {
   useElements,
   CardElement
 } from "@stripe/react-stripe-js";
+import { Elements } from "@stripe/react-stripe-js";
 import { useMemo } from "react";
 import{
 CardNumberElement,
@@ -161,7 +162,10 @@ export default function CheckoutForm({clientSecret}) {
 
         }}
       />
+      <Elements>
       <PaymentElement id="payment-element" options={paymentElementOptions} />
+      </Elements>
+   
       
       <button class="bg-green-500 rounded-sm p-2" disabled={isLoading || !stripe || !elements} id="submit">
         <span id="button-text">

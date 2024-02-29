@@ -15,12 +15,11 @@ function AllUsers() {
     try{
     var allUsers=collection(db,"users")
     allUsers=await getDocs(allUsers)
-    console.log(allUsers.docs)
-    console.log("HERE")
+ 
     const us=allUsers.docs.filter(async(d)=>{
-      console.log(d.data())
+    
       const u=doc(d)
-      console.log(u.data())
+    
       
       return u
     })
