@@ -9,7 +9,7 @@ function AllUsersItem({u}){
     return(
         <div class="p-2 flex-col">
             <div class="flex">
-                <button class="p-1 flex" onClick={()=>{
+                <button class="p-1 flex-col" onClick={()=>{
                    
                     if(user.userId.stringValue!=null){
                     navigate("/user/"+user.userId)
@@ -18,6 +18,7 @@ function AllUsersItem({u}){
                     }
                 }}>
                     <p class="font-bold hover:text-green-400">{user.firstname} {user.lastname}</p>
+                <p class="text-black text-xs">{user.followers!=null?user.followers.length:"0"} followers</p>
                 </button>
             </div>
         </div>

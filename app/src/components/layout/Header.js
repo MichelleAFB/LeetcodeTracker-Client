@@ -2,44 +2,56 @@ import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate ,useLocation, Link} from 'react-router-dom'
 import { connect, useSelector } from 'react-redux'
+import { query,doc,collection,getDocs,where, updateDoc} from 'firebase/firestore'
+import { db } from '../../firebase/firebase'
+import IonIcon from '@reacticons/ionicons'
+
 function Header({ourUser,visibility}) {
 
   const[isLoading,setIsLoading]=useState(true)
   const [user,setUser]=useState()
+  const[hasNotifications,setHasNotifications]=useState(false)
   const location=useLocation()
   console.log(location.pathname)
   console.log("HEADER:",visibility)
   useEffect(()=>{
 
-    const prom=new Promise((resolve,reject)=>{
+    const prom=new Promise(async(resolve,reject)=>{
       const u=JSON.parse(sessionStorage.getItem("user"))
+      const q = query(collection(db, "users"), where("email", "==", u.email));
+
+      const querySnapshot = await getDocs(q);
+    var us=[]
+   querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    
+          us.push(doc.data())
+          console.log(us)
+       
+        });
+       
+     setTimeout(()=>{
+      console.log(us)
+    
  
-      if(ourUser==null){
-        setUser(u)
-      }else{
-        setUser(ourUser)
-      }
-     
-      
+      setUser(us[0])
       setTimeout(()=>{
         resolve()
-      },500)
+      },800)
+     },800)
+        
+       
+ 
+  
     })
 
     prom.then(()=>{
-      if(location.pathname=='/' ){
-
-      }else if(visibility || visibility=="true"){
-     // setIsLoading(false)
-
-     if(user!=null){
+     
         setIsLoading(false)
-     }
-      
-      }
+    
     })
 
-  },[visibility])
+  },[visibility,hasNotifications])
 
 
   const navigate=useNavigate()
@@ -48,8 +60,12 @@ function Header({ourUser,visibility}) {
 
   }
 
-  if(visibility){
+  console.log("vis",visibility,"user",user,"isLoading",isLoading)
+
+
+  if(visibility && !isLoading){
     console.log(user)
+    console.log("hasNotifications",hasNotifications)
   return (
     <div class="w-full  ">
     <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
@@ -64,12 +80,73 @@ function Header({ourUser,visibility}) {
          <div class="flex-col justify-end">
         
            <div class="group relative m-12 flex w-2/3 justify-center">
-           <button class="justify-end flex w-full m-2">
+           <button class="justify-end flex w-full m-2" onClick={async()=>{
+           
+            const q = collection(db, "users")
+            const docs=await getDocs(q)
+            console.log(docs)
+            docs.docs.filter(async(d)=>{
+              console.log(d)
+
+              if(d.data().email==user.email){
+                const doo=await doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
+               if(d.data().allNotifications==null){
+                await updateDoc(doo,{"allNotifications":d.data().notifications})
+                await updateDoc(doo,{
+                  "hasNewNotifications":false
+                })
+                await updateDoc(doo,{
+                  "notifications":[]
+                })
+               }else if(d.data().allNotifications!=null){
+                const allnotif=d.data().allNotifications
+               d.data().notifications.map((n)=>{
+                allnotif.push(n)
+               })
+
+               setTimeout(async(allnotif)=>{
+                await updateDoc(doo,{"allNotifications":allnotif})
+                await updateDoc(doo,{
+                  "hasNewNotifications":false
+                })
+                await updateDoc(doo,{
+                  "notifications":[]
+                })
+               },300)
+               }
+                console.log(doo)
+
+                setTimeout(()=>{
+                  setHasNotifications(!hasNotifications)
+             },600)
+              }
+            })
+          
+         
+
+           }}>
               <p class="text-md text-white m-0">{user.firstname} {user.lastname}</p>
+             {user.hasNewNotifications? <IonIcon name="notifications-outline" size="large"/>:<p></p>}
            </button>  
-           <span class="absolute top-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">✨ You hover me!</span>
-                
           </div>
+          {hasNotifications && user.hasNewNotifications?<span onClick={()=>{
+            setHasNotifications(!hasNotifications)
+          }} class=" p-2 absolute top-20 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
+            <ul>
+              {
+                user.notifications.map((n)=>{
+                  return(
+                    <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
+                  <p class=" font-bold text-white text-xs">
+                    {n.message}-
+                  </p>
+                  <p class="text-gray-200 font-semi-bold text-xs">{new Date(n.time.seconds*1000).toString().substring(0,25)}</p>
+                  </div>)
+                })
+              }
+            </ul></span>
+           :<p></p>
+          }
            
            <button class="justify-end flex m-0" onClick={()=>{
             setIsLoading(true)
@@ -101,18 +178,24 @@ function Header({ourUser,visibility}) {
     </div>
   )
   }else{
-    return(
-      <div >
-    </div>
-    )
+    console.log("vis",visibility,"user",user,"isLoading",isLoading)
+    return(<p></p>)
   }
 
 
 }
 
+const mapStateToProps = (state, props) => {
+  var visibility= state.user.visibility
+ 
+
+  return {
+   visibility:visibility,
+  
+  };
+};
 
 
 
 
-
-export default  Header
+export default  connect(mapStateToProps)(Header)

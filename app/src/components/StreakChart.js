@@ -21,7 +21,7 @@ function StreakChart({allStreaks,streaks}) {
   const[isLoading,setIsLoading]=useState(false)
   const[seeAllStreaks,setSeeAllStreaks]=useState(false)
   const[allYears,setAllYears]=useState()
-  const[selectedYear,setSelectedYear]=useState(Number(new Date().getUTCFullYear()))
+  const[selectedYear,setSelectedYear]=useState(new Date().getUTCFullYear())
   const[useSelectedMonth,setUseSelectedMonth]=useState(false)
   const[selectedMonth,setSelectedMonth]=useState(new Date().toLocaleString("en-US",{month:"long"}).substring(0,3))
   const[useSelectedYear,setUseSelectedYear]=useState(true)
@@ -194,7 +194,7 @@ function StreakChart({allStreaks,streaks}) {
   console.log(months)
   
   if(!isLoading && streaks!=null){
-  
+  console.log(selectedYear)
  
    /* const data = {
       labels:problems.map((p)=> {return p.day}),

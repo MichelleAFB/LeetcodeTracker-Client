@@ -81,6 +81,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
         base:0,
         xAxisId:"Problems",
         labels: streaks.filter((d)=>{
+          if(useSelectedYear && d.day.includes(selectedYear.toString())){
           if(useSelectedMonth){
           if( d.day.includes(selectedMonth) && d.day.includes(selectedYear.toString())){
           return d.day
@@ -90,16 +91,25 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
           return d.day
         }
       }
+    }else{
+        return d.day  
+    }
         }),
-        data: streaks.map((m) => {
-          if(useSelectedMonth ){
-          if( m.day.includes(selectedMonth) && m.day.includes(selectedYear.toString()) && m.problems.length>0 ){ 
-          return m.problems.length
+        data: streaks.map((d) => {
+          if(useSelectedYear && d.day.includes(selectedYear.toString())){
+            if(useSelectedMonth){
+            if( d.day.includes(selectedMonth) && d.day.includes(selectedYear.toString())){
+            return d.problems.length
+          }
+        }else if(!useSelectedMonth){
+          if(d.day.includes(selectedYear.toString())){
+            return d.problems.length
+          }
         }
-      }else if(!useSelectedMonth){
-        if(m.day.includes(selectedYear.toString())){
-          return m.problems.length
-        }
+      }else{
+        console.log(d.day)
+          return d.problems.length
+        
       }
       }),
         backgroundColor: "rgba(50, 270, 100, 0.5)",

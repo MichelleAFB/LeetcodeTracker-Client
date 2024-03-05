@@ -24,9 +24,13 @@ function Home({problem,visibility,leetCodeVisiblity}) {
   const[user,setOurUser]=useState()
   const [newUsername,setUsername]=useState()
   const [isLoading,setIsLoading]=useState(true)
+  const[hasUsername,setHasUserName]=useState(true)
 
   useEffect(()=>{
     if(sessionStorage.getItem("user")!=null){
+      if(JSON.parse(sessionStorage.getItem("user").username==null)){
+        setHasUserName(false)
+      }
       const prom=new Promise(async(resolve,reject)=>{
         setOurUser(JSON.parse(sessionStorage.getItem("user")))
         dispatch(setUser(JSON.parse(sessionStorage.getItem("user"))))
@@ -45,7 +49,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
 
     
     }
-  },[visibility,leetCodeVisiblity])
+  },[visibility,leetCodeVisiblity,hasUsername])
 
   const refer=collection(db,"users")
   if(!isLoading){
@@ -54,7 +58,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
       <div class="flex-col">
         <div class="flex w-full">
             {
-             !Object.keys(user).includes("username")?
+             !Object.keys(user).includes("username") && !hasUsername?
               <div class="flex-col justify-center w-full">
                 <p class="text-lg font-bold">Become Discoverable!</p>
                   <div class="flex m-2 ">
@@ -87,7 +91,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
                           user.username=newUsername;
                           sessionStorage.setItem("user",JSON.stringify(user))
                        alert("SUCCESS,set username")
-
+                            setHasUserName(true)
                         }
                       })
                         }catch(err){

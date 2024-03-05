@@ -60,7 +60,7 @@ function ProblemList({id,reload}) {
     const userRef=doc(db,"users",u.userId)
     var use=await getDoc(userRef)
     use=use.data()
-    console.log(use)
+
     setOurUser(use)
 
       const getProblemsList=async()=>{
@@ -72,7 +72,7 @@ function ProblemList({id,reload}) {
           const userType=JSON.parse(sessionStorage.getItem("userType"))
 
         const data=await getDocs(problemsListCollectionRef)
-        console.log(data)
+     
         data.docs.map((doc)=>{
           var thing=doc.data()
           const thinger=thing
@@ -85,7 +85,7 @@ function ProblemList({id,reload}) {
             setTimeout(()=>{
              console.log(titles.includes(doc.data().title))
               if(!titles.includes(doc.data().title)){
-                console.log(fuller)
+         
               fuller.push(thinger) 
               }
 
@@ -178,7 +178,7 @@ function ProblemList({id,reload}) {
       const r=JSON.parse(sessionStorage.getItem("red"))
       const g=JSON.parse(sessionStorage.getItem("green"))
       const o=JSON.parse(sessionStorage.getItem("orange"))
-      console.log(o+" "+g+" "+r)
+    
       setGreenCount(g)
       setRedCount(r) 
       setOrangeCount(o)
@@ -186,7 +186,7 @@ setTimeout(()=>{
 
 
      const prom1=new Promise((resolve1,reject1)=>{
-      console.log(dataArr)
+  
       sessionStorage.setItem("problems",JSON.stringify(dataArr))
       setFiltered(dataArr)
       setProblems(dataArr)
@@ -196,7 +196,7 @@ setTimeout(()=>{
      prom1.then(()=>{
      
       const prom2=new Promise((resolve2,reject2)=>{
-        console.log(redCount+ " "+greenCount+" "+greenCount)
+    
         resolve2()
 
       })

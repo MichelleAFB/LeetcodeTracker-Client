@@ -41,9 +41,9 @@ function App({user,visibility}) {
 
       {
         JSON.parse(sessionStorage.getItem("user"))!=null?
-        <Header user={user} visibility={visibility}/>
+        <Header/>
         :
-        <Header user={user} visibility={JSON.parse(sessionStorage.getItem("headerVisibility"))}/>
+        <Header  />
 
       }
       <AllUsers/>
