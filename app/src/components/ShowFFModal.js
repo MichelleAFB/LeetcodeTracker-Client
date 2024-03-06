@@ -12,7 +12,7 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
             if(visibility &&(setFollowers!=false && setFollowing!=false)){
                 setIsLoading(false)
             }
-    },[visibility,user,setFollowers,setFollowing])
+    },[visibility,user])
  
  if(!isLoading && visibility && user!=null){
     console.log(user.followers)
@@ -73,9 +73,11 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
                 </div>
            
                 :
+                <div>
+                {user.following!=null && user.following.length>0?
                 <div class="ul">
                 {
-                    user.following.map((m)=>{
+                    user.followers.map((m)=>{
                         return(
                         <div>
                             <p>{m.username}</p>
@@ -84,6 +86,10 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
                     })
                 }
             </div>
+            :
+            <div></div>
+                }
+         </div>
         }
         </div>
       </main>
@@ -147,6 +153,8 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
                     </div>
                
                     :
+                    <div>
+                    {user.followers!=null && user.followers.length>0?
                     <div class="ul">
                     {
                         user.followers.map((m)=>{
@@ -158,6 +166,10 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
                         })
                     }
                 </div>
+                :
+                <div></div>
+                    }
+             </div>
             }
             </div>
           </main>
