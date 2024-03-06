@@ -876,10 +876,7 @@ setTimeout(()=>{
 
              const ourDates=getDatesArray(startDate,endDate)
              newChallenge.length=ourDates.length
-             console.log("cnew Challenge",newChallenge)
-             console.log(newChallenge.startDate instanceof Date)
-             console.log("currentChallenge",currentChallenge)
-             console.log(currentChallenge.startDate instanceof Date)
+  
              setTimeout(()=>{
                axios.post("https://leetcodetracker.onrender.com/create-new-challenge",{challenge:newChallenge,userId:user.userId,current:false}).then(async(response)=>{
                  console.log(response)
@@ -896,7 +893,10 @@ setTimeout(()=>{
                   checkCurrent()
                 
              alert("New challenge successfully added! starting on"+ startDate.toString().substring(0,15)+"  through "+ endDate.toString().substring(0,15)+" must complete "+ numberOfQuestions+ " each day!")
+             
+             setShow(false)
              dispatch(refreshChallengeChart())
+      
 
             },300)
 
