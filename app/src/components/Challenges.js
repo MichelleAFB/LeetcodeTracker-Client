@@ -17,9 +17,9 @@ import { getDatasetAtEvent } from 'react-chartjs-2';
 import { Button, Popover, PopoverHeader, PopoverBody } from "reactstrap";
 import DeleteChallengeComponent from './DeleteChallengeComponent';
 import { useDispatch } from 'react-redux';
-import { setEditChallengeVisibility,setChallenge } from '../redux/editChallenge.js/editChallenge-actions';
-
-function Challenges() {
+import { setEditChallengeVisibility,setChallenge, refreshChallengeChart } from '../redux/editChallenge.js/editChallenge-actions';
+import { connect } from 'react-redux';
+function Challenges({refresh}) {
 
   const usersCollectionRef=collection(db,"users")
   //const data=await getDocs(usersCollectionRef)
@@ -41,6 +41,7 @@ function Challenges() {
   const[streaks,setStreaks]=useState()
   const[isOpen,setIsOpen]=useState(false)
   const[editChallenge,setEditChallenge]=useState()
+  
   const dispatch=useDispatch()
   const selectionRange={
     startDate:startDate,
@@ -57,11 +58,14 @@ function Challenges() {
     var ourStreaks
     const newStreaks=[]
     var cha
+    const chall=[]
     const prom=new Promise(async(resolve,reject)=>{
-        axios.get("https://leetcodetracker.onrender.com/get-current-challenge-2/"+ourUser.userId).then(async(response)=>{
+        axios.get("http://localhost:3022/get-current-challenge-2/"+ourUser.userId).then(async(response)=>{
       console.log(response)
-      
+    
         if(response.data.currentChallenge!=null){
+          setCurrentChallenge(response.data.currentChallenge)
+
          checkStatus2(response.data.streaks,response.data.currentChallenge,response.data.challenges)
             setCurrentChallenge(response.data.currentChallenge)
         }
@@ -94,6 +98,24 @@ function Challenges() {
                 description:c.title +"("+c.no_questions+" questions per day)"
               }
             })
+            chall.push({
+              id: c._id,
+              title:  c.title +" ( "+c.no_questions+" questions per day)",
+              start: new Date(c.startDate),
+              end: new Date(c.endDate),
+              allDay: true,
+              challenge:c,
+              editable: false,
+              clickable: true,
+              overlap: true,
+              current:c.current,
+              color: renderChallenge(c),
+
+      
+              extendedProps: {
+                description:c.title +"("+c.no_questions+" questions per day)"
+              }
+            })
           })
      
      // const currChallenge=response.data.currentChallenge
@@ -102,7 +124,7 @@ function Challenges() {
           setTimeout(()=>{
             setTimeout(()=>{
               resolve()
-            },200)
+            },500)
           },500)
         })
      
@@ -112,10 +134,11 @@ function Challenges() {
     prom.then(()=>{
 
       const prom1=new Promise((resolve1,reject1)=>{
-        if(ourStreaks!=null){
+        if(ourStreaks!=null && ourStreaks.length>0 &&arr.length>0){
           var length=arr.length
           var i=1
           ourStreaks.map(async(s)=>{
+            console.log(s)
             var message="<ul class=' list-disc '>"
             s.problems.map((p)=>{
               message=message+"<li><p class='font-bold'>"+p.title+"</p></li>"
@@ -141,7 +164,7 @@ function Challenges() {
               })
               i++
 
-            if(i==ourStreaks.length){
+            
               setTimeout(()=>{
                 setChallenges(arr)
       
@@ -149,10 +172,16 @@ function Challenges() {
                   resolve1()
                 },200)
               },800)
-            }
+            
 
             },50)
           })
+        }else  {
+          console.log(chall)
+          setChallenges(chall)
+          setTimeout(()=>{
+            resolve1()
+          },600) 
         }
       })
 
@@ -162,7 +191,7 @@ function Challenges() {
       })
     })
 
-  },[])
+  },[refresh])
 
   function handleSelect(selection){
     console.log(selection)
@@ -567,19 +596,11 @@ const renderChallenge=(challenge)=>{
               }
             })
           },300)
-
-
-          
-
-        }
-        
-       
+        } 
       }else if(s.problems.length>=challenge.no_questions){
         console.log("GOING STRONG")
       }
     }
-
-      
     }
   })
 
@@ -662,15 +683,7 @@ const renderChallenge=(challenge)=>{
               "\n\nChallenge update: "+"\npasses:"+ chall.passes+ "\nused passes:"+chall.usedPasses +"\nchallenge success:"+chall.success)
               }
             })
-          },300)
-
-
-          
-       
-
-
-
-      
+          },300) 
     }
   }
   
@@ -743,16 +756,12 @@ setTimeout(()=>{
                 }) 
                      checkCurrent()
              alert("New challenge successfully added! starting on"+ startDate.toString().substring(0,15)+"  through "+ endDate.toString().substring(0,15)+" must complete "+ numberOfQuestions+ " each day!")
-
+                dispatch(refreshChallengeChart())
               },300)
         
           }
         })
-          
-
          },500)
-         
-  
        }catch(err){
          console.log("UPDATE FAILED:",err)
        }
@@ -845,7 +854,9 @@ setTimeout(()=>{
                       checkCurrent()
                       
                alert("New challenge successfully added! starting on"+ startDate.toString().substring(0,15)+"  through "+ endDate.toString().substring(0,15)+" must complete "+ numberOfQuestions+ " each day!")
-                    },300)
+               dispatch(refreshChallengeChart())
+
+              },300)
               
               
                   }
@@ -885,7 +896,9 @@ setTimeout(()=>{
                   checkCurrent()
                 
              alert("New challenge successfully added! starting on"+ startDate.toString().substring(0,15)+"  through "+ endDate.toString().substring(0,15)+" must complete "+ numberOfQuestions+ " each day!")
-               },300)
+             dispatch(refreshChallengeChart())
+
+            },300)
 
                
                  }
@@ -904,43 +917,23 @@ setTimeout(()=>{
            
          }
           },500) 
-
-
-
-
-
        }
      }
    })
   }
  }
 
- /**
-  *       <button class="bg-purple-400 p-2 flex w-full" onClick={async()=>{
-              console.log(currentChallenge)
-              const us= doc(db,"users",ourUser.userId)
-              console.log(us)
-              const update=await updateDoc(us,{
-                challenges:{0:currentChallenge},
-                currentChallenge:currentChallenge
-              })
-              console.log(update)
-              
 
-
-            }}>
-              add to
-            </button>
-  */
 function findEvent(ev){
   return challenges.filter((e)=> e.title==ev.event._def.title )
 }
 if(!isLoading){
+  console.log(challenges)
   if(challenges==null){
   return (
     <div class="flex-col  rounded-md p-3 w-full border-t-2 border-gray-400">
       <div class="flex w-full bg-gray-300 m-2 rounded-md p-3">
-        <p class="font-bold">Your challenges</p>
+        <p class="font-bold">No Challenges</p>
         
 
       </div>
@@ -1052,6 +1045,7 @@ if(!isLoading){
                        // console.log("\n\n")
 
                         if(ev!=null){
+                          console.log(ev)
                         return new bootstrap.Popover(event.el,{
                           placement:"top",
                           trigger:"hover",
@@ -1118,6 +1112,7 @@ if(!isLoading){
             </div>
 
           }
+          
       </div>
       
       <div class="flex w-full">
@@ -1299,4 +1294,12 @@ else if(isLoading){
 }
 }
 
-export default Challenges
+const mapStateToProps = (state, props) => {
+  var refresh= state.editChallenge.refresh
+ 
+
+  return {
+ refresh:refresh
+  };
+};
+export default connect(mapStateToProps)(Challenges)

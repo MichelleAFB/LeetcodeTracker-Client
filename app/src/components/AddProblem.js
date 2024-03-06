@@ -8,7 +8,8 @@ import { IconButton } from '@chakra-ui/react'
 //firebase
 import {getDocs,collection,doc,setDoc,addDoc} from 'firebase/firestore'
 import { db } from '../firebase/firebase'
-
+import { useDispatch } from 'react-redux'
+import { addLeetcodeProblemReload } from '../redux/addLeetcodeProblem.js/addLeecodeProblem-reducer'
 function AddProblem() {
 
   const[title,setTitle]=useState()
@@ -26,6 +27,7 @@ function AddProblem() {
   const[acRate,setAcRate]=useState()
 
   const[show,setShow]=useState(false)
+  const dispatch=useDispatch()
   useEffect(()=>{
     //TODO:ALLOW TO ADD NEW CATEGORY,DATASTRUCTURE
     /*const prom=new Promise((resolve,reject)=>{
@@ -210,18 +212,27 @@ function AddProblem() {
                   lastPracticed:currentDate.toString(),
                   no_attempts:0,
                   attempts:[{attempt:"N/A",date:currDate}],
-                  hints:hints,
+                  hints:hints!=null? hints:"",
                   link,link,
                   prompt:prompt,
                   examples:examples,
                   level:level,
                   solution:"solution",
-                  userId:user.userId
-                
+                  userId:user.userId,
+
              
+            
+
+                  boilerCode:`public class Main{
+                    public static void main(String[]args){
+
+                    }
+                  }`,
+
               }).then((response)=>{
                 
                 alert("SUCCESS")
+                dispatch(addLeetcodeProblemReload())
               })
 
               }

@@ -23,13 +23,13 @@ function AllUsers() {
       
       return u
     })
-    console.log(us)
+   
     setUsers(us)
    setTimeout(()=>{
     resolve()
    },300)
         }catch(err){
-    console.log("err",err)
+  
 }
   })
 
@@ -42,11 +42,11 @@ function AllUsers() {
 
   
     if(!isLoading){
-      console.log(users)
+  
     return (
       <div class="flex  p-2 justify-between">
         {users.map((u)=>{
-              console.log(u.data())
+             
               const self=JSON.parse(sessionStorage.getItem("user"))
               try{
               if(u.data().userId!=self.userId){

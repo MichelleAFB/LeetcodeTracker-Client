@@ -3,6 +3,8 @@ import {useState,useEffect} from 'react'
 import { db } from "../firebase/firebase"
 import axios from "axios"
 import { collection,doc,getDoc,query,where,getDocs,updateDoc } from "firebase/firestore"
+import { useDispatch } from "react-redux"
+import { setEditFFUser } from "../redux/editFollowersAndFollowing/editFollowersAndFollowing-actions"
 import ProblemList from "../components/ProblemList"
 function User(){
     const id=useParams().id
@@ -12,12 +14,12 @@ function User(){
     const[isLoading,setIsLoading]=useState(true)
     const[lastLogin,setLastLogin]=useState()
     const [streaks,setStreaks]=useState()
-    console.log(typeof(id))
+
     const[longestStreak,setLongestStreak]=useState()
     const[currentChallenge,setCurrentChallenge]=useState()
     const[notFollowing,setNotFollowing]=useState(true)
     const[loggedIn,setLoggedIn]=useState(true)
-
+    const dispatch=useDispatch()
     //ourUser=user we are viewing
     //user=logged in user
 
@@ -43,23 +45,19 @@ function User(){
                   
                     if(s.followers!=null){
 
-                        console.log(s.firstname," has followers",s.followers)
+                       
                       
                        var isFollowing= s.followers.map((f)=>{
-                        console.log(s.followers)
+                      
                             if(f.username==ourUser.username && f.user==ourUser.userId){
-                                console.log("\n\n\nFOLLOWING")
-                                console.log(ourUser,"viwing user",f.username)
-                                console.log("loggedin",ourUser.username)
-                                console.log(s.followers)
-                                console.log("\n\n")
+                               
                                 return true
                             }else{
                                 return false
                             }
                         })
                      setTimeout(()=>{
-                        console.log(isFollowing)
+                       
                         if(isFollowing.includes(true)){
                             setNotFollowing(false)
                         }else{
@@ -90,8 +88,7 @@ function User(){
            setIsLoading(false)
          const prom1=new Promise(async(resolve1,reject1)=>{
             axios.get("http://localhost:3022/sort-streaks/"+id).then((response)=>{
-                console.log("\n\n\n")
-                console.log(response.data)
+               
                 if(response.data.streaks.length>0){
                 response.data.streaks.map((s)=>{
                     if(s.length>1){
@@ -100,7 +97,7 @@ function User(){
                     
                 })
                 var longest=response.data.streaks.reduce(function (a, b) { return a.length>= b.length   ? a : b; });
-                console.log("longest:",longest)
+                
                 setLongestStreak(longest)
                 setTimeout(()=>{
                     resolve1()
@@ -147,9 +144,7 @@ function User(){
 
          
     
-    console.log("notfollowing:"+notFollowing)
-
-    console.log("alreadyFollowing:"+alreadyFollowing)
+  
     return(
         <div class="w-full flex min-h-screen ">
            <div class="flex-col w-full bg-gray-300 p-3">
@@ -220,8 +215,13 @@ function User(){
                                                            await  updateDoc(thefollowed,{
                                                             "hasNewNotifications":true
                                                            })
-
                                                     }
+                                                    setTimeout(()=>{
+                                                        dispatch(setEditFFUser(ourUser))
+                                                        setTimeout(()=>{
+                                                            dispatch(setEditFFUser(user))
+                                                        },300)
+                                                    },500)
                                                 }else{
                                                     following.push({followedSince: new Date(),user:ourUser.userId,username:ourUser.username})
                                                     setTimeout(async()=>{
@@ -247,6 +247,12 @@ function User(){
                                                                })
 
                                                         }
+                                                        setTimeout(()=>{
+                                                            dispatch(setEditFFUser(ourUser))
+                                                            setTimeout(()=>{
+                                                                dispatch(setEditFFUser(user))
+                                                            },300)
+                                                        },500)
                                                     })
                                                 }
                                             }

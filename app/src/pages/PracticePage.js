@@ -910,9 +910,9 @@ console.log(params)
             problem.problem.attempts.map((a)=>{
               console.log(a)
               return(
-                <div class="flex-col w-full p-3">
-                  <p class="font-bold text-center">{a.date}</p>
-                  <p class=" whitespace-pre">{a.attempt}</p>
+                <div class="flex-col w-full p-3 m-3 bg-gray-600">
+                  <p class="font-bold text-center text-white">{a.date}</p>
+                  <p class=" whitespace-pre text-white">{a.attempt}</p>
                 </div>
               )
             })

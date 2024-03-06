@@ -18,7 +18,6 @@ function ProblemCountMeter({color,count,backgroundColor,hideCount,index}) {
     })
 
     prom.then(()=>{
-      console.log("countString:"+countString)
       setIsLoading(false)
     })
   },[])
@@ -153,7 +152,7 @@ function ProblemCountMeter({color,count,backgroundColor,hideCount,index}) {
      </div>
     )
   }else if(color=="red"){
-    console.log("red:"+count)
+
     return    (
 
       <div>

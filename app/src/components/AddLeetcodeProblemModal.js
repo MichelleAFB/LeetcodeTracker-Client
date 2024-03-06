@@ -40,14 +40,12 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       var problemTitle=p.title.toUpperCase()
       problemTitle=problemTitle.replace(/\s/g, "");
       problemTitle=problemTitle.replace(/{[()]}/g, "");
-     console.log(docTitle + " "+problemTitle)
      
       if(docTitle==problemTitle){
         console.log(docTitle)
         console.log(problemTitle+"\n\n")
         
-        console.log("found" )
-        console.log(doc.data())
+       
         setProblem({problem:doc.data(),id:doc.id})
         sessionStorage.setItem("currentProblem",JSON.stringify({problem:doc.data(),id:doc.id}))
         
@@ -62,7 +60,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
   useEffect(()=>{
     const prom=new Promise((resolve,reject)=>{
       getProblemsList(ourProblem).then(()=>{
-        console.log(problem)
+        
         var problemData=JSON.parse(sessionStorage.getItem('currentProblem'))
         if(problemData!=null){
           setPrompt(ourProblem.prompt)
@@ -84,16 +82,14 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
   },[])
   const p=JSON.parse(sessionStorage.getItem("currentProblem"))
   
-  console.log(problemData)
-  console.log(ourProblem)
+
 
   if(visibility && !isLoading){ 
     const problemsListCollectionRef=collection(db,"problems")
 
     
     var problemData=JSON.parse(sessionStorage.getItem('currentProblem'))
-    console.log(problemData)
-    console.log(ourProblem)
+
     /*if(problemData!=null){
     
       setDataStructure(problemData.dataStructure)

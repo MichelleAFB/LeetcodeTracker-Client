@@ -2,7 +2,8 @@ import * as actionTypes from "./editChallenge-types";
 
 const initialState = {
  challenge:null,
- visibility:false
+ visibility:false,
+ refresh:false
 };
 
 export const editChallengeReducer = (state = initialState, action) => {
@@ -20,6 +21,13 @@ export const editChallengeReducer = (state = initialState, action) => {
       return {
         ...state,
         visibility: action.payload.visibility,
+      };
+      case actionTypes.REFRESH_CHALLENGE_CHART:
+      console.log("REDUX:SETTING EDIT PROBLEM");
+      
+      return {
+        ...state,
+        refresh: !state.refresh,
       };
     
 

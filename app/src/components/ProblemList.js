@@ -235,14 +235,7 @@ setTimeout(()=>{
         var dayDate=new Date(date)
         sendProblems.push({id:p.id,last:dayDate})
       })
-      setTimeout(()=>{
-    
-
-        axios.post("https://leetcodetracker.onrender.com/sort-problems",{problems:sendProblems}).then((response)=>{
-          console.log(response)
-        })
-
-      },1000)
+   
    
   }
   function  myDecoStyle(value) {

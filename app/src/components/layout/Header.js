@@ -12,8 +12,7 @@ function Header({ourUser,visibility}) {
   const [user,setUser]=useState()
   const[hasNotifications,setHasNotifications]=useState(false)
   const location=useLocation()
-  console.log(location.pathname)
-  console.log("HEADER:",visibility)
+ 
   useEffect(()=>{
 
     const prom=new Promise(async(resolve,reject)=>{
@@ -26,12 +25,12 @@ function Header({ourUser,visibility}) {
     // doc.data() is never undefined for query doc snapshots
     
           us.push(doc.data())
-          console.log(us)
+       
        
         });
        
      setTimeout(()=>{
-      console.log(us)
+     
     
  
       setUser(us[0])
@@ -60,12 +59,10 @@ function Header({ourUser,visibility}) {
 
   }
 
-  console.log("vis",visibility,"user",user,"isLoading",isLoading)
 
 
   if(visibility && !isLoading){
-    console.log(user)
-    console.log("hasNotifications",hasNotifications)
+   
   return (
     <div class="w-full  ">
     <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
@@ -84,7 +81,7 @@ function Header({ourUser,visibility}) {
            
             const q = collection(db, "users")
             const docs=await getDocs(q)
-            console.log(docs)
+           
             docs.docs.filter(async(d)=>{
               console.log(d)
 
@@ -178,7 +175,6 @@ function Header({ourUser,visibility}) {
     </div>
   )
   }else{
-    console.log("vis",visibility,"user",user,"isLoading",isLoading)
     return(<p></p>)
   }
 

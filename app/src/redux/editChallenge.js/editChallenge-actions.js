@@ -10,7 +10,7 @@ export function setChallenge(challenge) {
 }
 
 export function setEditChallengeVisibility(visibility) {
-  console.log("changing edit challenge visibility:"+visibility)
+ 
   return {
     type: actionTypes.SET_EDIT_CHALLENGE_VISIBILITY,
     payload: {
@@ -18,5 +18,13 @@ export function setEditChallengeVisibility(visibility) {
     },
   };
 }
+export function refreshChallengeChart() {
+  
+  return {
+    type: actionTypes.REFRESH_CHALLENGE_CHART
+    
+  };
+}
+
 
 

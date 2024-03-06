@@ -295,7 +295,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
           </div>
           <div class="flex">
           <span className="text-green mr-1">
-             <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.no_attempts}</span></p>
+          <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>0? problem.problem.attempts.length-1:"0"}</span></p>
              
           </span>
           </div>
@@ -396,7 +396,7 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
       </div>
       <div class="flex">
       <span className="text-green mr-1">
-         <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.no_attempts}</span></p>
+         <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>0? problem.problem.attempts.length-1:"0"}</span></p>
          
       </span>
       </div>
@@ -494,7 +494,7 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
       </div>
       <div class="flex">
       <span className="text-green mr-1">
-         <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.no_attempts}</span></p>
+      <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>0? problem.problem.attempts.length-1:"0"}</span></p>
          
       </span>
       </div>
