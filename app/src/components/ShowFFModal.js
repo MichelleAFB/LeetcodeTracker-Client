@@ -1,22 +1,89 @@
 import React from 'react'
 import { connect,useDispatch } from 'react-redux';
 import { useEffect,useState } from 'react';
-function ShowFFModal({setFollower,setFollowing,user,visibility}) {
+import { setEditFFUser, setFFFollowers,setFFFollowing, setFFVisibility } from '../redux/editFollowersAndFollowing/editFollowersAndFollowing-actions';
+function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
     const[isLoading,setIsLoading]=useState(true)
+    const dispatch=useDispatch()
+    
     
     useEffect(()=>{
 
-    },[visibility])
+            if(visibility &&(setFollowers!=false && setFollowing!=false)){
+                setIsLoading(false)
+            }
+    },[visibility,user,setFollowers,setFollowing])
  
- if(!isLoading){
+ if(!isLoading && visibility && user!=null){
+    console.log(user.followers)
     return (
     <div class='bg-gray-200' data-testId="modal-public">
      
     <div class='h-screen w-full fixed ml-0 mr-0 mt-0 mb-0 flex justify-center items-center bg-black bg-opacity-50 z-40'>
      
-      <main id='content' role='main' class='w-full max-w-lg mx-auto h-[80vh] overflow-y-scroll overflow-hidden rounded-md'>
-        Modal
+      <main id='content' role='main' class='w-full max-w-lg mx-auto h-[80%] overflow-y-scroll overflow-hidden rounded-md'>
         <div class=' bg-white  rounded-md shadow-lg bg-white dark:border-gray-700 mb-5 flex flex-col p-5'>
+            <div class="flex w-full justify-end">
+                <button class="bg-red-600 p-1" onClick={()=>{
+                    const prom=new Promise((resolve,reject)=>{
+                        dispatch(setEditFFUser(null))
+                      
+                        setTimeout(()=>{
+                            resolve()
+                        },100)
+                    })
+
+                    prom.then(()=>{
+                        dispatch(setFFFollowers(false))
+                        dispatch(setFFFollowing(false))
+                        dispatch(setFFVisibility(false))
+
+                    })
+                }}>
+                    <p class="text-white">
+                        x
+                    </p>
+                </button>
+            </div>
+        {
+            setFollowers?
+            <p class="text-lg font-bold">
+                Followers
+            </p>
+            :
+            <p class="text-lg font-bold">
+                Following
+            </p>
+        }
+        {
+            setFollowers ?
+            
+                <div class="ul">
+                    {
+                        user.followers.map((m)=>{
+                            console.log(m)
+                            return(
+                            <div>
+                                <p>{m.username}</p>
+                            </div>
+                            )
+                        })
+                    }
+                </div>
+           
+                :
+                <div class="ul">
+                {
+                    user.following.map((m)=>{
+                        return(
+                        <div>
+                            <p>{m.username}</p>
+                        </div>
+                        )
+                    })
+                }
+            </div>
+        }
         </div>
       </main>
     </div>
@@ -28,10 +95,11 @@ function ShowFFModal({setFollower,setFollowing,user,visibility}) {
 }
 
 const mapStateToProps = (state, props) => {
-    var visibility= state.editFollowersAndFollower.ffVisibility
-    var setFollowers=state.editFollowersAndFollower.setFollowers
-    var setFolllowing=state.editFollowersAndFollower.setFollowing
-    const user=state.eitFollowersAndFollower.user
+    console.log(state.editFollowersAndFollower)
+    var visibility= state.editFollowersAndFollowing.ffVisibility
+    var setFollowers=state.editFollowersAndFollowing.setFFFollowers
+    var setFolllowing=state.editFollowersAndFollowing.setFFFollowing
+    const user=state.editFollowersAndFollowing.user
 
     console.log("visibility"+visibility)
   
@@ -39,6 +107,7 @@ const mapStateToProps = (state, props) => {
      visibility:visibility,
      setFollowers:setFollowers,
      setFollowing:setFolllowing,
+   
      
      user:user
     };

@@ -9,19 +9,20 @@ export function setEditFFUser(user) {
   };
 }
 
-export function setFollowing() {
-
+export function setFFFollowing(value) {
+  console.log("DISPATCH FF FOLLOWING")
   return {
-    type: actionTypes.SET_FOLLOWING,
-  
+    type: actionTypes.SET_FF_FOLLOWING,
+    payload:{value:value}
   };
 }
 
-export function setFollowers() {
+export function setFFFollowers(value) {
+  console.log("DISPATCH FF FOLLOWERS")
  
   return {
-    type: actionTypes.SET_FOLLOWING,
- 
+    type: actionTypes.SET_FF_FOLLOWERS,
+    payload:{value:value}
   };
 }
 
@@ -39,7 +40,7 @@ export function setFFVisibility(value) {
   return {
     type: actionTypes.SET_FF_VISIBILITY,
     payload: {
-      ffVisibility:value
+      value:value
     },
   };
 }

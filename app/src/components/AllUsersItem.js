@@ -5,15 +5,16 @@ import {connect,useDispatch} from 'react-redux'
 import { useEffect } from "react"
 import { collection,getDocs } from "firebase/firestore"
 import { db } from "../firebase/firebase"
-import { setEditFFUser, setFFVisibility } from "../redux/editFollowersAndFollowing/editFollowersAndFollowing-actions"
+import { setEditFFUser, setFFVisibility,setFFFollowers,setFFFollowing} from "../redux/editFollowersAndFollowing/editFollowersAndFollowing-actions"
 function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
     const navigate=useNavigate()
  
     const[user,setUser]=useState(u.data())
     const[isLoading,setIsLoading]=useState(true)
     const self=JSON.parse(sessionStorage.getItem("user"))
-    const [followers,setFollowers]=useState(u.data().followers!=null? u.data().followers.length:0)
-    const [following,setFollowing]=useState(u.data().following!=null? u.data().following.length:0)
+    const [followers,getFollowers]=useState(u.data().followers!=null? u.data().followers.length:0)
+    const [following,getFollowing]=useState(u.data().following!=null? u.data().following.length:0)
+   
     const dispatch=useDispatch()
     useEffect(()=>{
         if(checkUser!=null){
@@ -26,10 +27,11 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
                         setUser(d.data())
                         console.log("\n\n\nMATCH")
                         if(d.data().followers!=null){
-                            setFollowers(d.data().followers.length)
+                            getFollowers(d.data().followers.length)
+                            dispatch(setFFFollowers(true))
                         }
                         if(d.data().following!=null){
-                            setFollowing(d.data().following.length)
+                            getFollowing(d.data().following.length)
                         }
                         setTimeout(()=>{
                             resolve()
@@ -50,10 +52,10 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
 
                             console.log("\n\n\nMATCH")
                             if(d.data().followers!=null){
-                                setFollowers(d.data().followers.length)
+                                getFollowers(d.data().followers)
                             }
                             if(d.data().following!=null){
-                                setFollowing(d.data().following.length)
+                                getFollowing(d.data().following)
                             }
                             setTimeout(()=>{
                                 resolve()
@@ -76,10 +78,10 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
 
                         console.log("\n\n\nMATCH")
                         if(d.data().followers!=null){
-                            setFollowers(d.data().followers.length)
+                            getFollowers(d.data().followers.length)
                         }
                         if(d.data().following!=null){
-                            setFollowing(d.data().following.length)
+                            getFollowing(d.data().following.length)
                         }
                         setTimeout(()=>{
                             resolve()
@@ -96,8 +98,8 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
     },[refreshFollowers,refreshFollowing,checkUser])
     if(!isLoading && user!=null){
         console.log("\n\n",user.firstname)
-        console.log("followers",followers.length)
-        console.log("following",following.length)
+        console.log("followers",followers)
+        console.log("following",following)
 
     return(
         <div class="p-2 flex-col">
@@ -115,23 +117,39 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
                 </button>
                 <div class="flex-col">
                     <button class="rounded-sm flex p-2" onClick={()=>{
+                       const prom=new Promise((resolve,reject)=>{
+                    
                         dispatch(setEditFFUser(user))
-                        dispatch(setFollowers(true))
-                        dispatch(setFollowing(false))
+                        dispatch(setFFFollowers(true))
+                        dispatch(setFFFollowing(false)) 
                         setTimeout(()=>{
-                            setFFVisibility(true)
-                        },500)
+                          resolve()
+                        },1000)
+                    })
+
+                    prom.then(()=>{
+                        dispatch(setFFVisibility(true))
+                    })
 
                     }}>
                         <p class="text-white bg-purple-600  text-xs">{user.followers!=null?user.followers.length:"0"} followers</p>
                     </button>
                     <button class="rounded-sm flex  p-2" onClick={()=>{
-                        dispatch(setEditFFUser(user))
-                        dispatch(setFollowers(false))
-                        dispatch(setFollowing(true))
-                        setTimeout(()=>{
-                            setFFVisibility(true)
-                        },500)
+                        const prom=new Promise((resolve,reject)=>{
+                         
+                            dispatch(setEditFFUser(user))
+                            dispatch(setFFFollowers(false))
+                            dispatch(setFFFollowing(true)) 
+                            setTimeout(()=>{
+                              resolve()
+                            },1000)
+                        })
+
+                        prom.then(()=>{
+                            dispatch(setFFVisibility(true))
+
+                        })
+                       
 
                     }}>
                         <p class="text-white bg-purple-600  text-xs">following {user.following!=null?user.following.length:"0"} </p>
@@ -148,8 +166,8 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
 
 const mapStateToProps = (state, props) => {
     var checkuser= state.editFollowersAndFollowing.user
-    var refreshFollowers=state.editFollowersAndFollowing.setFollowers
-    var refreshFollowing=state.editFollowersAndFollowing.setFollowing
+    var refreshFollowers=state.editFollowersAndFollowing.setFFFollowers
+    var refreshFollowing=state.editFollowersAndFollowing.setFFFollowing
   
   
     return {

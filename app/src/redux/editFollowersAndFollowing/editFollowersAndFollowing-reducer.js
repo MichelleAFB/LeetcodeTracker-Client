@@ -17,17 +17,19 @@ export const editFollowersAndFollowingReducer = (state = initialState, action) =
         user: action.payload.user,
       };
 
-    case actionTypes.SET_FOLLOWERS:
+    case actionTypes.SET_FF_FOLLOWERS:
+      console.log(action.payload)
       return {
         ...state,
-        setFollowers:! action.payload.setFollowers,
+        setFollowers: action.payload.value,
        
       };
 
-      case actionTypes.SET_FOLLOWING:
+      case actionTypes.SET_FF_FOLLOWING:
+        console.log(action.payload)
       return {
         ...state,
-        setFollowing:!action.payload.setFollowing,
+        setFollowing:action.payload.value,
       };
 
       case actionTypes.SET_FF_COUNT:
@@ -39,7 +41,7 @@ export const editFollowersAndFollowingReducer = (state = initialState, action) =
      case actionTypes.SET_FF_VISIBILITY:
         return {
           ...state,
-         ffVisibility:action.payload.visibility
+         ffVisibility:action.payload.value
         };
 
     default:

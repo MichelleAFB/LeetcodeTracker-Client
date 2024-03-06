@@ -77,7 +77,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
                       const data=await getDocs(refer)
                       data.docs.map(async(d)=>{
                         console.log(d.data())
-                        if(d.data().userId==user.userId){
+                        if((d.data().userId==user.userId) || d.data().email==user.email){
                           const dat=d.data()
                           const foundUser=doc(refer,d._key.path.segments[d._key.path.segments.length-1])
                           
