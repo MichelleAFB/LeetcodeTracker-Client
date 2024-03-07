@@ -13,9 +13,10 @@ import { useState } from 'react'
 //redux
 import { useDispatch } from 'react-redux'
 import { setProblem,setEditProblemVisibility } from '../redux/editProblem/editProblem-actions'
-import { doc, deleteDoc, updateDoc } from "firebase/firestore";
+import { doc, deleteDoc, updateDoc,getDocs,collection } from "firebase/firestore";
 import { db } from '../firebase/firebase'
 import { getDoc } from 'firebase/firestore'
+import { setOtherUsersProblem, setOtherUsersProblemVisibility,setCurrentUser,setOtherUser } from '../redux/addOtherUsersProblem/addOtherUsersProblem-reducer'
 function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,handleOldest}) {
  /*
     if id arguement is present, it means it is another user viewing this users problem list. and attempting to
@@ -176,7 +177,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
                     examples:problem.problem.examples,
                     level:problem.problem.level,
                     index:timeIndex
-     
+    
     })
   }catch(err){
     console.log("could not set time index",err)
@@ -194,7 +195,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
     var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
     var cDate=new Date()
     var index=1
-    var st=problem.problem.lastPracticed.split(" ")
+    var st=Object.keys(problem.problem.lastPracticed).length>1? new Date(problem.problem.lastPracticed.seconds*1000).toString():problem.problem.lastPracticed.split(" ")
   
    
   const currDate=cDate.toString().substring(0,15)
@@ -282,13 +283,46 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
           :
           <div></div>
         }
+         {id!=null? <button class="bg-green-700 rounded-md p-2 justify-self-end" onClick={()=>{
+            
+          
+            const prom=new Promise(async(resolve,reject)=>{
+             
+                dispatch(setOtherUsersProblem(problem))
+              
+                const snap = await getDocs(collection(db, "users"))
+                snap.forEach((d) => {
+                  const currentUser=JSON.parse(sessionStorage.getItem("user"))
+                  if(d.id==currentUser.userId){
+                    console.log("MATCH")
+                    dispatch(setCurrentUser(d.data()))
+                    
+                  }
+                  if(d.id==problem.problem.userId){
+                    dispatch(setOtherUser(d.data()))
+                  }
+                })
+                setTimeout(()=>{
+                  resolve()
+                },1000)
+            })
+
+            prom.then(()=>{
+              dispatch(setOtherUsersProblemVisibility(true))
+            })
+          }}>
+            <p class="text-end text-white font-bold">Add</p>
+          </button>
+          :
+          <div></div>
+        }
             </div>
         </div>
        
         <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
         <div class="flex">
           <p className="text-green font-bold mr-1">Last Practiced:</p>
-          <p>{dateLast}</p>
+          <p>{Object.keys(dateLast).length>1? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
             
           
              
@@ -383,13 +417,47 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
           :
           <div></div>
         }
+         {id!=null? <button class="bg-green-700 rounded-md p-2 justify-self-end" onClick={()=>{
+            
+          
+            const prom=new Promise(async(resolve,reject)=>{
+             
+                dispatch(setOtherUsersProblem(problem))
+              
+                const snap = await getDocs(collection(db, "users"))
+                const currentUser=JSON.parse(sessionStorage.getItem("user"))
+
+                snap.forEach((d) => {
+                  if(d.id==currentUser.userId){
+                    console.log("MATCH")
+                    dispatch(setCurrentUser(d.data()))
+                    
+                  }
+                  if(d.id==problem.problem.userId){
+                    dispatch(setOtherUser(d.data()))
+                  }
+                })
+                setTimeout(()=>{
+                  resolve()
+                },1000)
+            })
+
+            prom.then(()=>{
+              dispatch(setOtherUsersProblemVisibility(true))
+            })
+          }}>
+            <p class="text-end text-white font-bold">Add</p>
+          </button>
+          :
+          <div></div>
+        }
         </div>
     </div>
   
     <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
     <div class="flex">
       <p className="text-green font-bold mr-1 text-sm">Last Practiced:</p>
-      <p>{dateLast}</p>
+      <p>{Object.keys(dateLast).length>1? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
         
       
          
@@ -481,13 +549,47 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
           :
           <div></div>
         }
+         {id!=null? <button class="bg-green-700 rounded-md p-2 justify-self-end" onClick={()=>{
+            
+          
+            const prom=new Promise(async(resolve,reject)=>{
+             
+                dispatch(setOtherUsersProblem(problem))
+              
+                const snap = await getDocs(collection(db, "users"))
+                const currentUser=JSON.parse(sessionStorage.getItem("user"))
+
+                snap.forEach((d) => {
+                  if(d.id==currentUser.userId){
+                    console.log("MATCH")
+                    dispatch(setCurrentUser(d.data()))
+                    
+                  }
+                  if(d.id==problem.problem.userId){
+                    dispatch(setOtherUser(d.data()))
+                  }
+                })
+                setTimeout(()=>{
+                  resolve()
+                },1000)
+            })
+
+            prom.then(()=>{
+              dispatch(setOtherUsersProblemVisibility(true))
+            })
+          }}>
+            <p class="text-end text-white font-bold">Add</p>
+          </button>
+          :
+          <div></div>
+        }
         </div>
     </div>
     
     <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
     <div class="flex">
       <p className="text-green font-bold mr-1 text-sm">Last Practiced:</p>
-      <p>{dateLast}</p>
+      <p>{Object.keys(dateLast).length>1? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
         
       
          
@@ -522,6 +624,7 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
     }
   }
 }catch(err){
+  console.log(err)
     return(
       <div class="flex w-full p-3 bg-purple-400">
         problem

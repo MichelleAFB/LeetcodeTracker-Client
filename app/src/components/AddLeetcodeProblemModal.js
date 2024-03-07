@@ -14,6 +14,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
   const[isLoading,setIsLoading]=useState(true)
   const[problem,setProblem]=useState()
   const[prompt,setPrompt]=useState()
+ 
   const[showPrompt,setShowPrompt]=useState(true)
   const[category,setCategory]=useState("Find Sub:X Inside")
   const[dataStructure,setDataStructure]=useState("ArrayList") 
@@ -40,6 +41,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       var problemTitle=p.title.toUpperCase()
       problemTitle=problemTitle.replace(/\s/g, "");
       problemTitle=problemTitle.replace(/{[()]}/g, "");
+     console.log(docTitle + " "+problemTitle)
      
       if(docTitle==problemTitle){
         console.log(docTitle)

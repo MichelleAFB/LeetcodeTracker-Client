@@ -97,9 +97,7 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
 
     },[refreshFollowers,refreshFollowing,checkUser])
     if(!isLoading && user!=null){
-        console.log("\n\n",user.firstname)
-        console.log("followers",followers)
-        console.log("following",following)
+    
 
     return(
         <div class="p-2 flex-col">
@@ -119,15 +117,17 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
                     <button class="rounded-sm flex p-2" onClick={()=>{
                        const prom=new Promise((resolve,reject)=>{
                     
-                        dispatch(setEditFFUser(user))
+                        
                         dispatch(setFFFollowers(true))
-                        dispatch(setFFFollowing(false)) 
+                      
                         setTimeout(()=>{
+                            dispatch(setFFFollowing(false)) 
                           resolve()
                         },1000)
                     })
 
                     prom.then(()=>{
+                        dispatch(setEditFFUser(user))
                         dispatch(setFFVisibility(true))
                     })
 
@@ -137,15 +137,17 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
                     <button class="rounded-sm flex  p-2" onClick={()=>{
                         const prom=new Promise((resolve,reject)=>{
                          
-                            dispatch(setEditFFUser(user))
+                         
                             dispatch(setFFFollowers(false))
-                            dispatch(setFFFollowing(true)) 
+                           
                             setTimeout(()=>{
+                                dispatch(setFFFollowing(true)) 
                               resolve()
                             },1000)
                         })
 
                         prom.then(()=>{
+                            dispatch(setEditFFUser(user))
                             dispatch(setFFVisibility(true))
 
                         })

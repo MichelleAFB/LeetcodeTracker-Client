@@ -80,6 +80,7 @@ function ProblemList({id,reload}) {
               
         
           if(id==null? doc.data().userId==user.userId:doc.data().userId==id){
+            console.log(doc.data().title,doc.data().lastPracticed)
             titles.push(thing.title) 
 
             setTimeout(()=>{
@@ -98,7 +99,7 @@ function ProblemList({id,reload}) {
             var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
             var cDate=new Date()
             var index=1
-            var st=doc.data().lastPracticed.split(" ")
+            var st=Object.keys(doc.data().lastPracticed).length>1?new Date(doc.data().lastPracticed.seconds*1000).toString():doc.data().lastPracticed.split(" ")
           
            
           const currDate=cDate.toString().substring(0,15)
@@ -228,7 +229,7 @@ setTimeout(()=>{
       var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
     
       problems.map((p)=>{
-        var date=p.problem.lastPracticed.split(" ")
+        var date=Object.keys(p.problem.lastPracticed).length>1?new Date(p.problem.lastPracticed.seconds*1000).toString():p.problem.lastPracticed.split(" ")
   
 
         date=new Date(date[3],monthnum[months.indexOf(date[1])-1],date[2])
@@ -763,6 +764,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
 
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
+   console.log(problems)
    /*
 <button class="p-3 w-1/2 bg-green-400" onClick={()=>{
       sort(problems)
