@@ -312,18 +312,16 @@ const checkStatus2=async(streaks,challenge,challenges)=>{
   "Aug","Sep","Oct","Nov","Dec"];
   var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
   var changePasses=false
-  console.log(challenge)
+ 
   const challengeDates=getDatesArray(new Date(challenge.startDate),new Date(challenge.endDate))
-  console.log(challengeDates)
+  
   var today=new Date()
   if(challenge.success && challenge.lastUpdated.toString().substring(0,15)!=today.toString().substring(0,15)){
-    console.log("CHALLENGE STILL SUCCESS")
+   
 
     const indexToday=challengeDates.indexOf(today.toString().substring(0,15))
-    console.log("todayIndex",indexToday)
     const prevStreaks=streaks.filter((s)=>{
-      console.log("\n",s)
-      console.log(s.streak.day+"   ",challengeDates.indexOf(s.streak.day))
+    
       if(challengeDates.indexOf(s.streak.day)<indexToday && s.challenge_id==challenge._id){
         return s
       }
@@ -335,7 +333,7 @@ const checkStatus2=async(streaks,challenge,challenges)=>{
           return s
       }
     })
-    console.log("STREAKLESS",streaksLess)
+  
     if(challenge.passes=streaksLess.length>=0){
       challenge.passes=challenge.passes-streaksLess.length
       challenge.usedPasses=streaksLess.length
@@ -347,7 +345,7 @@ const checkStatus2=async(streaks,challenge,challenges)=>{
       challenge.success=false
     }
 
-    console.log("check these streaks",prevStreaks)
+   
     if(prevStreaks.length>0){
 
       if((prevStreaks.length+challenge.initialPasses+1)<challengeDates.length){
@@ -388,16 +386,16 @@ const checkStatus2=async(streaks,challenge,challenges)=>{
       }else{
         console.log("check Problems length for all streak")
         const failedStreaks=prevStreaks.filter((s)=>{
-          console.log(s.streak.day," success?",s.passed)
+        
           if(s.passed==false){
             return s
           }
         })
-        console.log("number of failed:",failedStreaks.length)
+      
         if(failedStreaks.length<challenge.initialPasses){
-          console.log("PASS")
+        
         }else{
-          console.log("FAIL THE CHALLENGE")
+         
           const index=challenges.filter((c)=>{
             if(c.title==challenge.title){
               return challenges.indexOf(c)
@@ -749,9 +747,10 @@ setTimeout(()=>{
              if(response.data.challenge!=null){
               newChallenge.challenge_id=response.data.challenge._id
                 var today=new Date()
+              u.data().challenges[useDispatch.data().challenges.length]=newChallenge
               setTimeout(async()=>{
                 const update=await updateDoc(userRef,{
-                  challenges:[newChallenge],
+                  challenges:u.data().challenges,
                   currentChallenge: today.toString().substring(0.15)==startDate.toString().substring(0,15)? newChallenge:null
                 }) 
                      checkCurrent()
@@ -928,7 +927,7 @@ function findEvent(ev){
   return challenges.filter((e)=> e.title==ev.event._def.title )
 }
 if(!isLoading){
-  console.log(challenges)
+  
   if(challenges==null){
   return (
     <div class="flex-col  rounded-md p-3 w-full border-t-2 border-gray-400">
@@ -1208,7 +1207,7 @@ if(!isLoading){
       <div class="flex-col w-3/4  bg-orange-400  rounded-r-[5px] p-3 ">
 
         <div class="flex w-full justify-between">
-        <p class="font-bold text-xl text-start">Create New Challenge</p>
+        <p class="font-bold text-xl text-start">Delete Challenge</p>
         <button class="bg-green-500 rounded-md p-2" onClick={()=>{
           setShowDelete(!showDelete)
           setShow(false)
@@ -1218,13 +1217,14 @@ if(!isLoading){
       </div>
 
       <div class="flex-col m-3">
+        hi
         <div class="h-[20vh] overflow-y-scroll overflow-hidden w-full bg-white">
           {
             challenges.map((c)=>{
               if(c.challenge!=null){
                 console.log()
               return(
-                <DeleteChallengeComponent challenge={c}/>
+                <DeleteChallengeComponent challenge={c.challenge}/>
               )
               }
             })

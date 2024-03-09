@@ -59,7 +59,7 @@ function EditChallengeModal({visibility,challenge}) {
                 "currentChallenge.endDate":endDate.toISOString()
                 
             })
-            axios.post("http://localhost:3022/update-challenge",{challenge:challenge,endDate:endDate}).then((response)=>{
+            axios.post("https://leetcodetracker.onrender.com/update-challenge",{challenge:challenge,endDate:endDate}).then((response)=>{
                 console.log(response.data)
                 if(response.data.success){
                     alert("SUCCESSFULLY UPDATED")

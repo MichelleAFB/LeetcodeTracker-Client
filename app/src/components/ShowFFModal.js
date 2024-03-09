@@ -85,7 +85,7 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
             </p>
         }
         {
-            showFollowers && user.followers.length>0?
+            showFollowers &&  user.followers!=null &&user.followers.length>0?
             
                 <div class="ul">
                     {
@@ -150,7 +150,7 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
                 </p>
             }
             {
-                 user.following.length>0 ?
+                 user.following!=null && user.following.length>0 ?
                 
                     <div class="ul">
                         {
