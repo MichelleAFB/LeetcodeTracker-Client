@@ -129,6 +129,16 @@ function Header({ourUser,visibility}) {
           {hasNotifications && user.hasNewNotifications?<span onClick={()=>{
             setHasNotifications(!hasNotifications)
           }} class=" p-2 absolute top-20 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
+            <div class="flex-col">
+              <div class="flex w-full justify-end">
+                <button class="flex bg-red-500 p-1" onClick={()=>{
+                  setHasNotifications(!hasNotifications)
+                }}>
+                  <p class="text-white font-bold">
+                    x
+                  </p>
+                </button>
+              </div>
             <ul>
               {
                 user.notifications.map((n)=>{
@@ -141,7 +151,8 @@ function Header({ourUser,visibility}) {
                   </div>)
                 })
               }
-            </ul></span>
+            </ul>
+            </div></span>
            :<p></p>
           }
            
