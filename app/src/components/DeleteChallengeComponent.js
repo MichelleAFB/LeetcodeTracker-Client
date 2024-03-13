@@ -7,6 +7,7 @@ function DeleteChallengeComponent({challenge}) {
 
   const[isLoading,setIsLoading]=useState(true)
   const[key,setKey]=useState()
+  const[allChallenges,setAllChallenges]=useState()
   
   
   useEffect(()=>{
@@ -20,6 +21,7 @@ function DeleteChallengeComponent({challenge}) {
     var allChallenges
     var matched=false
     var foundKey
+    var allChall
     const prom=new Promise(async(resolve,reject)=>{
       const data=await getDocs(ref)
       data.docs.map((d)=>{
@@ -30,6 +32,7 @@ function DeleteChallengeComponent({challenge}) {
 
           if(data.challenges!=null && data.challenges.length>0 ){
           length=data.challenges!=null && data.challenges.length>0?data.challenges.length:0
+           
           allChallenges=data.challenges
             data.challenges.map((c)=>{
               
@@ -157,9 +160,35 @@ if(!isLoading){
                 data.challenges.map((c)=>{
               
                   if(c.title==challenge.title){
-                      console.log("MATCH")
+                      console.log("MATCH",data.challenges)
                       console.log(c.title,challenge.title)
-                      axios.post("http://localhost:3022/delete-challenge",{})
+                      var cut=data.challenges
+                      cut.splice(key,1)
+                     
+
+                      console.log(cut)
+                      if(data.currentChallenge!=null){
+                        console.log(data.currentChallenge)
+                        axios.post("http://localhost:3022/delete-challenge",{challenge:challenge}).then(async(response)=>{
+                       
+                            console.log(response)
+                            const collectionRef=collection(db,"users")
+                            const documents=await getDocs(collectionRef)
+                            documents.docs.map(async(d)=>{
+                              if(d.data().userId==challenge.userId){
+                                const refer=doc(db,"users",d.id)
+                                await updateDoc(refer,{"challenges":response.data.user.challenges})
+                                await updateDoc(refer,{"currentChallenge":response.data.user.currentChallenge})
+                                alert("SUCCESS")
+                              }
+                            })
+
+
+                          
+                        })
+                      
+                      }
+                    
 
                   }
                 })
