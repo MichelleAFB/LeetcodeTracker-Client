@@ -68,49 +68,47 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
  
   const data= {
     labels:streaks.map((m) => {
-      if(useSelectedMonth && m.day.includes(selectedMonth) && m.day.includes(selectedYear)){
-        return m.day
-      }else{
-        if(useSelectedMonth==false && m.day.includes(selectedYear)){
+    if(useSelectedYear){
+      if(m.day.includes(selectedYear)){
+        if(useSelectedMonth){
+          if(m.day.includes(selectedMonth)){
+            return m.day
+          }
+        }else{
           return m.day
         }
       }
+    }else{
+      return m.day
+    }
     }),
     datasets: [
       {
         base:0,
         xAxisId:"Problems",
         labels: streaks.filter((d)=>{
-          if(useSelectedYear && d.day.includes(selectedYear.toString())){
-          if(useSelectedMonth){
-          if( d.day.includes(selectedMonth) && d.day.includes(selectedYear.toString())){
-          return d.day
-        }
-      }else if(!useSelectedMonth){
-        if(d.day.includes(selectedYear.toString())){
-          return d.day
-        }
-      }
-    }else{
-        return d.day  
-    }
+          if(useSelectedYear){
+            if(d.day.includes(selectedYear)){
+              if(useSelectedMonth){
+                if(d.day.includes(selectedMonth)){
+                  return d.problems.length
+                }
+              }else{
+                return d.problems.length
+              }
+            }
+          }else{
+            return d.problems.length
+          }
         }),
         data: streaks.map((d) => {
-          if(useSelectedYear && d.day.includes(selectedYear.toString())){
-            if(useSelectedMonth){
-            if( d.day.includes(selectedMonth) && d.day.includes(selectedYear.toString())){
+       if(useSelectedYear){
+          if(d.day.includes(selectedYear)){
             return d.problems.length
           }
-        }else if(!useSelectedMonth){
-          if(d.day.includes(selectedYear.toString())){
-            return d.problems.length
-          }
-        }
-      }else{
-        console.log(d.day)
-          return d.problems.length
-        
-      }
+       }else{
+        return d.problems.length
+       }
       }),
         backgroundColor: "rgba(50, 270, 100, 0.5)",
       },
@@ -119,7 +117,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
 
  async function remove(e,s,p){
   e.preventDefault()
-  console.log("here")
+ 
  const problemsListCollectionRef=collection(db,"problems")
  const user=JSON.parse(sessionStorage.getItem("user"))
  
@@ -144,7 +142,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
 
  if(!isLoading && streaks.length!=0){
   //console.log(streaks)
- console.log("useSelectedYear",useSelectedYear)
+ console.log("useSelectedYear",useSelectedYear,"selected Year:",selectedYear," useSelected Month:",useSelectedMonth," selected Month:",selectedMonth)
  
   
   return (

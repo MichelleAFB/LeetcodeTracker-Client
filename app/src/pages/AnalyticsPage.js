@@ -29,7 +29,7 @@ function AnalyticsPage() {
       
       console.log(response)
       if(response.data.streaks!=null){
-      axios.get("http://localhost:3022/sort-streaks/"+user.userId,{message:"hi",userId:user.userId}).then(async(response1)=>{
+      axios.get("https://leetcodetracker.onrender.com/sort-streaks/"+user.userId,{message:"hi",userId:user.userId}).then(async(response1)=>{
         console.log("allstreaks",response1.data.streaks)
       setAllStreaks(response1.data.streaks)
         const str=response.data.streaks 

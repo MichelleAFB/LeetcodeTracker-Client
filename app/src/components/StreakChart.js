@@ -229,7 +229,7 @@ function StreakChart({allStreaks,streaks}) {
       <div class="flex w-full overflow-x-scroll  overflow-hidden">
         {allStreaks.map((st)=>{
           console.log(st)
-          return(<Streak streaks={st}/>)
+          return(<Streak streaks={st} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>)
         })
           
         }
@@ -250,7 +250,22 @@ function StreakChart({allStreaks,streaks}) {
       
            <p class="text-4xl">Your Streaks </p>
       <div class="flex justify-around">
-                <select class="bg-gray-500 p-1 rounded-sm text-white" default={selectedYear} onChange={(e)=>{
+      {
+                !useSelectedYear?
+                <button class="flex p-2 border-gray bg-gray-500 border-2 rounded-sm p-2"  onClick={()=>{
+                  setUseSelectedYear(!useSelectedYear)
+                }}>
+
+                </button>
+                :
+                <button class="flex p-2 border-gray bg-green-500 border-2 rounded-sm p-2" onClick={()=>{
+                  setUseSelectedYear(!useSelectedYear)
+                }}>
+                  
+                </button>
+              }
+        { useSelectedYear?
+                <select class="bg-gray-500 p-1 rounded-sm text-white flex" default={selectedYear} onChange={(e)=>{
                 setSelectedYear(e.target.value)
               }}>
                 {
@@ -263,15 +278,18 @@ function StreakChart({allStreaks,streaks}) {
                 }
 
               </select>
+              :
+              <div></div>
+            }
               {
-                useSelectedMonth?
-                <button class="flex p-2 border-gray bg-green-500 border-2 rounded-[75%] p-2"  onClick={()=>{
+                !useSelectedMonth?
+                <button class="flex p-2 border-gray bg-gray-500 border-2 rounded-sm p-2"  onClick={()=>{
                   setUseSelectedMonth(!useSelectedMonth)
                 }}>
 
                 </button>
                 :
-                <button class="flex p-2 border-gray border-2 rounded-[75%] p-2" onClick={()=>{
+                <button class="flex p-2 border-gray bg-green-500 border-2 rounded-sm p-2" onClick={()=>{
                   setUseSelectedMonth(!useSelectedMonth)
                 }}>
                   
@@ -279,7 +297,7 @@ function StreakChart({allStreaks,streaks}) {
               }
               {
                 useSelectedMonth?
-              <select class="bg-gray-500 text-white p-2" value={selectedMonth} onChange={(e)=>{
+              <select class="bg-gray-500 text-white p-2"  onChange={(e)=>{
                 setSelectedMonth(e.target.value)
               }}>
                 <option value={"Jan"}> January</option>

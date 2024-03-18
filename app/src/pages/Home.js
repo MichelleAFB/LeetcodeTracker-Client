@@ -54,7 +54,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
   const refer=collection(db,"users")
   if(!isLoading){
   return (
-    <div class="max-w-auto flex min-h-screen ">
+    <div class=" flex min-h-screen overflow-hidden ">
       <div class="flex-col">
         <div class="flex w-full">
             {

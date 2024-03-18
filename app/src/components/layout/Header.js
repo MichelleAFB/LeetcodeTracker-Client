@@ -131,8 +131,47 @@ function Header({ourUser,visibility}) {
           }} class=" p-2 absolute top-20 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
             <div class="flex-col">
               <div class="flex w-full justify-end">
-                <button class="flex bg-red-500 p-1" onClick={()=>{
-                  setHasNotifications(!hasNotifications)
+                <button class="flex bg-red-500 p-1" onClick={async()=>{
+                              const q = collection(db, "users")
+                              const docs=await getDocs(q)
+                             
+                              docs.docs.filter(async(d)=>{
+                                console.log(d)
+                  
+                                if(d.data().email==user.email){
+                                  const doo=await doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
+                                 if(d.data().allNotifications==null){
+                                  await updateDoc(doo,{"allNotifications":d.data().notifications})
+                                  await updateDoc(doo,{
+                                    "hasNewNotifications":false
+                                  })
+                                  await updateDoc(doo,{
+                                    "notifications":[]
+                                  })
+                                 }else if(d.data().allNotifications!=null){
+                                  const allnotif=d.data().allNotifications
+                                 d.data().notifications.map((n)=>{
+                                  allnotif.push(n)
+                                 })
+                  
+                                 setTimeout(async(allnotif)=>{
+                                  await updateDoc(doo,{"allNotifications":allnotif})
+                                  await updateDoc(doo,{
+                                    "hasNewNotifications":false
+                                  })
+                                  await updateDoc(doo,{
+                                    "notifications":[]
+                                  })
+                                 },300)
+                                 }
+                                  console.log(doo)
+                  
+                                  setTimeout(()=>{
+                                    setHasNotifications(!hasNotifications)
+                               },600)
+                                }
+                              })
+               
                 }}>
                   <p class="text-white font-bold">
                     x

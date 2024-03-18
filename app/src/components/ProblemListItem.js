@@ -17,6 +17,7 @@ import { doc, deleteDoc, updateDoc,getDocs,collection } from "firebase/firestore
 import { db } from '../firebase/firebase'
 import { getDoc } from 'firebase/firestore'
 import { setOtherUsersProblem, setOtherUsersProblemVisibility,setCurrentUser,setOtherUser } from '../redux/addOtherUsersProblem/addOtherUsersProblem-reducer'
+import { addLeetcodeProblemReload } from '../redux/addLeetcodeProblem.js/addLeecodeProblem-reducer'
 function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,handleOldest}) {
  /*
     if id arguement is present, it means it is another user viewing this users problem list. and attempting to
@@ -41,9 +42,10 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
   const[reload,setReload]=useState()
 
   useEffect(()=>{
+    
   var last
     const prom=new Promise(async(resolve,reject)=>{
-      const dd = problem.problem.lastPracticed.toString()
+      const dd = problem.problem.lastPracticed.seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString():problem.problem.lastPracticed.toString()
       const d=dd.split(" ")
       const date=d[0]+ " "+d[1]+" "+d[2]+" "+d[3]
       const u=await getDoc(us)
@@ -99,7 +101,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
 
     const diff=Math.abs("days since practicing"+lastL-currL)
    
-    console.log(diff==0 )
+   
     if(currY==lastL){
       if(diff==0 &&  currY==lastY){
         //console.log("USE DAYS\n\n")
@@ -114,11 +116,6 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
 
       }
     }
-
-   
-   
-
-
   }
 
   
@@ -133,6 +130,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
  
 
   function handleGreen(){
+    console.log("green:",green)
     setGreen(green+1)
     const count=JSON.parse(sessionStorage.getItem("green"))
     sessionStorage.setItem("green",count+1)
@@ -159,7 +157,28 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
 
    const updateIndex=async(problemRef,timeIndex)=>{
     
-    console.log("poblem id",problemRef)
+    console.log(timeIndex)
+    if(user.healthyIndex==null){
+      console.log("NOT NULL")
+      if(timeIndex<7){
+      handleGreen()
+        
+      }else if(timeIndex>=7 && timeIndex<14){
+        handleOrange()
+      }else if(timeIndex>=14){
+        handleRed()
+      }
+    }else{
+      if(timeIndex<=user.healthyIndex){
+        handleGreen()
+          
+        }else if(timeIndex>user.healthyIndex.end && timeIndex<user.decliningIndex){
+          handleOrange()
+        }else{
+          handleRed()
+        }
+
+    }
     try{
     await updateDoc(problemRef,{
       id:problem.id,
@@ -195,30 +214,29 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
     var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
     var cDate=new Date()
     var index=1
-    var st=Object.keys(problem.problem.lastPracticed).length>1? new Date(problem.problem.lastPracticed.seconds*1000).toString():problem.problem.lastPracticed.split(" ")
+   // console.log(problem.problem.lastPracticed,typeof(problem.problem.lastPracticed))
+    var st=problem.problem.lastPracticed.seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString():problem.problem.lastPracticed.split(" ")
   
    
   const currDate=cDate.toString().substring(0,15)
 
     const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
-   
     var nextDate=new Date(startDate);
  
     var nextnext=nextDate.setDate(nextDate.getDate()+1)
   
-   
+  
     nextDate=new Date(nextnext)
+    
     var index=1;
    
     while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
       
       var nextnext=nextDate.setDate(nextDate.getDate()+1)
       nextDate=new Date(nextnext)
-   
-      
       index++
    }
-
+  
     
     
     
@@ -227,9 +245,11 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
 
     const problemRef=doc(db,"problems",problem.id)
     if(problem.problem.index==null || problem.problem.index!=index){
+
     updateIndex(problemRef,index)
     }
-   
+    console.log(problem.problem.attempts[0])
+    
 
 
     if(   user.healthyIndex!=null? (index<=user.healthyIndex.end ):(index<=7 )){
@@ -257,6 +277,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
                 
                 deleteProblem(problem).then((response)=>{
                   alert("SUCCESS: deleted problem:"+problem.problem.title)
+                  dispatch(addLeetcodeProblemReload())
                 })
                 }}>
                   <p class="text-end text-white">Remove</p>
@@ -322,14 +343,14 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
         <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
         <div class="flex">
           <p className="text-green font-bold mr-1">Last Practiced:</p>
-          <p>{Object.keys(dateLast).length>1? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
+          <p>{Object.keys(dateLast).seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
             
           
              
           </div>
           <div class="flex">
           <span className="text-green mr-1">
-          <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>0? problem.problem.attempts.length-1:"0"}</span></p>
+          <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>1 && problem.problem.attempts[0].attempt=='N/A'? problem.problem.attempts.length-1:problem.problem.attempts.length>0 && problem.problem.attempts[0].attempt!='N/A'&& problem.problem.attempts[0].attempt!='' && problem.problem.attempts[0].attempt!=null? problem.problem.attempts.length:"0"}</span></p>
              
           </span>
           </div>
@@ -355,7 +376,6 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
         
       </div>
           )
-        
         }
   
 if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user.criticalIndex.start):(index>=7 && index<14)){
@@ -391,6 +411,7 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
                 
                 deleteProblem(problem).then((response)=>{
                   alert("SUCCESS: deleted problem:"+problem.problem.title)
+                  dispatch(addLeetcodeProblemReload())
                 })
                 }}>
                   <p class="text-end text-white">Remove</p>
@@ -457,14 +478,14 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
     <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
     <div class="flex">
       <p className="text-green font-bold mr-1 text-sm">Last Practiced:</p>
-      <p>{Object.keys(dateLast).length>1? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
+      <p>{Object.keys(dateLast).seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
         
       
          
       </div>
       <div class="flex">
       <span className="text-green mr-1">
-         <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>0? problem.problem.attempts.length-1:"0"}</span></p>
+         <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>1 && problem.problem.attempts[0].attempt=='N/A'? problem.problem.attempts.length-1:problem.problem.attempts.length>0 && problem.problem.attempts[0].attempt!='N/A'&& problem.problem.attempts[0].attempt!='' && problem.problem.attempts[0].attempt!=null? problem.problem.attempts.length:"0"}</span></p>
          
       </span>
       </div>
@@ -523,6 +544,7 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
                 
                 deleteProblem(problem).then((response)=>{
                   alert("SUCCESS: deleted problem:"+problem.problem.title)
+                  dispatch(addLeetcodeProblemReload())
                 })
                 }}>
                   <p class="text-end text-white">Remove</p>
@@ -589,14 +611,14 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
     <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
     <div class="flex">
       <p className="text-green font-bold mr-1 text-sm">Last Practiced:</p>
-      <p>{Object.keys(dateLast).length>1? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
+      <p>{Object.keys(dateLast).seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
         
       
          
       </div>
       <div class="flex">
       <span className="text-green mr-1">
-      <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>0? problem.problem.attempts.length-1:"0"}</span></p>
+      <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>1 && problem.problem.attempts[0].attempt=='N/A'? problem.problem.attempts.length-1:problem.problem.attempts.length>0 && problem.problem.attempts[0].attempt!='N/A'&& problem.problem.attempts[0].attempt!='' && problem.problem.attempts[0].attempt!=null? problem.problem.attempts.length:"0"}</span></p>
          
       </span>
       </div>

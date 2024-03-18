@@ -12,14 +12,13 @@ import {
 } from '@chakra-ui/react'
 import ProblemListItem from './ProblemListItem'
 import { getDoc } from 'firebase/firestore'
-
 //outside
 import axios from 'axios'
 import ProblemCountMeter from './ProblemCountMeter'
 import { useParams } from 'react-router-dom'
 import IonIcon from '@reacticons/ionicons'
 import { connect } from 'react-redux'
-
+import { useDispatch } from 'react-redux'
 function ProblemList({id,reload}) {
 
   const[problems,setProblems]=useState()
@@ -43,7 +42,7 @@ function ProblemList({id,reload}) {
   const[redCount,setRedCount]=useState(0)
   const[greenCount,setGreenCount]=useState(0)
   const[orangeCount,setOrangeCount]=useState(0)
-  
+  const dispatch=useDispatch()
   const[full,setFull]=useState()
   const fuller=[]
   const[userDefinedIndex,setUserDefiniedIndex]=useState(false)
@@ -80,7 +79,6 @@ function ProblemList({id,reload}) {
               
         
           if(id==null? doc.data().userId==user.userId:doc.data().userId==id){
-            console.log(doc.data().title,doc.data().lastPracticed)
             titles.push(thing.title) 
 
             setTimeout(()=>{
@@ -99,7 +97,7 @@ function ProblemList({id,reload}) {
             var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
             var cDate=new Date()
             var index=1
-            var st=Object.keys(doc.data().lastPracticed).length>1?new Date(doc.data().lastPracticed.seconds*1000).toString():doc.data().lastPracticed.split(" ")
+            var st=doc.data().lastPracticed.seconds !=null?new Date(doc.data().lastPracticed.seconds*1000).toString():doc.data().lastPracticed.split(" ")
           
            
           const currDate=cDate.toString().substring(0,15)
@@ -115,6 +113,7 @@ function ProblemList({id,reload}) {
               index++
            }
            setTimeout(()=>{
+            console.log(index)
             if(use.healthyIndex==null){
             if(index<7){
               GREEN=GREEN+1
@@ -152,7 +151,7 @@ function ProblemList({id,reload}) {
               }
 
             }
-           },50)
+           },120)
          
          
           
@@ -764,7 +763,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
 
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
-   console.log(problems)
+   
    /*
 <button class="p-3 w-1/2 bg-green-400" onClick={()=>{
       sort(problems)
@@ -833,8 +832,8 @@ const user=JSON.parse(sessionStorage.getItem("user"))
             setGreen(false)
           }}>
            <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("orange"))} color={"orange"}/>
-           <p  class="text-center text-xs font-bold">{` < ${user.criticalIndex.start}days ago`}</p>
-           <p  class="text-center text-xs font-bold">{` > ${user.decliningIndex.start} days ago`}</p>
+           <p  class="text-center text-xs font-bold">{` < ${user.criticalIndex!=null ?user.criticalIndex.start:"14"}days ago`}</p>
+           <p  class="text-center text-xs font-bold">{` > ${user.decliningIndex!=null ?user.criticalIndex.start:"14"} days ago`}</p>
           </button>
           :
           <button class="flex-col p-2"onClick={()=>{
