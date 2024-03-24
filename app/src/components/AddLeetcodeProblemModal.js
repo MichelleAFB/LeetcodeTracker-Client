@@ -21,6 +21,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
   const[alreadyExists,setAlreadyExists]=useState()
   const[updateFirebaseId,setUpdateFireBaseId]=useState(false)
   const[acRate,setAcRate]=useState()
+  const[tags,setTags]=useState()
   const dispatch=useDispatch()
 
   const problemsListCollectionRef=collection(db,"problems")
@@ -32,6 +33,8 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       const userType=JSON.parse(sessionStorage.getItem("userType"))
 
     const data=await getDocs(problemsListCollectionRef)
+ 
+
       data.docs.map((doc)=>{
     
      
@@ -41,11 +44,9 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       var problemTitle=p.title.toUpperCase()
       problemTitle=problemTitle.replace(/\s/g, "");
       problemTitle=problemTitle.replace(/{[()]}/g, "");
-     console.log(docTitle + " "+problemTitle)
-     
+      console.log(docTitle + " "+problemTitle)
       if(docTitle==problemTitle){
-        console.log(docTitle)
-        console.log(problemTitle+"\n\n")
+        console.log(docTitle + " "+problemTitle)
         
        
         setProblem({problem:doc.data(),id:doc.id})
@@ -68,7 +69,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
           setPrompt(ourProblem.prompt)
           setDataStructure(problemData.problem.dataStructure)
           setCategory(problemData.problem.category)
-          setAcRate(ourProblem.problem.acRate)
+          setAcRate(problemData.problem.acRate!=null? problemData.problem.acRate:0)
         }
         setTimeout(()=>{
           resolve()
@@ -81,7 +82,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
         setIsLoading(false)
     })
 
-  },[])
+  },[visibility])
   const p=JSON.parse(sessionStorage.getItem("currentProblem"))
   
 
@@ -98,7 +99,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       setCategory(problemData.category)
     }
     */
-   console.log(problemData)
+   console.log(problemData,"ourproblem:",ourProblem)
     
   return (
     <div class='bg-gray-200' data-testId="modal-public">
@@ -148,19 +149,19 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                 {ourProblem.level}
                 {
                   ourProblem.difficulty=="Easy"?
-                  <p class="text-green-400 font-bold ml-2">{ourProblem.difficulty}</p>
+                  <p class="text-green-400 font-bold ml-2">{problemData.difficulty}</p>
                   :
                   <p></p>
                 }
                 {
                   ourProblem.difficulty=="Medium"?
-                  <p class="text-orange-400 font-bold ml-2">{ourProblem.difficulty}</p>
+                  <p class="text-orange-400 font-bold ml-2">{problemData.difficulty}</p>
                   :
                   <p></p>
                 }
                 {
                   ourProblem.difficulty=="Hard"?
-                  <p class="text-red-500 font-bold ml-2">{ourProblem.difficulty}</p>
+                  <p class="text-red-500 font-bold ml-2">{problemData.difficulty}</p>
                   :
                   <p></p>
                 }
@@ -277,6 +278,8 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       no_attempts:problemData.problem.no_attempts,
                       level:ourProblem.difficulty,
                       tags:ourProblem.topicTags,
+                    
+                      titleSlug:problemData.problem.titleSlug!=null? problemData.problem.titleSlug:null,
                       page:ourProblem.page!=null? ourProblem.page:1,
                       topicTags:ourProblem.topicTags,
                       acRate:ourProblem.acRate!=null? ourProblem.acRate:0.0,
@@ -339,7 +342,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       acRate:ourProblem.acRate!=null ? ourProblem.acRate:0.0,
                       level:ourProblem.difficulty,
                       page:ourProblem.page!=null? ourProblem.page:1,
-
+                      titleSlug:ourProblem.titleSlug!=null?ourProblem.titleSlug:null,
                       attempts:[{attempt:"N/A",date:currDate}],
                       solution:"N/A",
                       userId:user.userId,

@@ -26,6 +26,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
   const problemsListCollectionRef=collection(db,"problems")
 
   useEffect(()=>{
+    if(visibility){
     console.log("user:",user)
     console.log("other:",otherUser)
     setCategory(ourProblem!=null && ourProblem.category!=null? ourProblem.category:"")
@@ -52,6 +53,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
     prom.then(()=>{
         setIsLoading(false)
     })
+  }
 
   },[visibility])
   
@@ -336,7 +338,7 @@ const mapStateToProps = (state, props) => {
   var problem=state.addOtherUsersProblem.problem
   const ourUser=state.addOtherUsersProblem.user
   const other=state.addOtherUsersProblem.otherUser
-  console.log("visibility"+visibility)
+
     if(problem!=null){
   return {
    visibility:visibility,

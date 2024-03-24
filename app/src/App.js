@@ -34,7 +34,7 @@ function App({user,visibility}) {
   
 
   return (
-    <div class="flex-col w-[100vw]">
+    <div class="flex-col ">
     <Router>
       <EditProblemModal/>
       <AddLeetcodeProblemModal/>

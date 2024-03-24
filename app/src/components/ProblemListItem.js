@@ -248,7 +248,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
 
     updateIndex(problemRef,index)
     }
-    console.log(problem.problem.attempts[0])
+    
     
 
 

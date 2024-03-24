@@ -115,13 +115,13 @@ function EditProblemModal({ourProblem,visibility}) {
 
   const dispatch=useDispatch()
 
-  console.log(examples)
+
 
   if(!isLoading && problem!=null){
 
-    console.log("prompt:"+prompt)
+    //console.log("prompt:"+prompt)
     
-    console.log("link:"+link)
+    //console.log("link:"+link)
   return (
     <div class='bg-gray-200 z-20' data-testId="modal-public">
      

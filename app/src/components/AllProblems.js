@@ -12,6 +12,7 @@ function AllProblems() {
   const[problems,setProblems]=useState()
   const[filtered,setFiltered]=useState()
   const[search,setSearch]=useState(false)
+  const[url,setUrl]=useState()
 
   useEffect(()=>{
 
@@ -60,8 +61,7 @@ function AllProblems() {
       var evie=ev.title.toUpperCase()
       str=str.replace(/ /g,"")
       evie=evie.replace(/ /g,"")
-      console.log(evie)
-      console.log(str)
+   
       const evieSplit=evie.split(" ")
       
       
@@ -72,7 +72,7 @@ function AllProblems() {
           if(o.includes(str)){
             //console.log(evie.includes(str))
           
-            console.log("\n\n")
+          
             if(!fil.includes(ev))
             fil.push(ev)
           }
@@ -80,7 +80,6 @@ function AllProblems() {
         
       }
     })
-    console.log(fil)
       resolve(fil)
     })
 
@@ -98,6 +97,17 @@ function AllProblems() {
     <div class="flex h-screen w-full flex-col border-gray-100 bg-gray-100 border-b-2 rounded-md m-4 p-3 z-auto">
       <p class="text-2xl text-center font-bold">Problems from Leetcode</p>
       <p class="font-bold text-center text-purple-500 text-xl">{problems.length} Questions</p> 
+      <input class="flex bg-white rounded-sm p-2 w-full" onChange={(e)=>{
+        setUrl(e.target.value)
+
+      }}/>
+      <button class="bg-purple-500 p-2 rounded-sm" onClick={()=>{
+        axios.post("http://localhost:3022/leetcode-problem-from-url",{url:url}).then((response)=>{
+          console.log(response)
+        })
+      }}>
+        <p class="text-white">Find</p>
+      </button>
       <input type="text" class="flex w-full p-2 rounded-md" onFocus={()=>{
         setSearch(true)
       }}onChange={(e)=>{

@@ -121,8 +121,9 @@ function Auth() {
 
             },500)
           }else{
+            alert("NO User found")
 
-            const prom1=new Promise((resolve1,reject1)=>{
+           /* const prom1=new Promise((resolve1,reject1)=>{
 
                createUserWithEmailAndPassword(auth,email,password).then((response)=>{
                 console.log(response)
@@ -187,6 +188,7 @@ function Auth() {
               })
              
             })
+            */
             
 
           }
@@ -202,7 +204,7 @@ function Auth() {
     }
 
     
-    await createUserWithEmailAndPassword(auth,email,password).then(async(response)=>{
+    /*await createUserWithEmailAndPassword(auth,email,password).then(async(response)=>{
       console.log("response 180",response.data)
       
       var userUid = auth.currentUser.uid;
@@ -347,6 +349,7 @@ function Auth() {
     }).catch((err)=>{
       console.log("err",err)
     })
+    */
     
     
   }

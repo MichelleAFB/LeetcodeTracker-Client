@@ -19,6 +19,7 @@ import { useParams } from 'react-router-dom'
 import IonIcon from '@reacticons/ionicons'
 import { connect } from 'react-redux'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 function ProblemList({id,reload}) {
 
   const[problems,setProblems]=useState()
@@ -46,6 +47,7 @@ function ProblemList({id,reload}) {
   const[full,setFull]=useState()
   const fuller=[]
   const[userDefinedIndex,setUserDefiniedIndex]=useState(false)
+  const navigate=useNavigate()
   useEffect(()=>{
     sessionStorage.setItem("green",0)
     sessionStorage.setItem("red",0)
@@ -742,6 +744,10 @@ const user=JSON.parse(sessionStorage.getItem("user"))
     }
   }
 
+  function randomNumber(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+  
   if(isLoading){
     
     return(
@@ -773,8 +779,8 @@ const user=JSON.parse(sessionStorage.getItem("user"))
 
    */
   return (
-    <div class="bg-gray-400 w-full  p-3 z-10">
-      <div class="flex w-full justify-end">
+    <div class="bg-gray-400 w-1/2  p-3 z-10">
+      <div class="flex w-1/2 justify-end">
         <button class="" onClick={()=>{
           
         }}>
@@ -911,6 +917,17 @@ const user=JSON.parse(sessionStorage.getItem("user"))
           setSearchByDate(false)
         }}>
            <p class="text-black text-center font-semibold">Reset</p>
+         </button>
+         <button class="bg-white p-2 rounded-md m-2 flex w-1/4 justify-center" onClick={()=>{
+          var position=Math.floor(randomNumber(0,problems.length-1))
+          console.log(problems[position])
+          if(id==null){
+            navigate("/practice/"+problems[position].id+"/"+problems[position].problem.index)
+          }else{
+            navigate("/practice/"+problems[id].id+"/"+problems[position].problem.index+"/"+id)
+          }
+        }}>
+           <p class="text-black text-center font-semibold">Generate Random Question</p>
          </button>
       </div>
       

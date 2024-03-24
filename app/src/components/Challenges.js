@@ -6,7 +6,7 @@ import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
 import "react-date-range/dist/theme/default.css"; // theme css file
 import { setDoc } from 'firebase/firestore';
-
+import IonIcon from '@reacticons/ionicons';
 import FullCalendar from "@fullcalendar/react";
 //import interactionPlugin from "@fullcalendar/core/"
 import dayGridPlugin from "@fullcalendar/daygrid";
@@ -41,6 +41,8 @@ function Challenges({refresh}) {
   const[streaks,setStreaks]=useState()
   const[isOpen,setIsOpen]=useState(false)
   const[editChallenge,setEditChallenge]=useState()
+  const[showCreateGroupChallenge,setShowCreateGroupChallenge]=useState(false)
+  const[createGroupChallenge,setCreateGroupChallenge]=useState({key:'selection',startDate:new Date(),endDate:new Date()})
   
   const dispatch=useDispatch()
   const selectionRange={
@@ -199,6 +201,8 @@ function Challenges({refresh}) {
     setEndDate(selection.selection.endDate)
 
   }
+
+ 
 
   function getDatesArray(start, end) {
     for(var arr=[],dt=new Date(start); dt<=new Date(end); dt.setDate(dt.getDate()+1)){
@@ -1115,18 +1119,22 @@ if(!isLoading){
       </div>
       
       <div class="flex w-full">
-      {show && !showDelete ?
+      {show && !showDelete && !showCreateGroupChallenge ?
       <div class="flex w-full">
-      <div class="flex-col w-3/4  bg-yellow-400 rounded-l-[5px]  rounded-md p-1 ">
-        <div class="flex"><p class="font-bold text-xl">Create New Challenge</p></div>
-
+      <div class="flex-col w-2/3  bg-yellow-400 rounded-l-[5px]  rounded-md p-1 ">
+        <div class="flex w-full">
+        <div class="flex w-1/2 justify-start">
+          <p class="font-bold text-xl">Create New Challenge</p>
+        </div>
         <div class="flex w-full justify-end">
         <button class="bg-green-500 rounded-md p-2" onClick={()=>{
           setShow(!show)
           setShowDelete(false)
+          setCreateGroupChallenge(false)
         }}>
           <p class="text-white">+</p>
         </button>
+      </div>
       </div>
 
       <div class="flex-col m-3">
@@ -1158,66 +1166,181 @@ if(!isLoading){
       
       </div>
       </div>
-      <div class="flex-col w-1/2  bg-orange-400 rounded-l-[5px]  rounded-md p-3 ">
-        <div class="flex"><p class="font-bold text-xl">Delete Challenge</p></div>
+      <div class="flex-col w-1/8  bg-purple-400  rounded-l-[5px] ]rounded-md p-1 ">
+          <div class="flex"></div>
 
-        <div class="flex w-full justify-end">
+          <div class="flex w-full justify-between">
+          <p class="font-bold text-xl text-start">Create Group Challenge</p>
+        </div>
+        <button class="bg-purple-700 rounded-md p-2" onClick={()=>{
+            setShow(false)
+            setShowDelete(false)
+            setShowCreateGroupChallenge(!showCreateGroupChallenge)
+          }}>
+            <IonIcon name="people-outline" style={{color:"white",font:"bold"}}/>
+          </button>
+      </div>
+      <div class="flex-col w-1/8  bg-orange-400 rounded-l-[5px]  rounded-md p-3 ">
+        <div class="flex"><p class="font-bold text-xl">Delete Challenge</p></div>
         <button class="bg-red-500 rounded-md p-2" onClick={()=>{
           setShowDelete(!showDelete)
           setShow(false)
+          setCreateGroupChallenge(false)
+
         }}>
           <p class="text-white">-</p>
         </button>
-      </div>
-
-      <div class="flex-col m-3">
-    
-        
-      
-      </div>
       </div>
       </div>
       :
       <div></div>
   }
-
-     
-{!show && showDelete ?
-<div class="flex w-full">
-<div class="flex-col w-1/4  bg-yellow-400  rounded-l-[5px] ]rounded-md p-1 ">
+      {showCreateGroupChallenge && !showDelete && !show ?
+      <div class="flex w-full">
+        <div class="flex-col w-1/4  bg-yellow-400  rounded-l-[5px] ]rounded-md p-1 ">
         <div class="flex"></div>
 
         <div class="flex w-full justify-between">
         <p class="font-bold text-xl text-start">Create  New Challenge</p>
-        <button class="bg-red-500 rounded-md p-2" onClick={()=>{
+      </div>
+      <button class="bg-green-500 rounded-md p-2" onClick={()=>{
           setShow(!show)
           setShowDelete(false)
+          setShowCreateGroupChallenge(false)
         }}>
-          <p class="text-white">-</p>
+          <p class="text-white">+</p>
         </button>
       </div>
+      <div class="flex-col w-3/4  bg-purple-400 rounded-l-[5px]  rounded-md p-1 ">
+        <div class="flex w-full ">
+          <div class="flex w-1/2 justify-start">
+          <p class="font-bold text-xl text-start">Create Group Challenge</p>
+          </div>
+          <div class="flex w-1/2 justify-end">
+        <button class="bg-purple-700 rounded-md p-2" onClick={()=>{
+            setShow(false)
+            setShowDelete(false)
+            setShowCreateGroupChallenge(!showCreateGroupChallenge)
+          }}>
+           <IonIcon name="people-outline" style={{color:"white",font:"bold"}}/>
+          </button>
+          </div>
+        </div>
+    
 
       <div class="flex-col m-3">
-    
+        <form onSubmit={submit} >
+        <input type="text" name="name" class="flex w-full rounded-sm bg-white p-2 mb-2" placeholder="Title" onChange={(e)=>{
+        
+          const name=e.target.name
+          const value=e.target.value
+        
+          console.log(value,createGroupChallenge)
+          setCreateGroupChallenge((prev)=> {return ({...prev,name:value})})
+        }}/>
+        <input type="number" name="no_questions" class="flex w-1/2 rounded-sm bg-white p-2 mb-2"  default={5} placeholder="# of Questions" onChange={(e)=>{
+               const name=e.target.name
+               const value=e.target.value
+             
+               console.log(value,createGroupChallenge)
+               setCreateGroupChallenge((prev)=> {return ({...prev,no_questions:value})})
+        }}/>
+         <input type="number" name="no_passes"  class="flex w-1/2 rounded-sm bg-white p-2 mb-2"  default={0} placeholder="# of forgiveness passes" onChange={(e)=>{
+              const name=e.target.name
+              const value=e.target.value
+            
+              console.log({name:value},createGroupChallenge)
+              setCreateGroupChallenge(prev=> {return({...prev,no_passes:value,initialPasses:value})})
+        }}/>
+        <div class="flex-col">
+          <p class="text-xl font-bold">Start Date/End Date</p>
+          <DateRangePicker ranges={[{key:createGroupChallenge.key,startDate:createGroupChallenge.startDate,endDate:createGroupChallenge.endDate}]}onChange={(selection)=>{
+            console.log(selection)
+            var startDate=selection.startDate
+            var endDate=selection.endDate
+            setCreateGroupChallenge(prev=> {return({...prev,key:"selection",startDate:startDate,endDate:endDate})})
+
+          }} 
+             minDates={new Date()} 
+             />
+
+        </div>
+        <div class="flex w-full mt-2 justify-center">
+          <button class="bg-green-500 rounded-md flex p-2" type="submit">
+            <p class="text-white font-bold">Submit</p>
+          </button>
+          </div>
+        </form>
         
       
       </div>
+      </div>
+      <div class="flex-col w-full  bg-orange-400  rounded-l-[5px] p-1">
+              <div class="flex"></div>
+
+              <div class="flex w-full justify-between">
+            <p class="font-bold text-xl text-start">Delete Challenge</p>
+         
+           </div>
+           <button class="bg-red-500 rounded-md p-2" onClick={()=>{
+                setShowDelete(!showDelete)
+                setShowCreateGroupChallenge(false)
+                setShow(false)
+              }}>
+             <p class="text-white">-</p>
+             </button>
+          </div>
+      </div>
+      :
+      <div></div>
+  }
+     
+{!show && showDelete && !showCreateGroupChallenge?
+<div class="flex w-full">
+<div class="flex-col w-1/8  bg-yellow-400  rounded-l-[5px] ]rounded-md p-1 ">
+        <div class="flex"></div>
+
+        <div class="flex w-full justify-between">
+        <p class="font-bold text-xl text-start">Create  New Challenge</p>
+      </div>
+      <button class="bg-green-500 rounded-md p-2" onClick={()=>{
+          setShow(!show)
+          setShowDelete(false)
+          setShowCreateGroupChallenge(false)
+        }}>
+          <p class="text-white">+</p>
+        </button>
+      </div>
+      <div class="flex-col w-1/8  bg-purple-400  rounded-l-[5px] ]rounded-md p-1 ">
+            <div class="flex"></div>
+
+            <div class="flex w-full justify-between">
+            <p class="font-bold text-xl text-start">Create Group Challenge</p>
+          </div>
+          <button class="bg-purple-700 rounded-md p-2" onClick={()=>{
+              setShow(false)
+              setShowDelete(false)
+              setShowCreateGroupChallenge(!showCreateGroupChallenge)
+            }}>
+            <IonIcon name="people-outline" style={{color:"white",font:"bold"}}/>
+            </button> 
       </div>
 
       <div class="flex-col w-3/4  bg-orange-400  rounded-r-[5px] p-3 ">
 
         <div class="flex w-full justify-between">
         <p class="font-bold text-xl text-start">Delete Challenge</p>
-        <button class="bg-green-500 rounded-md p-2" onClick={()=>{
+        <button class="bg-red-500 rounded-md p-2" onClick={()=>{
           setShowDelete(!showDelete)
           setShow(false)
+          setShowCreateGroupChallenge(false)
         }}>
-          <p class="text-white">+</p>
+          <p class="text-white">-</p>
         </button>
       </div>
 
       <div class="flex-col m-3">
-        hi
+       
         <div class="h-[20vh] overflow-y-scroll overflow-hidden w-full bg-white">
           {
             challenges.map((c)=>{
@@ -1242,45 +1365,48 @@ if(!isLoading){
   }
    
   </div>
-  {!show && !showDelete ?
+  {!show && !showDelete && !showCreateGroupChallenge ?
   <div class="flex w-full">
-      <div class="flex-col w-1/2  bg-yellow-400 rounded-l-[5px] p-1 ">
+      <div class="flex-col  bg-yellow-400 rounded-l-[5px] p-1 w-full ">
         <div class="flex"></div>
 
         <div class="flex w-full justify-between">
         <p class="font-bold text-xl text-start">Create New Challenge</p>
         <button class="bg-green-500 rounded-md p-2" onClick={()=>{
           setShow(!show)
+          setShowDelete(false)
+          setShowCreateGroupChallenge(false)
         }}>
           <p class="text-white">+</p>
         </button>
       </div>
+    </div>
+    <div class="flex-col w-full  bg-purple-400  rounded-l-[5px] p-1">
+              <div class="flex"></div>
 
-      <div class="flex-col m-3">
-  
-        
-      
-      </div>
-      </div>
-
-      <div class="flex-col w-1/2  bg-orange-400  rounded-r-[5px] p-1 ">
-        <div class="flex"></div>
-
-        <div class="flex w-full justify-between">
-        <p class="font-bold text-xl text-start">Delete Challenge</p>
-        <button class="bg-red-500 rounded-md p-2" onClick={()=>{
-          setShowDelete(!showDelete)
-        }}>
-          <p class="text-white">-</p>
+              <div class="flex w-full justify-between">
+        <p class="font-bold text-xl text-start">Create Group Challenge</p>
+        <button class="bg-purple-700 rounded-md p-2" onClick={()=>{
+          setShowCreateGroupChallenge(!showCreateGroupChallenge)
+          setShow(false)
+          setShowDelete(false)
+        }}> 
+      <IonIcon name="people-outline" style={{color:"white"}}/>       
         </button>
+        </div>
       </div>
+      <div class="flex-col w-full  bg-orange-400  rounded-l-[5px] p-1">
+              <div class="flex"></div>
 
-      <div class="flex-col m-3">
-    
-        
-      
-      </div>
-      </div>
+              <div class="flex w-full justify-between">
+            <p class="font-bold text-xl text-start">Delete Challenge</p>
+            <button class="bg-red-500 rounded-md p-2" onClick={()=>{
+                setShowDelete(!showDelete)
+              }}>
+             <p class="text-white">-</p>
+             </button>
+           </div>
+          </div>
   </div>
       :
       <div></div>
