@@ -186,6 +186,21 @@ function Header({ourUser,visibility}) {
                   <p class=" font-bold text-white text-xs">
                     {n.message}-
                   </p>
+                  {n.type!=null && n.type=="GROUP_CHALLENGE_REQUEST"?
+                  <div class="flex p-3">
+                    {
+                      user.groupChallengeRequests.map((r)=>{
+                        if(r.challengeId==n.challengeId){
+                          return(<button class="bg-gray-700 rounded-sm p-1">
+                            <p class="text-white">Open</p>
+                          </button>)
+                        }
+                      })
+                    }
+                  </div>
+                  :
+                  <div></div>
+                  }
                   <p class="text-gray-200 font-semi-bold text-xs">{new Date(n.time.seconds*1000).toString().substring(0,25)}</p>
                   </div>)
                 })

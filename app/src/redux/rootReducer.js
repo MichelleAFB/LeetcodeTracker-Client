@@ -6,6 +6,7 @@ import { settingsReducer } from './settings/settings-reducer'
 import { editChallengeReducer } from './editChallenge.js/editChallenge-reducer'
 import { editFollowersAndFollowingReducer } from './editFollowersAndFollowing/editFollowersAndFollowing-reducer'
 import { addOtherUsersProblemReducer } from './addOtherUsersProblem/addOtherUsersProblem-actions'
+import { groupChallengeReducer } from './groupChallangeRequest/groupChallenge-reducer'
 export const rootReducer=combineReducers({
   editProblem:editProblemReducer,
   user:editUserReducer,
@@ -13,5 +14,6 @@ export const rootReducer=combineReducers({
   settings:settingsReducer,
   editChallenge:editChallengeReducer,
   editFollowersAndFollowing:editFollowersAndFollowingReducer,
-  addOtherUsersProblem:addOtherUsersProblemReducer
+  addOtherUsersProblem:addOtherUsersProblemReducer,
+  groupChallenge:groupChallengeReducer
 })

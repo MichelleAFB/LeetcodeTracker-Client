@@ -1,6 +1,7 @@
 import React from 'react'
 import {useState,useEffect} from 'react'
 import { db} from '../firebase/firebase'
+
 import { collection,getDocs,doc, updateDoc ,getDoc} from 'firebase/firestore' 
 import { DateRangePicker } from "react-date-range";
 import "react-date-range/dist/styles.css"; // main style file
@@ -16,9 +17,10 @@ import axios from 'axios';
 import { getDatasetAtEvent } from 'react-chartjs-2';
 import { Button, Popover, PopoverHeader, PopoverBody } from "reactstrap";
 import DeleteChallengeComponent from './DeleteChallengeComponent';
-import { useDispatch } from 'react-redux';
+import { createDispatchHook, useDispatch } from 'react-redux';
 import { setEditChallengeVisibility,setChallenge, refreshChallengeChart } from '../redux/editChallenge.js/editChallenge-actions';
 import { connect } from 'react-redux';
+import ChallengesSelectedContestants from './ChallengesSelectedContestants';
 function Challenges({refresh}) {
 
   const usersCollectionRef=collection(db,"users")
@@ -37,17 +39,25 @@ function Challenges({refresh}) {
   const[initialPasses,setInitialPasses]=useState(passes)
   const[startDate,setStartDate]=useState(new Date())
   const [endDate,setEndDate]=useState(new Date()) 
+  const[startDateGroup,setStartDateGroup]=useState(new Date())
+  const [endDateGroup,setEndDateGroup]=useState(new Date()) 
   const[updateChallenge,setUpdateChallenge]=useState("NOT DONE")
   const[streaks,setStreaks]=useState()
   const[isOpen,setIsOpen]=useState(false)
   const[editChallenge,setEditChallenge]=useState()
   const[showCreateGroupChallenge,setShowCreateGroupChallenge]=useState(false)
-  const[createGroupChallenge,setCreateGroupChallenge]=useState({key:'selection',startDate:new Date(),endDate:new Date()})
-  
+  const[createGroupChallenge,setCreateGroupChallenge]=useState({userId:ourUser.userId,failedDays:0,current:true,lastUpdated:new Date(),success:true,key:'selection',startDate:new Date(),endDate:new Date()})
+  const [selectedContestants,setSelectedContestants]=useState([])
+  const[contestantsChanged,setContestantsChanged]=useState(false)
   const dispatch=useDispatch()
   const selectionRange={
     startDate:startDate,
     endDate:endDate,
+    key:"selection"
+  }
+  const selectionGroupRange={
+    startDate:startDateGroup,
+    endDate:endDateGroup,
     key:"selection"
   }
 
@@ -61,10 +71,24 @@ function Challenges({refresh}) {
     const newStreaks=[]
     var cha
     const chall=[]
+    
+   
     const prom=new Promise(async(resolve,reject)=>{
         axios.get("http://localhost:3022/get-current-challenge-2/"+ourUser.userId).then(async(response)=>{
+          
       console.log(response)
-    
+      const u=collection(db,"users")
+      const d=await getDocs(u)
+      const user=d.docs.filter((f)=>{
+        if(f.data().userId==ourUser.userId){
+          console.log("MATCH",d,f.data())
+          
+          return f.data()
+        }
+      })
+      console.log(user)
+      sessionStorage.setItem("user",JSON.stringify(user[0].data()))
+      
         if(response.data.currentChallenge!=null){
           setCurrentChallenge(response.data.currentChallenge)
 
@@ -127,7 +151,7 @@ function Challenges({refresh}) {
             setTimeout(()=>{
               resolve()
             },500)
-          },500)
+          },800)
         })
      
 
@@ -193,8 +217,11 @@ function Challenges({refresh}) {
       })
     })
 
-  },[refresh])
+  },[refresh,selectedContestants])
 
+  function handleSelectedContestants(p){
+    setSelectedContestants(p)
+  }
   function handleSelect(selection){
     console.log(selection)
     setStartDate(selection.selection.startDate)
@@ -271,9 +298,184 @@ async function checkCurrent(){
     }
 
   })
+}  function randomNumber(min, max) {
+  return Math.random() * (max - min) + min;
 }
 
+async function submitGroupChallenge(e){
+  e.preventDefault()
+  console.log(createGroupChallenge)
+  console.log(selectedContestants)
+  const collectionRef=collection(db,"users")
+  
+  const length=getDatesArray(startDateGroup,endDateGroup).length
+  const d=await getDocs(collectionRef)
+  const challengeId=Math.floor(randomNumber(0,60000))
+  const allusers=[]
+  const allUsers=d.docs.map((f)=>{
+    if(selectedContestants.includes(f.data().username)){
+     
+     
+     
+      const u={challengeId:challengeId,userId:f.data().userId,success:true,passes:createGroupChallenge.no_passes,initialPasses:createGroupChallenge.no_passes,username:f.data().username,firstname:f.data().firstname,lastname:f.data().lastname,createdBy:ourUser.userId,approved:false,denied:false}
+      
+      return u
+    }
+  })
+  console.log(allUsers.length+" before")
+  var i=0
+ allUsers.map(( element )=> {
+    if(element!=null){
+      allusers.push(element)
+    }
+ });
+ // allusers.splice(allusers.length-1,1)
 
+
+  
+  d.docs.map(async(d)=>{
+  
+    if(d.data().userId==ourUser.userId){
+      
+   
+      if(selectedContestants.length<1){
+        alert("Please select contestants!")
+      }
+      if(length>1){
+        alert("Please select a valid date range")
+      }
+      if(createGroupChallenge.name==null || Number(createGroupChallenge.no_questions)<=0 || Number(createGroupChallenge.no_passes)<=0 || length==0){
+        alert("please fill out all fields")
+      }
+   
+      if( createGroupChallenge.name!=null && Number(createGroupChallenge.no_questions)>0 && Number(createGroupChallenge.no_passes)>=0 && length>0){
+       setTimeout(()=>{
+      
+      
+        const newChallenge=createGroupChallenge
+        newChallenge.no_questions=Number(createGroupChallenge.no_questions)
+        newChallenge.challengeId=challengeId
+        newChallenge.startDate=startDateGroup
+        newChallenge.usedPasses=0
+        newChallenge.title=createGroupChallenge.name
+        newChallenge.endDate=endDateGroup
+        newChallenge.length=length
+        newChallenge.passes=Number(createGroupChallenge.no_passes)
+        newChallenge.initialPasses=Number(createGroupChallenge.no_passes)
+        newChallenge.selectedContestants=allusers
+   
+       
+
+        const  refer=doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
+      
+        try{
+          setTimeout(async()=>{
+          console.log("newChallenge",newChallenge)
+        if(d.data().groupChallenges==null || d.data().groupChallenges.length==0){
+         
+          const updateGroup=await updateDoc(refer,{
+            "groupChallenges":[newChallenge]
+          })
+          const  updatedRefer=await getDoc(refer)
+          setTimeout(()=>{
+            axios.post("http://localhost:3022/update-group-challenge-contestant/"+ourUser.userId,{case:"CREATE_GROUP_CHALLENGE_FOR_CREATOR",user:updatedRefer.data(),challenge:newChallenge}).then((response)=>{
+              console.log(response)
+              if(response.data.success){
+                alert("SUCCESS: sent out requests for group challenge, "+newChallenge.name)
+              }
+            })
+
+          },1000)
+
+        }else{
+          const cha=d.data().groupChallenges
+          cha.push(newChallenge)
+          const updateGroup=await updateDoc(refer,{
+            "groupChallenges":cha
+          })
+          const  updatedRefer=await getDoc(refer)
+          setTimeout(()=>{
+            axios.post("http://localhost:3022/update-group-challenge-contestant/"+ourUser.userId,{case:"CREATE_GROUP_CHALLENGE_FOR_CREATOR",user:updatedRefer.data(),challenge:newChallenge}).then((response)=>{
+              console.log(response)
+              if(response.data.success){
+                alert("SUCCESS: sent out requests for group challenge, "+newChallenge.name)
+              }
+            })
+
+          },1000)
+        
+
+        }
+      },1200)
+      }catch(err){
+        console.log(err)
+      }
+        allusers.map(async(p)=>{
+          if(p!=null){
+          
+          const refer=doc(db,"users",p.userId)
+          
+          const userData=await getDoc(refer)
+          console.log(userData.data())
+            var n
+            var an
+            var gr
+            const allNots=refer.notifications!=null? refer.notifications:null
+            const  nots=refer.allNotifications!=null?refer.allNotifications:null
+            const groupChallengeRequests=refer.groupChallengeRequests!=null?refer.groupChallengeRequests:null
+            var message={time:new Date(),type:"GROUP_CHALLENGE_REQUEST",challengeId:challengeId,message:ourUser.username +"("+ourUser.firstname +" "+ourUser.lastname+") has request you to join a group challenge,"+newChallenge.title+", with "+ (allusers.length-1).toString()+" other users."}
+            const newNotif=[message]
+            const newAllNotifs=[message]
+            const newGR=[p]
+
+            if(allNots==null){
+              an=newAllNotifs
+            }else{
+              allNots.push(message)
+            }
+
+            if(nots==null){
+              n=newNotif
+            }else{
+              nots.push(message)
+            }
+            if(groupChallengeRequests==null){
+              gr=newGR
+            }else{
+              groupChallengeRequests.push(message)
+            }
+
+        try{
+          setTimeout(async()=>{
+            const updateContestant=await updateDoc(refer,{
+              hasNewNotifications:true,
+              notifications:n==null?nots:n,
+              allNotifications:an==null?allNots:an,
+              groupChallengeRequests: gr==null?groupChallengeRequests:gr
+            })
+            setTimeout(async()=>{
+              const updateData=await getDoc(refer)
+             axios.post("http://localhost:3022/update-group-challenge-contestant/"+p.userId,{user:updateData.data(),case:"CREATE_GROUP_CHALLENGE_REQUEST"}).then((response)=>{
+              console.log(response)
+             })
+            },500)
+           
+           },1000)
+          
+
+        }catch(err){
+          console.log(err)
+        }
+
+        }
+        })
+      },2000)
+      }
+    }
+  })
+
+  
+}
 
 async function checkStatusForStreak(streak,challenge){
   console.log("\nCHECK STATUS For Streak:"+streak.day)
@@ -1003,6 +1205,11 @@ if(!isLoading){
           <div class="flex-col w-full">
       
             <p class="font-bold text-2xl">Your Challenges</p>
+            <button class="bg-green-400 p-2 rounded-md" onClick={()=>{
+              axios.post("http://localhost:3022/update-group-challenge-contestant/"+ourUser.userId,{case:"CREATE_GROUP_CHALLENGE_FOR_CREATOR",user:ourUser,challenge:ourUser.groupChallenges[0]})
+            }}>
+              <p class="text-white">Here</p>
+            </button>
           </div>
           {
             showCurrentChallenge?
@@ -1229,7 +1436,7 @@ if(!isLoading){
     
 
       <div class="flex-col m-3">
-        <form onSubmit={submit} >
+        <form onSubmit={submitGroupChallenge} >
         <input type="text" name="name" class="flex w-full rounded-sm bg-white p-2 mb-2" placeholder="Title" onChange={(e)=>{
         
           const name=e.target.name
@@ -1252,17 +1459,70 @@ if(!isLoading){
               console.log({name:value},createGroupChallenge)
               setCreateGroupChallenge(prev=> {return({...prev,no_passes:value,initialPasses:value})})
         }}/>
+      <p class="font-bold text-xl">
+        Contestants
+      </p>
+    
+     <ChallengesSelectedContestants setSelectedContestants={setSelectedContestants} selectedContestants={selectedContestants} contestantsChanged={contestantsChanged}/>
+     
+ 
+         <select name="cars" class=" flex p-2 rounded-md w-full" id="cars" onChange={(e)=>{
+         console.log(selectedContestants)
+          
+        
+          if(selectedContestants.length>0){
+            const exists=selectedContestants.filter((c)=>{
+              console.log(e.target.value,c)
+              if( c==e.target.value){
+                 return true
+              }
+             })
+             console.log(exists)
+          if(!exists.includes(true)){
+           const ppl=selectedContestants
+           ppl.push(e.target.value)
+            setTimeout(()=>{
+              console.log(ppl)
+              setSelectedContestants(ppl)
+              setContestantsChanged(!contestantsChanged)
+          },500)
+          }
+          
+          }else{
+            const ppl=selectedContestants
+            ppl.push(e.target.value)
+
+            setTimeout(()=>{
+              setSelectedContestants(ppl)
+              setContestantsChanged(!contestantsChanged)
+
+            },1500)
+
+          }
+         }}>
+              {
+                ourUser.followers.map((f)=>{
+                  return(<option class="flex-col p-2 border-b-2 border-gray-300 ">
+                    <p class="font-bold" value={f}>
+                      {f.username}
+                      </p></option>)
+                })
+              } 
+            </select>
         <div class="flex-col">
           <p class="text-xl font-bold">Start Date/End Date</p>
-          <DateRangePicker ranges={[{key:createGroupChallenge.key,startDate:createGroupChallenge.startDate,endDate:createGroupChallenge.endDate}]}onChange={(selection)=>{
-            console.log(selection)
-            var startDate=selection.startDate
-            var endDate=selection.endDate
+          <DateRangePicker min={new Date()} ranges={[selectionGroupRange]}onChange={(selection)=>{
+            console.log(selection.selection.startDate)
+            console.log(selectionGroupRange)
+         
+            setStartDateGroup(selection.selection.startDate)
+            setEndDateGroup(selection.selection.endDate)
             setCreateGroupChallenge(prev=> {return({...prev,key:"selection",startDate:startDate,endDate:endDate})})
 
           }} 
              minDates={new Date()} 
              />
+          
 
         </div>
         <div class="flex w-full mt-2 justify-center">

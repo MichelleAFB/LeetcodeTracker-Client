@@ -23,6 +23,7 @@ import SettingsModal from './components/SettingsModal';
 import EditChallengeModal from './components/EditChallengeModal';
 import ShowFFModal from './components/ShowFFModal';
 import AddOtherUsersProblemModal from './components/AddOtherUsersProblemModal';
+import ChallengeRequestModal from './components/ChallengeRequestModal';
 
 function App({user,visibility}) {
 
@@ -42,6 +43,7 @@ function App({user,visibility}) {
       <EditChallengeModal/>
       <ShowFFModal/>
       <AddOtherUsersProblemModal/>
+      <ChallengeRequestModal/>
 
 
       {
