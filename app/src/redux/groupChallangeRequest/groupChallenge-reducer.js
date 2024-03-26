@@ -12,7 +12,7 @@ export const groupChallengeReducer = (state = initialState, action) => {
       console.log("REDUX:SETTING EDIT PROBLEM");
       return {
         ...state,
-        challenge: action.payload.problem,
+        challenge: action.payload.challenge,
       };
 
     case actionTypes.SET_CHALLENGE_REQUEST_MODAL_VISIBILITY:

@@ -1,6 +1,7 @@
 import * as actionTypes from "./groupChallenge-types";
 
 export function setChallengeRequest(challenge) {
+  console.log("SETTING CHALLENGE")
   return {
     type: actionTypes.SET_CHALLENGE_REQUEST,
     payload: {

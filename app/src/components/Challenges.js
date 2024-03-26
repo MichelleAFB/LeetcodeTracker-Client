@@ -148,6 +148,7 @@ function Challenges({refresh}) {
          // const dates=getDatesArray(new Date(currChallenge.startDate),new Date(currChallenge.endDate))
 
           setTimeout(()=>{
+            setOurUser(JSON.parse(sessionStorage.getItem("user")))
             setTimeout(()=>{
               resolve()
             },500)
@@ -317,7 +318,7 @@ async function submitGroupChallenge(e){
      
      
      
-      const u={challengeId:challengeId,userId:f.data().userId,success:true,passes:createGroupChallenge.no_passes,initialPasses:createGroupChallenge.no_passes,username:f.data().username,firstname:f.data().firstname,lastname:f.data().lastname,createdBy:ourUser.userId,approved:false,denied:false}
+      const u={challengeId:challengeId,userId:f.data().userId,success:true,passes:Number(createGroupChallenge.no_passes),initialPasses:Number(createGroupChallenge.no_passes),username:f.data().username,firstname:f.data().firstname,lastname:f.data().lastname,createdBy:ourUser.userId,approved:false,denied:false}
       
       return u
     }

@@ -1,18 +1,20 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate ,useLocation, Link} from 'react-router-dom'
-import { connect, useSelector } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
+
 import { query,doc,collection,getDocs,where, updateDoc} from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 import IonIcon from '@reacticons/ionicons'
-
+import { setChallengeRequestModalVisibility,setChallengeRequest } from '../../redux/groupChallangeRequest/groupChallenge-actions'
+import OpenChallengeRequestButton from './OpenChallengeRequestButton'
 function Header({ourUser,visibility}) {
 
   const[isLoading,setIsLoading]=useState(true)
   const [user,setUser]=useState()
   const[hasNotifications,setHasNotifications]=useState(false)
   const location=useLocation()
- 
+ const dispatch=useDispatch()
   useEffect(()=>{
 
     const prom=new Promise(async(resolve,reject)=>{
@@ -77,60 +79,59 @@ function Header({ourUser,visibility}) {
          <div class="flex-col justify-end">
         
            <div class="group relative m-12 flex w-2/3 justify-center">
-           <button class="justify-end flex w-full m-2" onClick={async()=>{
-           
-            const q = collection(db, "users")
-            const docs=await getDocs(q)
-           
-            docs.docs.filter(async(d)=>{
-              console.log(d)
-
-              if(d.data().email==user.email){
-                const doo=await doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
-               if(d.data().allNotifications==null){
-                await updateDoc(doo,{"allNotifications":d.data().notifications})
-                await updateDoc(doo,{
-                  "hasNewNotifications":false
-                })
-                await updateDoc(doo,{
-                  "notifications":[]
-                })
-               }else if(d.data().allNotifications!=null){
-                const allnotif=d.data().allNotifications
-               d.data().notifications.map((n)=>{
-                allnotif.push(n)
-               })
-
-               setTimeout(async(allnotif)=>{
-                await updateDoc(doo,{"allNotifications":allnotif})
-                await updateDoc(doo,{
-                  "hasNewNotifications":false
-                })
-                await updateDoc(doo,{
-                  "notifications":[]
-                })
-               },300)
-               }
-                console.log(doo)
-
-                setTimeout(()=>{
-                  setHasNotifications(!hasNotifications)
-             },600)
-              }
-            })
-          
-         
-
-           }}>
+           <button class="justify-end flex w-full m-2" >
               <p class="text-md text-white m-0">{user.firstname} {user.lastname}</p>
-             {user.hasNewNotifications? <IonIcon name="notifications-outline" size="large"/>:<p></p>}
+             {user.hasNewNotifications? <IonIcon onClick={async()=>{
+           
+           const q = collection(db, "users")
+           const docs=await getDocs(q)
+          
+           docs.docs.filter(async(d)=>{
+             console.log(d)
+
+             if(d.data().email==user.email){
+               const doo=await doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
+              if(d.data().allNotifications==null){
+               await updateDoc(doo,{"allNotifications":d.data().notifications})
+               await updateDoc(doo,{
+                 "hasNewNotifications":false
+               })
+               await updateDoc(doo,{
+                 "notifications":[]
+               })
+              }else if(d.data().allNotifications!=null){
+               const allnotif=d.data().allNotifications
+              d.data().notifications.map((n)=>{
+               allnotif.push(n)
+              })
+
+              setTimeout(async(allnotif)=>{
+               await updateDoc(doo,{"allNotifications":allnotif})
+               await updateDoc(doo,{
+                 "hasNewNotifications":false
+               })
+               await updateDoc(doo,{
+                 "notifications":[]
+               })
+              },300)
+              }
+               console.log(doo)
+
+               setTimeout(()=>{
+                 setHasNotifications(!hasNotifications)
+            },600)
+             }
+           })
+           
+         
+        
+
+          }} name="notifications-outline" size="large"/>:<p></p>}
            </button>  
           </div>
-          {hasNotifications && user.hasNewNotifications?<span onClick={()=>{
-            setHasNotifications(!hasNotifications)
-          }} class=" p-2 absolute top-20 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
-            <div class="flex-col">
-              <div class="flex w-full justify-end">
+          {hasNotifications && user.hasNewNotifications? <span class=" p-2 absolute top-20 w-1/3 right-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
+            <div class="flex-col ">
+              <div class="flex w-full justify-end ">
                 <button class="flex bg-red-500 p-1" onClick={async()=>{
                               const q = collection(db, "users")
                               const docs=await getDocs(q)
@@ -178,12 +179,12 @@ function Header({ourUser,visibility}) {
                   </p>
                 </button>
               </div>
-            <ul>
+            <ul class={`h-[${user.notifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden `}>
               {
                 user.notifications.map((n)=>{
                   return(
                     <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
-                  <p class=" font-bold text-white text-xs">
+                  <p class=" font-bold text-white text-3xs">
                     {n.message}-
                   </p>
                   {n.type!=null && n.type=="GROUP_CHALLENGE_REQUEST"?
@@ -191,9 +192,7 @@ function Header({ourUser,visibility}) {
                     {
                       user.groupChallengeRequests.map((r)=>{
                         if(r.challengeId==n.challengeId){
-                          return(<button class="bg-gray-700 rounded-sm p-1">
-                            <p class="text-white">Open</p>
-                          </button>)
+                          return(<OpenChallengeRequestButton challenge={r}/>)
                         }
                       })
                     }

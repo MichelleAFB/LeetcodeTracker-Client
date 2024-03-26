@@ -158,7 +158,7 @@ function User(){
                            user.username!=null  && ourUser.username!=null && notFollowing==true ?
                            <button class="bg-gray-600 rounded-md  pb-1 pt-1 pr-2 pl-2" onClick={()=>{
                             const ourUser=JSON.parse(sessionStorage.getItem("user"))
-                                axios.post("https://leetcodetracker.onrender.com/follow-user/"+user.username+"/"+ourUser.username).then(async(response)=>{
+                                axios.post("http://localhost:3022/follow-user/"+user.username+"/"+ourUser.username).then(async(response)=>{
                                     if(response.data.success){
                                         sessionStorage.setItem("user",JSON.stringify(response.data.user))
                                         alert("You now follow "+ user.username)
