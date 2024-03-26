@@ -289,9 +289,13 @@ function ChallengeRequestModal({challenge,visibility}) {
                     var newAllNots=hdata.notifications!=null && hdata.notifications.length>0? hdata.allNotifications:[]
                     if(newNots.length>0){
                       newNots.push(notification)
+                    }else{
+                      newNots=[notification]
                     }
                     if(newAllNots.length>0){
                       newAllNots.push(notification)
+                    }else{
+                      newAllNots=[notification]
                     }
                     const updateHost=await updateDoc(hostRef,{
                       notifications:newNots,
@@ -303,6 +307,12 @@ function ChallengeRequestModal({challenge,visibility}) {
                     const contRef=doc(db,"users",challenge.userId)
                     var contData=await getDoc(contRef)
                     contData=contData.data()
+                    var newAddGroupChallenge=contData.groupChallenges!=null && hdata.notifications.length>0? hdata.groupChallenges:[]
+                    if(newAddGroupChallenge.length==0){
+                      newAddGroupChallenge=[newGroupChallenge]
+                    }else{
+                      newAddGroupChallenge.push(newGroupChallenge)
+                    }
                     if(contData.groupChallengeRequests!=null && contData.groupChallengeRequests.length>0){
                       var newChallengeReq=contData.groupChallengeRequests
                       contData.groupChallengeRequests.map((c)=>{
@@ -313,7 +323,8 @@ function ChallengeRequestModal({challenge,visibility}) {
                           newChallengeReq[contIndex].dateDenied=new Date()
                          setTimeout(async()=>{
                           const updateCont=await updateDoc(contRef,{
-                            groupChallengeRequests:newChallengeReq
+                            groupChallengeRequests:newChallengeReq,
+                            groupChallenges:newAddGroupChallenge
                           })
                          },150)
                         }
