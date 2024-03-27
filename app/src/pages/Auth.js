@@ -117,7 +117,21 @@ function Auth() {
 
             setTimeout(()=>{
 
-             navigate('/home')
+           
+             const user=JSON.parse(sessionStorage.getItem("user"))
+             axios.get("http://localhost:3022/get-current-group-challenge/"+user.userId).then((response)=>{
+              console.log(response)
+             if(response.data.success){
+                if(response.data.groupChallenges.length>0){
+                  sessionStorage.setItem("currentGroupChallenges",JSON.stringify(response.data.groupChallenges))
+                  setTimeout(()=>{
+                    navigate("/home")
+                  },300)
+                }else{
+                  //navigate("/home")
+                }
+              }
+             })
 
             },500)
           }else{

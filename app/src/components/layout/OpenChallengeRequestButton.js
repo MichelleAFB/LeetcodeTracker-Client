@@ -5,9 +5,9 @@ import { setChallengeRequestModalVisibility,setChallengeRequest } from '../../re
 function OpenChallengeRequestButton({challenge}) {
     const dispatch=useDispatch()
 
-    if(challenge.approved==true || challenge.denied==true){
+  /*  if(challenge.approved==true || challenge.denied==true){
         return(<div></div>)
-    }else{
+    }else{*/
   return (
     <button class="bg-gray-700 rounded-sm p-1" onClick={()=>{
         console.log("CLICK")
@@ -19,7 +19,7 @@ function OpenChallengeRequestButton({challenge}) {
                 <p class="text-white">Open Request</p>
      </button>
   )
-            }
+           // }
 }
 
 export default OpenChallengeRequestButton

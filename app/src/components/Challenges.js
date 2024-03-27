@@ -49,6 +49,9 @@ function Challenges({refresh}) {
   const[createGroupChallenge,setCreateGroupChallenge]=useState({userId:ourUser.userId,failedDays:0,current:true,lastUpdated:new Date(),success:true,key:'selection',startDate:new Date(),endDate:new Date()})
   const [selectedContestants,setSelectedContestants]=useState([])
   const[contestantsChanged,setContestantsChanged]=useState(false)
+  const[showGroupChallenges,setShowGroupChallenges]=useState(false)
+  const[allGroupChallenges,setAllGroupChallenges]=useState()
+  const[displayGroupChallenges,setDisplayGroupChallenges]=useState(false)
   const dispatch=useDispatch()
   const selectionRange={
     startDate:startDate,
@@ -71,10 +74,12 @@ function Challenges({refresh}) {
     const newStreaks=[]
     var cha
     const chall=[]
-    
+    var groupCha=[]
    
     const prom=new Promise(async(resolve,reject)=>{
         axios.get("http://localhost:3022/get-current-challenge-2/"+ourUser.userId).then(async(response)=>{
+          axios.get("http://localhost:3022/get-user-group-challenges/"+ourUser.userId).then(async(response1)=>{
+
           
       console.log(response)
       const u=collection(db,"users")
@@ -103,7 +108,26 @@ function Challenges({refresh}) {
           setStreaks(response.data.streaks)
           ourStreaks=response.data.streaks
           //setChallenges(response.data.challenges)
-
+            response1.data.all.map((c)=>{
+              groupCha.push({
+                id: c._id,
+                title:  c.title +" ( "+c.no_questions+" questions per day)",
+                start: new Date(c.startDate),
+                end: new Date(c.endDate),
+                allDay: true,
+                challenge:c,
+                editable: false,
+                clickable: true,
+                overlap: true,
+                current:c.current,
+                color: renderChallenge(c),
+  
+        
+                extendedProps: {
+                  description:c.title +"("+c.no_questions+" questions per day)"
+                }
+              })
+            })
           
           response.data.challenges.map((c)=>{
             arr.push({
@@ -153,6 +177,7 @@ function Challenges({refresh}) {
               resolve()
             },500)
           },800)
+         })
         })
      
 
@@ -161,6 +186,7 @@ function Challenges({refresh}) {
     prom.then(()=>{
 
       const prom1=new Promise((resolve1,reject1)=>{
+        setAllGroupChallenges(groupCha)
         if(ourStreaks!=null && ourStreaks.length>0 &&arr.length>0){
           var length=arr.length
           var i=1
@@ -206,6 +232,7 @@ function Challenges({refresh}) {
         }else  {
           console.log(chall)
           setChallenges(chall)
+         
           setTimeout(()=>{
             resolve1()
           },600) 
@@ -350,7 +377,10 @@ async function submitGroupChallenge(e){
       }
    
       if( createGroupChallenge.name!=null && Number(createGroupChallenge.no_questions)>0 && Number(createGroupChallenge.no_passes)>=0 && length>0){
-       setTimeout(()=>{
+        const ids=allusers.map((c)=>{
+          return c.userId
+        })
+        setTimeout(()=>{
       
       
         const newChallenge=createGroupChallenge
@@ -364,6 +394,7 @@ async function submitGroupChallenge(e){
         newChallenge.passes=Number(createGroupChallenge.no_passes)
         newChallenge.initialPasses=Number(createGroupChallenge.no_passes)
         newChallenge.selectedContestants=allusers
+        newChallenge.allUserIds=ids
    
        
 
@@ -1133,7 +1164,7 @@ setTimeout(()=>{
 function findEvent(ev){
   return challenges.filter((e)=> e.title==ev.event._def.title )
 }
-if(!isLoading){
+if(!isLoading && challenges!=null){
   
   if(challenges==null){
   return (
@@ -1199,7 +1230,7 @@ if(!isLoading){
   )
 }
 
-    console.log("challenges",challenges)
+    console.log("allgroupchallenges",allGroupChallenges)
     return(
       <div class="flex-col  rounded-md p-3 w-full  ">
         <div class="flex-col w-full">
@@ -1207,13 +1238,13 @@ if(!isLoading){
       
             <p class="font-bold text-2xl">Your Challenges</p>
             <button class="bg-green-400 p-2 rounded-md" onClick={()=>{
-              axios.post("http://localhost:3022/update-group-challenge-contestant/"+ourUser.userId,{case:"CREATE_GROUP_CHALLENGE_FOR_CREATOR",user:ourUser,challenge:ourUser.groupChallenges[0]})
+              setShowGroupChallenges(!showGroupChallenges)
             }}>
-              <p class="text-white">Here</p>
+              <p class="text-white">See Group Challenges</p>
             </button>
           </div>
           {
-            showCurrentChallenge?
+            showCurrentChallenge && !showGroupChallenges?
             <div>
                 <div class="bg-gray-200 rounded-md p-2 flex-col m-2">
                   <div class="flex w-full justify-between">
@@ -1319,11 +1350,104 @@ if(!isLoading){
   />
                 </div>
             </div>:
-            <div>
+               <div>
             </div>
 
           }
           
+      </div>
+      <div class="flex w-full">
+        {
+          showGroupChallenges && allGroupChallenges!=null?
+          <div class="bg-gray-200 rounded-md p-2 flex-col m-2 w-full">
+          <div class="flex w-full justify-between">
+            <p class="text-xl font-bold">Group Challenges</p>
+          </div>
+          <div class="flex w-full">
+          <FullCalendar
+               plugins={[dayGridPlugin]}
+               handleMouseEnter={()=>{
+                console.log("hello")
+               }}
+               events={allGroupChallenges}
+               onClick={(e)=>{
+                console.log(e.target.value)
+               }}
+               eventDidMount={(event)=>{
+               // console.log(event.event.extendedProps)
+                const cha=event.event.extendedProps.challenge
+                //console.log(cha)
+                const ev=event.event.extendedProps.titles
+               // console.log(event.event.extendedProps)
+               // console.log("\n\n")
+
+                if(ev!=null){
+                  console.log(ev)
+                return new bootstrap.Popover(event.el,{
+                  placement:"top",
+                  trigger:"hover",
+                  customClass:"popoverStyle",
+                  content:`<div class="flex-col bg-gray-300 rounded-md p-3">
+                  ${ev}
+                  </div>`,
+                  html:true
+                })
+              }else{
+                
+                const popoverRight = (
+                  <Popover id="popover-positioned-scrolling-top" title="Popover right">
+                    <strong>Holy guacamole!</strong> Check this info.
+                    <button class="btn btn-danger" onClick={()=>{console.log("hi")}}>
+                      Hi
+                    </button>
+                  </Popover>
+                );
+         
+                 // console.log(Object.keys(event.event.extendedProps))
+                  const cha=event.event.extendedProps
+                 // console.log(cha)
+                  const start=new Date(cha.challenge.startDate)
+                  const today=new Date()
+                  //console.log(event)
+                 /* console.log(new bootstrap.Popover(event.el,{
+                    trigger:"click",
+                    container:"body"
+                  }))*/
+                  function trigger(){console.log("hi")}
+                  //console.log(cha)
+               return new bootstrap.Popover(event.el,{
+                  placement:"top",
+                  trigger:"hover",
+                  popover:trigger(),
+                  title:"Challenge Stats",
+                  container:'body',
+                          customClass:"popoverStyle",
+                  content:`<div class="flex-col"><p class="font-bold">Success:<span class="font-normal">${cha.challenge.success}</span></p>
+                  <p class="font-bold">initial # of passes:<span class="font-normal"> ${cha.passes}</span></p>
+                  <p class="font-bold">remaining passes:<span class="font-normal"> ${cha.challenge.usedPasses}</span></p>
+                  <div class="body">
+                    <input tabindex="0" class="btn btn-danger" onclick="trigger()">
+                    <p class="text-white">Delete</p></input>
+                  </body>
+
+                    </div>
+                  </div>`,
+                  html:true
+                })
+              }
+               }}
+
+               
+               contentHeight="300px"
+               aspectRatio={2}
+
+
+/>
+          </div>
+        </div>
+        :
+        <div></div>
+        }
       </div>
       
       <div class="flex w-full">
@@ -1675,6 +1799,59 @@ if(!isLoading){
     </div>
     )
   }
+}else if(!isLoading && challenges==null){
+  return (
+    <div class="flex-col  rounded-md p-3 w-full border-t-2 border-gray-400">
+      <div class="flex w-full bg-gray-300 m-2 rounded-md p-3">
+        <p class="font-bold">No Challenges</p>
+        
+
+      </div>
+      <div class=" flex-col  bg-yellow-400 rounded-md p-3">
+      <div class="flex w-full justify-end  rounded-md p-3 ">
+        <button class="bg-green-500 rounded-md p-3" onClick={()=>{
+          setShow(!show)
+        }}> 
+          <p class="text-white">+</p>
+        </button>
+      </div>
+  
+      <div class="flex w-full justify-start"><p class="font-bold text-xl">Create New Challenge</p></div>
+      {show?
+      <div class="flex-col m-3">
+        <form onSubmit={submit} >
+        <input type="text" class="flex w-full rounded-sm bg-white p-2 mb-2" placeholder="Title" onChange={(e)=>{
+          setName(e.target.value)
+        }}/>
+        <input type="number" class="flex w-1/2 rounded-sm bg-white p-2 mb-2"  default={5} placeholder="# of Questions" onChange={(e)=>{
+          setNumberOfQuestions(e.target.value)
+        }}/>
+         <input type="number" class="flex w-1/2 rounded-sm bg-white p-2 mb-2"  default={0} placeholder="# of forgiveness passes" onChange={(e)=>{
+          setPasses(e.target.value)
+        }}/>
+        <div class="flex-col">
+          <p class="text-xl font-bold">Start Date/End Date</p>
+          <DateRangePicker ranges={[selectionRange]} onChange={handleSelect} 
+             minDates={new Date()} 
+             />
+
+        </div>
+        <div class="flex w-full mt-2 justify-center">
+          <button class="bg-red-500 rounded-md flex p-2" type="submit">
+            <p class="text-white font-bold">Submit</p>
+          </button>
+          </div>
+        </form>
+        
+      
+      </div>
+      :
+      <div></div>
+  }
+    
+  </div>
+    </div>
+  )
 }
 else if(isLoading){
   return(<div>No </div>)

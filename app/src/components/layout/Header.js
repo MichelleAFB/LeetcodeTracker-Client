@@ -3,16 +3,18 @@ import { useState,useEffect } from 'react'
 import { useNavigate ,useLocation, Link} from 'react-router-dom'
 import { connect, useDispatch } from 'react-redux'
 
-import { query,doc,collection,getDocs,where, updateDoc} from 'firebase/firestore'
+import { query,doc,collection,getDocs,where, updateDoc,getDoc} from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 import IonIcon from '@reacticons/ionicons'
 import { setChallengeRequestModalVisibility,setChallengeRequest } from '../../redux/groupChallangeRequest/groupChallenge-actions'
 import OpenChallengeRequestButton from './OpenChallengeRequestButton'
+
 function Header({ourUser,visibility}) {
 
   const[isLoading,setIsLoading]=useState(true)
   const [user,setUser]=useState()
   const[hasNotifications,setHasNotifications]=useState(false)
+  const[reload,setReload]=useState(false)
   const location=useLocation()
  const dispatch=useDispatch()
   useEffect(()=>{
@@ -52,7 +54,7 @@ function Header({ourUser,visibility}) {
     
     })
 
-  },[visibility,hasNotifications])
+  },[visibility,hasNotifications,reload])
 
 
   const navigate=useNavigate()
@@ -132,7 +134,7 @@ function Header({ourUser,visibility}) {
           {hasNotifications && user.hasNewNotifications? <span class=" p-2 absolute top-20 w-1/3 right-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
             <div class="flex-col ">
               <div class="flex w-full justify-end ">
-                <button class="flex bg-red-500 p-1" onClick={async()=>{
+                <button class="flex bg-red-500 p-1 m-2" onClick={async()=>{
                               const q = collection(db, "users")
                               const docs=await getDocs(q)
                              
@@ -174,16 +176,64 @@ function Header({ourUser,visibility}) {
                               })
                
                 }}>
-                  <p class="text-white font-bold">
-                    x
-                  </p>
+                 <IonIcon name="close-outline" style={{color:"white"}}/>
                 </button>
               </div>
             <ul class={`h-[${user.notifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden `}>
               {
                 user.notifications.map((n)=>{
+                  if(n.acknowledged!=null && n.acknowledged==false){
                   return(
                     <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
+                      <div class="flex w-full justify-end p-1">
+                        <button class="bg-gray-600 p-1 rounded-sm" onClick={async()=>{
+                          function findNote(arr,n){
+                            var pos
+                            var i=0;
+                            arr.map((a)=>{
+                              if(a.time.toString()==n.time.toString()){
+                                pos=i
+                              }
+                              i++
+                            })
+                            return pos==null? -1:pos
+                          }
+                          const refer=doc(db,"users",user.userId)
+                          const d=await getDoc(refer)
+                          const data=d.data()
+                          console.log(data)
+                          const nn=data.notifications
+                          const an=data.allNotifications
+                          const aIndex=findNote(an,n)
+                          const nIndex=findNote(nn,n)
+                          an.map((d)=>{
+                            d.acknowledged=true
+                          })
+                          console.log(aIndex,nIndex)
+                          if(nIndex!=-1){
+                            var newNotifications=nn
+                            newNotifications[nIndex].acknowledged=true
+                            newNotifications[nIndex].timeAcknowledged=new Date()
+                            console.log(newNotifications)
+                            if(aIndex==-1){
+                              const updateNote=newNotifications[nIndex]
+                              an.push(updateNote)
+                            }
+                            newNotifications.splice(nIndex,1)
+                          setTimeout(async()=>{
+                            const update=await updateDoc(refer,{
+                              notifications:newNotifications,
+                              allNotifications:an
+
+                            })
+                            setIsLoading(true)
+                          },100)
+                          }
+
+                        }}>
+                          <IonIcon name="close-outline" style={{color:"white"}}/>
+                        </button>
+                      </div>
                   <p class=" font-bold text-white text-3xs">
                     {n.message}-
                   </p>
@@ -202,6 +252,7 @@ function Header({ourUser,visibility}) {
                   }
                   <p class="text-gray-200 font-semi-bold text-xs">{new Date(n.time.seconds*1000).toString().substring(0,25)}</p>
                   </div>)
+                }
                 })
               }
             </ul>

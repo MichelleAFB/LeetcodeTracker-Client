@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { setChallengeRequestModalVisibility,setChallengeRequest } from '../redux/groupChallangeRequest/groupChallenge-actions'
 import { collection,doc,getDocs,getDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase/firebase'
-
+import axios from 'axios'
 function ChallengeRequestModal({challenge,visibility}) {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -208,6 +208,7 @@ function ChallengeRequestModal({challenge,visibility}) {
                     const contRef=doc(db,"users",challenge.userId)
                     var contData=await getDoc(contRef)
                     contData=contData.data()
+                    var changed
                     if(contData.groupChallengeRequests!=null && contData.groupChallengeRequests.length>0){
                       var newChallengeReq=contData.groupChallengeRequests
                       contData.groupChallengeRequests.map((c)=>{
@@ -216,6 +217,7 @@ function ChallengeRequestModal({challenge,visibility}) {
                           const contIndex=findGroupIndex(newChallengeReq,c)
                           newChallengeReq[contIndex].approved=true
                           newChallengeReq[contIndex].dateApproved=new Date()
+                          changed=newChallengeReq[contIndex]
                          setTimeout(async()=>{
                           const updateCont=await updateDoc(contRef,{
                             groupChallengeRequests:newChallengeReq
@@ -227,6 +229,7 @@ function ChallengeRequestModal({challenge,visibility}) {
                       const newreq=challenge
                       newreq.approved=true
                       newreq.dateApproved=new Date()
+                      changed=newreq
                      setTimeout(async()=>{
                       const updateCont=await updateDoc(contRef,{
                         groupChallengeRequests:newreq
@@ -234,17 +237,17 @@ function ChallengeRequestModal({challenge,visibility}) {
                      },150)
 
                     }
-                    alert("SUCCESS: you are now participating in "+groupChallenge.title)
-                    setIsLoading(true)
-                    /* const updateChallenge=await updateDoc(challengeRefer,{
-                      groupChallenges:allgroups
-                    })*/
-                    //const requestRefer=doc(db,"users",challenge.userId)
-                    //const updateRequest
-                    
+               
+                    setTimeout(()=>{
+                      axios.post("http://localhost:3022/update-group-challenge-contestant/"+challenge.userId,{groupChallenge:newGroupChallenge,user:changed,case:"CONTESTANT_GROUP_CHALLENGE_ACCEPTED"}).then((response)=>{
+                        console.log(response)
+                        if(response.data.success){
+                          alert("SUCCESS: you are now participating in "+groupChallenge.title)
+                          setIsLoading(true)
+                        }
+                      })
+                    },150)
                   }
-                  
-                  
                 }
               })
             }}>
@@ -305,6 +308,7 @@ function ChallengeRequestModal({challenge,visibility}) {
                     })
                     /*****CONTESTANT */
                     const contRef=doc(db,"users",challenge.userId)
+                    var changed
                     var contData=await getDoc(contRef)
                     contData=contData.data()
                     var newAddGroupChallenge=contData.groupChallenges!=null && hdata.notifications.length>0? hdata.groupChallenges:[]
@@ -321,6 +325,7 @@ function ChallengeRequestModal({challenge,visibility}) {
                           const contIndex=findGroupIndex(newChallengeReq,c)
                           newChallengeReq[contIndex].denied=true
                           newChallengeReq[contIndex].dateDenied=new Date()
+                          changed=newChallengeReq[contIndex]
                          setTimeout(async()=>{
                           const updateCont=await updateDoc(contRef,{
                             groupChallengeRequests:newChallengeReq,
@@ -333,6 +338,7 @@ function ChallengeRequestModal({challenge,visibility}) {
                       const newreq=challenge
                       newreq.denied=true
                       newreq.dateDenied=new Date()
+                      changed=newreq
                      setTimeout(async()=>{
                       const updateCont=await updateDoc(contRef,{
                         groupChallengeRequests:newreq
@@ -340,17 +346,17 @@ function ChallengeRequestModal({challenge,visibility}) {
                      },150)
 
                     }
-                    alert("SUCCESS: you are now participating in "+groupChallenge.title)
-                    setIsLoading(true)
-                    /* const updateChallenge=await updateDoc(challengeRefer,{
-                      groupChallenges:allgroups
-                    })*/
-                    //const requestRefer=doc(db,"users",challenge.userId)
-                    //const updateRequest
                     
-                  }
-                  
-                  
+                    setTimeout(()=>{
+                      axios.post("http://localhost:3022/update-group-challenge-contestant/"+challenge.userId,{groupChallenge:newGroupChallenge,user:changed,case:"CONTESTANT_GROUP_CHALLENGE_REJECTED"}).then((response)=>{
+                        console.log(response)
+                        if(response.data.success){
+                          alert("SUCCESS: you are not participating in "+groupChallenge.title)
+                          setIsLoading(true)
+                        }
+                      })
+                    },150)
+                  } 
                 }
               })
             }}>
