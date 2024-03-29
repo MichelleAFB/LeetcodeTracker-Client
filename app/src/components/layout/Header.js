@@ -66,7 +66,8 @@ function Header({ourUser,visibility}) {
 
 
   if(visibility && !isLoading){
-   
+   console.log(user.allNotifications)
+   console.log(user.notifications)
   return (
     <div class="w-full  ">
     <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
@@ -83,8 +84,8 @@ function Header({ourUser,visibility}) {
            <div class="group relative m-12 flex w-2/3 justify-center">
            <button class="justify-end flex w-full m-2" >
               <p class="text-md text-white m-0">{user.firstname} {user.lastname}</p>
-             {user.hasNewNotifications? <IonIcon onClick={async()=>{
-           
+             {user!=null ? <IonIcon onClick={async()=>{
+           /*
            const q = collection(db, "users")
            const docs=await getDocs(q)
           
@@ -126,63 +127,27 @@ function Header({ourUser,visibility}) {
            })
            
          
-        
+        */
+           setHasNotifications(!hasNotifications)
 
           }} name="notifications-outline" size="large"/>:<p></p>}
            </button>  
           </div>
-          {hasNotifications && user.hasNewNotifications? <span class=" p-2 absolute top-20 w-1/3 right-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
+          {hasNotifications  ? /*hasNotifications   && user.hasNewNotifications?*/ <span class=" p-2 absolute top-20 w-1/3 right-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
             <div class="flex-col ">
               <div class="flex w-full justify-end ">
                 <button class="flex bg-red-500 p-1 m-2" onClick={async()=>{
-                              const q = collection(db, "users")
-                              const docs=await getDocs(q)
-                             
-                              docs.docs.filter(async(d)=>{
-                                console.log(d)
-                  
-                                if(d.data().email==user.email){
-                                  const doo=await doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
-                                 if(d.data().allNotifications==null){
-                                  await updateDoc(doo,{"allNotifications":d.data().notifications})
-                                  await updateDoc(doo,{
-                                    "hasNewNotifications":false
-                                  })
-                                  await updateDoc(doo,{
-                                    "notifications":[]
-                                  })
-                                 }else if(d.data().allNotifications!=null){
-                                  const allnotif=d.data().allNotifications
-                                 d.data().notifications.map((n)=>{
-                                  allnotif.push(n)
-                                 })
-                  
-                                 setTimeout(async(allnotif)=>{
-                                  await updateDoc(doo,{"allNotifications":allnotif})
-                                  await updateDoc(doo,{
-                                    "hasNewNotifications":false
-                                  })
-                                  await updateDoc(doo,{
-                                    "notifications":[]
-                                  })
-                                 },300)
-                                 }
-                                  console.log(doo)
-                  
-                                  setTimeout(()=>{
-                                    setHasNotifications(!hasNotifications)
-                               },600)
-                                }
-                              })
+                            
+                             setHasNotifications(!hasNotifications)
                
                 }}>
                  <IonIcon name="close-outline" style={{color:"white"}}/>
                 </button>
               </div>
-            <ul class={`h-[${user.notifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden `}>
+            <ul class={`h-[${user.allNotifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden `}>
               {
                 user.notifications.map((n)=>{
-                  if(n.acknowledged!=null && n.acknowledged==false){
+                  if(n.acknowledged!=null && n.acknowledged==false ){
                   return(
                     <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
                       <div class="flex w-full justify-end p-1">
@@ -198,6 +163,7 @@ function Header({ourUser,visibility}) {
                             })
                             return pos==null? -1:pos
                           }
+                          console.log("CLICK")
                           const refer=doc(db,"users",user.userId)
                           const d=await getDoc(refer)
                           const data=d.data()
@@ -226,7 +192,79 @@ function Header({ourUser,visibility}) {
                               allNotifications:an
 
                             })
-                            setIsLoading(true)
+                           
+                          },100)
+                          }
+
+                        }}>
+                          <IonIcon name="close-outline" style={{color:"white"}}/>
+                        </button>
+                      </div>
+                  <p class=" font-bold text-white text-3xs">
+                    {n.message}-
+                  </p>
+                  {n.type!=null && n.type=="GROUP_CHALLENGE_REQUEST"?
+                  <div class="flex p-3">
+                    {
+                      user.groupChallengeRequests.map((r)=>{
+                        if(r.challengeId==n.challengeId){
+                          return(<OpenChallengeRequestButton challenge={r}/>)
+                        }
+                      })
+                    }
+                  </div>
+                  :
+                  <div></div>
+                  }
+                  <p class="text-gray-200 font-semi-bold text-xs">{new Date(n.time.seconds*1000).toString().substring(0,25)}</p>
+                  </div>)
+                }else if(n.acknowledged==null){
+                  return(
+                    <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
+                      <div class="flex w-full justify-end p-1">
+                        <button class="bg-gray-600 p-1 rounded-sm" onClick={async()=>{
+                          function findNote(arr,n){
+                            var pos
+                            var i=0;
+                            arr.map((a)=>{
+                              if(a.time.toString()==n.time.toString()){
+                                pos=i
+                              }
+                              i++
+                            })
+                            return pos==null? -1:pos
+                          }
+                          console.log("CLICK")
+
+                          const refer=doc(db,"users",user.userId)
+                          const d=await getDoc(refer)
+                          const data=d.data()
+                          console.log(data)
+                          const nn=data.notifications
+                          const an=data.allNotifications
+                          const aIndex=findNote(an,n)
+                          const nIndex=findNote(nn,n)
+                          an.map((d)=>{
+                            d.acknowledged=true
+                          })
+                          console.log(aIndex,nIndex)
+                          if(nIndex!=-1){
+                            var newNotifications=nn
+                            newNotifications[nIndex].acknowledged=true
+                            newNotifications[nIndex].timeAcknowledged=new Date()
+                            console.log(newNotifications)
+                            if(aIndex==-1){
+                              const updateNote=newNotifications[nIndex]
+                              an.push(updateNote)
+                            }
+                            newNotifications.splice(nIndex,1)
+                          setTimeout(async()=>{
+                            const update=await updateDoc(refer,{
+                              notifications:newNotifications,
+                              allNotifications:an
+
+                            })
+                         
                           },100)
                           }
 

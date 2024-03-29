@@ -119,6 +119,7 @@ function Auth() {
 
            
              const user=JSON.parse(sessionStorage.getItem("user"))
+             navigate("/home")
              axios.get("http://localhost:3022/get-current-group-challenge/"+user.userId).then((response)=>{
               console.log(response)
              if(response.data.success){

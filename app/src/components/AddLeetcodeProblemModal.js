@@ -149,19 +149,19 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                 {ourProblem.level}
                 {
                   ourProblem.difficulty=="Easy"?
-                  <p class="text-green-400 font-bold ml-2">{problemData.difficulty}</p>
+                  <p class="text-green-400 font-bold ml-2">{ourProblem.difficulty}</p>
                   :
                   <p></p>
                 }
                 {
                   ourProblem.difficulty=="Medium"?
-                  <p class="text-orange-400 font-bold ml-2">{problemData.difficulty}</p>
+                  <p class="text-orange-400 font-bold ml-2">{ourProblem.difficulty}</p>
                   :
                   <p></p>
                 }
                 {
                   ourProblem.difficulty=="Hard"?
-                  <p class="text-red-500 font-bold ml-2">{problemData.difficulty}</p>
+                  <p class="text-red-500 font-bold ml-2">{ourProblem.difficulty}</p>
                   :
                   <p></p>
                 }

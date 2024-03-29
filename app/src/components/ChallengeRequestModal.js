@@ -178,7 +178,7 @@ function ChallengeRequestModal({challenge,visibility}) {
                       console.log("CHANGED:",allgroups)
                     const challengeRefer=doc(db,"users",host.userId)
                     const notification={
-                      message:challenge.username+" ("+challenge.firstname +" " +challenge.lastname+") has accepted your group challenge invitation for "+challenge.title+" from "+ new Date(groupChallenge.startDate.seconds*1000).toString().substring(0,15)+" through "+new Date(groupChallenge.endDate.seconds*1000).toString().substring(0,15),
+                      message:challenge.username+" ("+challenge.firstname +" " +challenge.lastname+") has accepted your group challenge invitation for "+groupChallenge.title+" from "+ new Date(groupChallenge.startDate.seconds*1000).toString().substring(0,15)+" through "+new Date(groupChallenge.endDate.seconds*1000).toString().substring(0,15),
                       time:new Date(),
                       type:"GROUP_CHALLENGE_REQUEST_ACCEPTED",
                       challenge:newGroupChallenge.selectedContestants[position],
@@ -276,7 +276,7 @@ function ChallengeRequestModal({challenge,visibility}) {
                       console.log("CHANGED:",allgroups)
                     const challengeRefer=doc(db,"users",host.userId)
                     const notification={
-                      message:challenge.username+" ("+challenge.firstname +" " +challenge.lastname+") has rejected your group challenge invitation for "+challenge.title+" from "+ new Date(groupChallenge.startDate.seconds*1000).toString().substring(0,15)+" through "+new Date(groupChallenge.endDate.seconds*1000).toString().substring(0,15),
+                      message:challenge.username+" ("+challenge.firstname +" " +challenge.lastname+") has rejected your group challenge invitation for "+groupChallenge.title+" from "+ new Date(groupChallenge.startDate.seconds*1000).toString().substring(0,15)+" through "+new Date(groupChallenge.endDate.seconds*1000).toString().substring(0,15),
                       time:new Date(),
                       type:"GROUP_CHALLENGE_REQUEST_REJECTED",
                       challenge:newGroupChallenge.selectedContestants[position],
