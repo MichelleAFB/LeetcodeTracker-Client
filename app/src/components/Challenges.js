@@ -1170,10 +1170,84 @@ if(!isLoading && challenges!=null){
   return (
     <div class="flex-col  rounded-md p-3 w-full border-t-2 border-gray-400">
       <div class="flex w-full bg-gray-300 m-2 rounded-md p-3">
-        <p class="font-bold">No Challenges</p>
+        <p class="font-bold">No Challenges Yet</p>
         
 
       </div>
+      <button class="bg-green-700 p-1 rounded-sm" onClick={async()=>{
+            var trevor={
+              "challengeId": 17946,
+              "userId": "Bq02JQzmhI3lNCKko9BW",
+              "success": true,
+              "passes": "1",
+              "initialPasses": "1",
+              "username": "_trevor.am_",
+              "firstname": "Trevor",
+              "lastname": "Myers",
+              "createdBy": "gs0K9MxVoU8nNDnfkwem",
+              "approved": true,
+              "dateApproved":new Date("2024-03-28T21:17:59.699+00:00"),
+              "denied": false
+          }
+         var notif
+          const d=doc(db,"users","gs0K9MxVoU8nNDnfkwem")
+          const data=(await getDoc(d)).data()
+          const gc=data.groupChallenges
+          gc.map((g)=>{
+            if(g.challengeId==trevor.challengeId){
+              console.log("match")
+              g.selectedContestants.push(trevor)
+              
+
+            }
+          })
+          const n={
+            message:"_trevor.am_ (Trevor Myers) has accepted your group challenge invitation for '2 a Day' from Thu Mar 28 2024 through Sun Mar 31 2024",
+            type:"GROUP_CHALLENGE_REQUEST_ACCEPTED",
+            time:trevor.dateApproved,
+            acknowledged:false,
+            challenge:trevor
+          }
+          const not=data.notifications
+    
+          not.push(n)
+
+          setTimeout(()=>{
+            notif=not
+          },50)
+
+          setTimeout(async()=>{
+            console.log(notif)
+            console.log(gc)
+           /* await updateDoc(d,{
+              notifications:notif,
+              groupChallenges:gc
+            })*/
+        },1000)
+        /*  console.log(data.data())
+          const n=  {
+            time: new Date("2024-03-28T21:17:59.699+00:00"),
+            type: "GROUP_CHALLENGE_REQUEST",
+            message: "_mirchoe_ (Michelle Badu) has request you to join a group challenge,2 a Day, with 0 other users.",
+            challengeId: 17946,
+            acknowledged:false
+        }
+        */
+         /* const requests=data.data().groupChallengeRequests
+          const not=data.data().notifications
+          const allNot=data.data().allNotifications
+          requests.push(trevor)
+          not.push(n)
+          allNot.push(n)*/
+          setTimeout(async()=>{
+          /* await  updateDoc(d,{
+            notifications:not,
+            groupChallengesRequests:requests
+           })*/
+          },1000)
+        }}>
+          <p class="text-white">add</p>
+        </button>
       <div class=" flex-col  bg-yellow-400 rounded-md p-3">
       
       <div class="flex w-full justify-end  rounded-md p-3 ">
@@ -1236,7 +1310,7 @@ if(!isLoading && challenges!=null){
       <div class="flex-col  rounded-md p-3 w-full  ">
         <div class="flex-col w-full">
           <div class="flex-col w-full">
-        <button class="bg-green-700 p-1 rounded-sm" onClick={async()=>{
+          <button class="bg-green-700 p-1 rounded-sm" onClick={async()=>{
             var trevor={
               "challengeId": 17946,
               "userId": "Bq02JQzmhI3lNCKko9BW",
@@ -1881,6 +1955,100 @@ if(!isLoading && challenges!=null){
         
 
       </div>
+      <button class="bg-green-700 p-1 rounded-sm" onClick={async()=>{
+            var trevor={
+              "challengeId": 17946,
+              "userId": "Bq02JQzmhI3lNCKko9BW",
+              "success": true,
+              "passes": "1",
+              "initialPasses": "1",
+              "username": "_trevor.am_",
+              "firstname": "Trevor",
+              "lastname": "Myers",
+              "createdBy": "gs0K9MxVoU8nNDnfkwem",
+              "approved": true,
+              "dateApproved":new Date("2024-03-28T21:17:59.699+00:00"),
+              "denied": false
+          }
+         var notif
+          const d=doc(db,"users","gs0K9MxVoU8nNDnfkwem")
+          const data=(await getDoc(d)).data()
+          //data.allUsersId.push("Bq02JQzmhI3lNCKko9BW")
+          
+          const gc=data.groupChallenges
+         
+
+          gc.map((g)=>{
+           
+            
+            
+            setTimeout(()=>{
+              if(g.challengeId==trevor.challengeId){
+                console.log("match")
+                g.selectedContestants.push(trevor)
+              
+                setTimeout(()=>{
+                 
+                  g.allUserIds.push("Bq02JQzmhI3lNCKko9BW")
+                  console.log(g)
+            
+  
+                },100)
+                //g.allUsersId.push("Bq02JQzmhI3lNCKko9BW")
+                
+  
+              }
+
+            })
+        
+          })
+          const n={
+            message:"_trevor.am_ (Trevor Myers) has accepted your group challenge invitation for '2 a Day' from Thu Mar 28 2024 through Sun Mar 31 2024",
+            type:"GROUP_CHALLENGE_REQUEST_ACCEPTED",
+            time:trevor.dateApproved,
+            acknowledged:false,
+            challenge:trevor
+          }
+          const not=data.notifications
+    
+          not.push(n)
+
+          setTimeout(()=>{
+            notif=not
+          },50)
+
+          setTimeout(async()=>{
+            console.log(notif)
+            console.log(gc)
+            await updateDoc(d,{
+              notifications:notif,
+              groupChallenges:gc
+            })
+        },1000)
+        /*  console.log(data.data())
+          const n=  {
+            time: new Date("2024-03-28T21:17:59.699+00:00"),
+            type: "GROUP_CHALLENGE_REQUEST",
+            message: "_mirchoe_ (Michelle Badu) has request you to join a group challenge,2 a Day, with 0 other users.",
+            challengeId: 17946,
+            acknowledged:false
+        }
+        */
+         /* const requests=data.data().groupChallengeRequests
+          const not=data.data().notifications
+          const allNot=data.data().allNotifications
+          requests.push(trevor)
+          not.push(n)
+          allNot.push(n)*/
+          setTimeout(async()=>{
+          /* await  updateDoc(d,{
+            notifications:not,
+            groupChallengesRequests:requests
+           })*/
+          },1000)
+        }}>
+          <p class="text-white">add</p>
+        </button>
       <div class=" flex-col  bg-yellow-400 rounded-md p-3">
       <div class="flex w-full justify-end  rounded-md p-3 ">
         <button class="bg-green-500 rounded-md p-3" onClick={()=>{
