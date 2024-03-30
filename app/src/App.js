@@ -24,18 +24,29 @@ import EditChallengeModal from './components/EditChallengeModal';
 import ShowFFModal from './components/ShowFFModal';
 import AddOtherUsersProblemModal from './components/AddOtherUsersProblemModal';
 import ChallengeRequestModal from './components/ChallengeRequestModal';
-
+import axios from 'axios';
 function App({user,visibility}) {
 
   const[isLoading,setIsLoading]=useState(true)
   console.log(visibility)
   useEffect(()=>{
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+        axios.post("http://localhost:3022/fix-time-last",{latitude:latitude,longitude:longitude})
+      });
+    } else {
+      console.log("Geolocation is not supported by this browser.");
+    }
 
   },[visibility]) 
   
 
   return (
     <div class="flex-col ">
+
     <Router>
       <EditProblemModal/>
       <AddLeetcodeProblemModal/>

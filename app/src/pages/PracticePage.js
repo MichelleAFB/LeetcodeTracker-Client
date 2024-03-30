@@ -770,7 +770,21 @@ console.log(params)
                    
                    const user=JSON.parse(sessionStorage.getItem("user"))
                    console.log(problem)
-                    axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges}).then((response)=>{
+                   if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    });
+                  } else {
+                    console.log("Geolocation is not supported by this browser.");
+                  }
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                      axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges,latitude:latitude,longitude:longitude}).then((response)=>{
                       
                       console.log(response)
                       if(response.data.message!=null){
@@ -797,6 +811,11 @@ console.log(params)
                       }
                       
                      })
+                    });
+                  } else {
+                    alert("Geolocation is not supported by this browser.");
+                  }
+                    
            
             
           }}>

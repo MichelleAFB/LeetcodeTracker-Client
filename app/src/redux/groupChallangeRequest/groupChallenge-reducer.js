@@ -3,7 +3,8 @@ import * as actionTypes from "./groupChallenge-types";
 const initialState = {
  challenge:null,
  visibility:false,
- reload:false
+ reload:false,
+ disabled:false
 };
 
 export const groupChallengeReducer = (state = initialState, action) => {
@@ -29,6 +30,13 @@ export const groupChallengeReducer = (state = initialState, action) => {
           ...state,
           reload: !state.reload,
         };
+   case actionTypes.SET_CHALLENGE_REQUEST_DISABLED:
+          console.log("ADD LEETCODE RELOAD");
+          
+          return {
+            ...state,
+            reload:action.payload.disabled,
+          };
     
 
     default:

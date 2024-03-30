@@ -1,1 +1,1 @@
-var newAddGroupChallenge=contData.groupChallenges!=null && hdata.notifications.length>0? hdata.groupChallenges:[]
+{`(${new Date(challenge.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(challenge.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}

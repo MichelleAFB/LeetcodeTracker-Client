@@ -1,10 +1,10 @@
 import React from 'react'
 import {useDispatch,connect} from 'react-redux'
-import { setChallengeRequestModalVisibility,setChallengeRequest } from '../../redux/groupChallangeRequest/groupChallenge-actions'
+import { setChallengeRequestModalVisibility,setChallengeRequest, setChallengeRequesDiabled } from '../../redux/groupChallangeRequest/groupChallenge-actions'
 
-function OpenChallengeRequestButton({challenge}) {
+function OpenChallengeRequestButton({challenge,disabled}) {
     const dispatch=useDispatch()
-
+  console.log("disabled:"+disabled)
   /*  if(challenge.approved==true || challenge.denied==true){
         return(<div></div>)
     }else{*/
@@ -12,6 +12,7 @@ function OpenChallengeRequestButton({challenge}) {
     <button class="bg-gray-700 rounded-sm p-1" onClick={()=>{
         console.log("CLICK")
         dispatch(setChallengeRequest(challenge))
+        dispatch(setChallengeRequesDiabled(disabled))
         setTimeout(()=>{
             dispatch(setChallengeRequestModalVisibility(true))
         },100)

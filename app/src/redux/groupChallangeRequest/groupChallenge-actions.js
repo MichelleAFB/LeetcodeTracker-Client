@@ -20,6 +20,15 @@ export function setChallengeRequestModalVisibility(visibility) {
   };
 }
 
+export function setChallengeRequesDiabled(disabled) {
+  return {
+    type: actionTypes.SET_CHALLENGE_REQUEST_DISABLED,
+    payload: {
+      diabled:disabled
+    },
+  };
+}
+
 
 export function addChallengeRequestReload() {
   return {

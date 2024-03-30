@@ -15,6 +15,7 @@ function Header({ourUser,visibility}) {
   const [user,setUser]=useState()
   const[hasNotifications,setHasNotifications]=useState(false)
   const[reload,setReload]=useState(false)
+  const[showAllNotifications,setShowAllNotifications]=useState(false)
   const location=useLocation()
  const dispatch=useDispatch()
   useEffect(()=>{
@@ -54,7 +55,7 @@ function Header({ourUser,visibility}) {
     
     })
 
-  },[visibility,hasNotifications,reload])
+  },[visibility,hasNotifications,reload,showAllNotifications])
 
 
   const navigate=useNavigate()
@@ -85,55 +86,14 @@ function Header({ourUser,visibility}) {
            <button class="justify-end flex w-full m-2" >
               <p class="text-md text-white m-0">{user.firstname} {user.lastname}</p>
              {user!=null ? <IonIcon onClick={async()=>{
-           /*
-           const q = collection(db, "users")
-           const docs=await getDocs(q)
           
-           docs.docs.filter(async(d)=>{
-             console.log(d)
-
-             if(d.data().email==user.email){
-               const doo=await doc(db,"users",d._key.path.segments[d._key.path.segments.length-1])
-              if(d.data().allNotifications==null){
-               await updateDoc(doo,{"allNotifications":d.data().notifications})
-               await updateDoc(doo,{
-                 "hasNewNotifications":false
-               })
-               await updateDoc(doo,{
-                 "notifications":[]
-               })
-              }else if(d.data().allNotifications!=null){
-               const allnotif=d.data().allNotifications
-              d.data().notifications.map((n)=>{
-               allnotif.push(n)
-              })
-
-              setTimeout(async(allnotif)=>{
-               await updateDoc(doo,{"allNotifications":allnotif})
-               await updateDoc(doo,{
-                 "hasNewNotifications":false
-               })
-               await updateDoc(doo,{
-                 "notifications":[]
-               })
-              },300)
-              }
-               console.log(doo)
-
-               setTimeout(()=>{
-                 setHasNotifications(!hasNotifications)
-            },600)
-             }
-           })
-           
-         
-        */
            setHasNotifications(!hasNotifications)
 
           }} name="notifications-outline" size="large"/>:<p></p>}
            </button>  
           </div>
-          {hasNotifications  ? /*hasNotifications   && user.hasNewNotifications?*/ <span class=" p-2 absolute top-20 w-1/3 right-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
+          
+          {hasNotifications ? /*hasNotifications   && user.hasNewNotifications?*/ <span class=" p-2 absolute top-20 w-1/3 right-10 scale-0 rounded bg-gray-800 p-2 text-xs text-white scale-100">
             <div class="flex-col ">
               <div class="flex w-full justify-end ">
                 <button class="flex bg-red-500 p-1 m-2" onClick={async()=>{
@@ -144,9 +104,16 @@ function Header({ourUser,visibility}) {
                  <IonIcon name="close-outline" style={{color:"white"}}/>
                 </button>
               </div>
-            <ul class={`h-[${user.allNotifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden `}>
-              {
-                user.notifications.map((n)=>{
+              <div class="flex w-full">
+                <input type="checkbox" onChange={(e)=>{
+                    console.log(e.target.checked)
+                    setShowAllNotifications(e.target.checked)
+                }}></input>
+                <p class="text-white text-small">Show all notifications</p>
+              </div>
+              {!showAllNotifications?
+            <ul class={`h-[${user.notifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden `}>
+              { user.notifications.map((n)=>{
                   if(n.acknowledged!=null && n.acknowledged==false ){
                   return(
                     <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
@@ -205,10 +172,15 @@ function Header({ourUser,visibility}) {
                   </p>
                   {n.type!=null && n.type=="GROUP_CHALLENGE_REQUEST"?
                   <div class="flex p-3">
+                    
                     {
                       user.groupChallengeRequests.map((r)=>{
                         if(r.challengeId==n.challengeId){
-                          return(<OpenChallengeRequestButton challenge={r}/>)
+                          return(<div class="flex-col w-full">
+                            {r.approved==true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-500">Accepted-{r.dateApproved.toString()}</span></p>:<p></p>}
+                            {r.denied==true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{r.dateDenied.toString()}</span></p>:<p></p>}
+                            <OpenChallengeRequestButton challenge={r} disabled={false}/>
+                            </div>)
                         }
                       })
                     }
@@ -280,7 +252,7 @@ function Header({ourUser,visibility}) {
                     {
                       user.groupChallengeRequests.map((r)=>{
                         if(r.challengeId==n.challengeId){
-                          return(<OpenChallengeRequestButton challenge={r}/>)
+                          return(<OpenChallengeRequestButton challenge={r} disabled={false}/>)
                         }
                       })
                     }
@@ -293,10 +265,54 @@ function Header({ourUser,visibility}) {
                 }
                 })
               }
+               
             </ul>
+            :
+
+
+
+
+
+            <ul class={`h-[${user.allNotifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden`}>
+              { user.allNotifications.map((n)=>{
+                  
+                  return(
+                    <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
+                      
+                  <p class=" font-bold text-white text-3xs">
+                    {n.message}-
+                  </p>
+                  {n.type!=null && n.type=="GROUP_CHALLENGE_REQUEST"?
+                  <div class="flex p-3">
+                    
+                    {
+                      user.groupChallengeRequests.map((r)=>{
+                        if(r.challengeId==n.challengeId){
+                          return(<div class="flex-col w-full">
+                            {r.approved!=true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-500">Accepted-{r.dateApproved.toString()}</span></p>:<p></p>}
+                            {r.denied!=true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{r.dateApproved.toString()}</span></p>:<p></p>}
+                            <OpenChallengeRequestButton challenge={r} disabled={true}/>
+                            </div>)
+                        }
+                      })
+                    }
+                  </div>
+                  :
+                  <div></div>
+                  }
+                  <p class="text-gray-200 font-semi-bold text-xs">{new Date(n.time.seconds*1000).toString().substring(0,25)}</p>
+                  </div>)
+                
+                })
+              }
+
+            </ul>
+            
+            }
             </div></span>
            :<p></p>
           }
+          
            
            <button class="justify-end flex m-0" onClick={()=>{
             setIsLoading(true)

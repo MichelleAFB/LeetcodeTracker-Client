@@ -6,7 +6,7 @@ import { setChallengeRequestModalVisibility,setChallengeRequest } from '../redux
 import { collection,doc,getDocs,getDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase/firebase'
 import axios from 'axios'
-function ChallengeRequestModal({challenge,visibility}) {
+function ChallengeRequestModal({challenge,visibility,disabled}) {
 
   const[isLoading,setIsLoading]=useState(true)
   const[groupChallenge,setGroupChallenge]=useState()
@@ -154,6 +154,31 @@ function ChallengeRequestModal({challenge,visibility}) {
             }
           </div>
           </div>
+          <div class="flex">
+            {
+              challenge.approved?
+              <div class="flex w-full">
+                <p class="font-bold">
+                  Status:<span class="text-green-500 font-normal m-1">Approved </span>  <span class="ml-2 font-normal text-xs">{`(${new Date(challenge.dateApproved.seconds *1000).toString().substring(0,15)}) ${Number(new Date(challenge.dateApproved.seconds *1000).toString().substring(16,18))>12? (Number(new Date(challenge.dateApproved.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(challenge.dateApproved.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(challenge.dateApproved.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span>
+                </p>
+              </div>:
+              <div>
+              </div>
+            }
+            {
+              challenge.denied?
+              <div class="flex w-full">
+                <p class="font-bold">
+                  Status:<span class="text-red-500 font-normal">Denied </span>  <span class="ml-2 font-normal text-xs">{`(${new Date(challenge.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(challenge.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span>
+                </p>
+              </div>:
+              <div>
+              </div>
+            }
+
+          </div>
+          {disabled?
+
           <div class="flex w-full justify-around m-2">
             <button class="bg-green-500 rounded-sm p-1" onClick={()=>{
               groupChallenge.selectedContestants.map(async(c)=>{
@@ -362,7 +387,11 @@ function ChallengeRequestModal({challenge,visibility}) {
             }}>
               <p class="text-white">Deny</p>
             </button>
+  
           </div>
+          :
+          <div></div>
+  }
 
         </div>
         
@@ -379,11 +408,14 @@ function ChallengeRequestModal({challenge,visibility}) {
 const mapStateToProps = (state, props) => {
   var visibility= state.groupChallenge.visibility
   var challenge=state.groupChallenge.challenge
+  var disabled=state.groupChallenge.disabled
+
  
 
   return {
    visibility:visibility,
-  challenge:challenge
+  challenge:challenge,
+  disabled:disabled
   };
 };
 export default connect(mapStateToProps)(ChallengeRequestModal)
