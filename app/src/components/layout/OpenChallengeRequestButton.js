@@ -11,11 +11,12 @@ function OpenChallengeRequestButton({challenge,disabled}) {
   return (
     <button class="bg-gray-700 rounded-sm p-1" onClick={()=>{
         console.log("CLICK")
-        dispatch(setChallengeRequest(challenge))
         dispatch(setChallengeRequesDiabled(disabled))
+
+        dispatch(setChallengeRequest(challenge))
         setTimeout(()=>{
             dispatch(setChallengeRequestModalVisibility(true))
-        },100)
+        },250)
               }}>
                 <p class="text-white">Open Request</p>
      </button>

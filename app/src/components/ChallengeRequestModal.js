@@ -67,12 +67,16 @@ function ChallengeRequestModal({challenge,visibility,disabled}) {
   function findIndex(arr,e){
     console.log(arr)
     var i=0
-    const index=arr.map((a)=>{
+    var index=arr.map((a)=>{
       if(a.userId==e.userId){
         return i
       }
       i++
     })
+    index=index.filter((f)=>{
+      return f!=null
+    })
+    console.log("index in func:",index)
     return index.length>0?index[0]:-1
   }
 
@@ -87,6 +91,7 @@ function ChallengeRequestModal({challenge,visibility,disabled}) {
       }
       i++
     })
+    
     console.log("index:",ind)
     return ind!=null?ind:-1
   }
@@ -177,7 +182,7 @@ function ChallengeRequestModal({challenge,visibility,disabled}) {
             }
 
           </div>
-          {disabled?
+          {disabled==false?
 
           <div class="flex w-full justify-around m-2">
             <button class="bg-green-500 rounded-sm p-1" onClick={()=>{
@@ -191,9 +196,10 @@ function ChallengeRequestModal({challenge,visibility,disabled}) {
                   contestant.approved=true
                   contestant.dateApproved=new Date()
                   
-                  
+                  console.log("position:"+position)
                   if(position!=-1 && groupIndex!=-1){
                     newGroupChallenge.hasAccepted=true
+                    console.log(newGroupChallenge.selectedContestants[position])
                     newGroupChallenge.selectedContestants[position].approved=true
                     newGroupChallenge.selectedContestants[position].dateApproved=new Date()
                    
@@ -219,9 +225,13 @@ function ChallengeRequestModal({challenge,visibility,disabled}) {
                     var newAllNots=hdata.notifications!=null && hdata.notifications.length>0? hdata.allNotifications:[]
                     if(newNots.length>0){
                       newNots.push(notification)
+                    }else{
+                      newNots=[notification]
                     }
                     if(newAllNots.length>0){
                       newAllNots.push(notification)
+                    }else{
+                      newAllNots=[notification]
                     }
                     const updateHost=await updateDoc(hostRef,{
                       notifications:newNots,

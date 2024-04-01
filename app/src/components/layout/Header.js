@@ -115,6 +115,7 @@ function Header({ourUser,visibility}) {
             <ul class={`h-[${user.notifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden `}>
               { user.notifications.map((n)=>{
                   if(n.acknowledged!=null && n.acknowledged==false ){
+                    console.log("SHOULD NOT BE DISABLED")
                   return(
                     <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
                       <div class="flex w-full justify-end p-1">
@@ -175,11 +176,12 @@ function Header({ourUser,visibility}) {
                     
                     {
                       user.groupChallengeRequests.map((r)=>{
-                        if(r.challengeId==n.challengeId){
+                        if(n.challengeId==r.challengeId){
+                          console.log(r.dateApproved)
                           return(<div class="flex-col w-full">
-                            {r.approved==true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-500">Accepted-{r.dateApproved.toString()}</span></p>:<p></p>}
-                            {r.denied==true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{r.dateDenied.toString()}</span></p>:<p></p>}
-                            <OpenChallengeRequestButton challenge={r} disabled={false}/>
+                            {r.approved==true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-800">Accepted-{`(${new Date(r.dateApproved.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateApproved.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
+                            {r.denied==true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{`(${new Date(r.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
+                            <OpenChallengeRequestButton challenge={r} disabled={r.approved!=true && r.denied!=true? false:true}/>
                             </div>)
                         }
                       })
@@ -251,8 +253,13 @@ function Header({ourUser,visibility}) {
                   <div class="flex p-3">
                     {
                       user.groupChallengeRequests.map((r)=>{
-                        if(r.challengeId==n.challengeId){
-                          return(<OpenChallengeRequestButton challenge={r} disabled={false}/>)
+                        if(n.challengeId==r.challengeId){
+                          console.log(r.dateApproved)
+                          return(<div class="flex-col w-full">
+                            {r.approved==true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-800">Accepted-{`(${new Date(r.dateApproved.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateApproved.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
+                            {r.denied==true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{`(${new Date(r.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
+                            <OpenChallengeRequestButton challenge={r} disabled={r.approved!=true && r.denied!=true? false:true}/>
+                            </div>)
                         }
                       })
                     }
@@ -287,11 +294,12 @@ function Header({ourUser,visibility}) {
                     
                     {
                       user.groupChallengeRequests.map((r)=>{
-                        if(r.challengeId==n.challengeId){
+                        if(n.challengeId==r.challengeId){
+                          console.log(r.dateApproved)
                           return(<div class="flex-col w-full">
-                            {r.approved!=true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-500">Accepted-{r.dateApproved.toString()}</span></p>:<p></p>}
-                            {r.denied!=true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{r.dateApproved.toString()}</span></p>:<p></p>}
-                            <OpenChallengeRequestButton challenge={r} disabled={true}/>
+                            {r.approved==true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-800">Accepted-{`(${new Date(r.dateApproved.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateApproved.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
+                            {r.denied==true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{`(${new Date(r.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
+                            <OpenChallengeRequestButton challenge={r} disabled={r.approved!=true && r.denied!=true? false:true}/>
                             </div>)
                         }
                       })

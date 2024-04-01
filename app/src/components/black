@@ -1,1 +1,8 @@
-{`(${new Date(challenge.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(challenge.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(challenge.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}
+if(n.challengeId==r.challengeId){
+  console.log(r)
+  return(<div class="flex-col w-full">
+    {r.approved!=true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-800">Accepted-{`(${new Date(r.dateApproved.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateApproved.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
+    {r.denied!=true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{`(${new Date(r.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
+    <OpenChallengeRequestButton challenge={r} disabled={r.approved!=true && r.denied!=true? false:true}/>
+    </div>)
+}
