@@ -29,7 +29,8 @@ function GroupChallenges() {
                         arr.push({
                             id: c.challenge.challengeId,
                             challenge:c.challenge,
-                            title:  c.challenge.title, 
+                            title:  c.challenge.title,
+                             
                             start: new Date(c.challenge.startDate),
                             end: new Date(c.challenge.endDate),
                             allDay: true,
@@ -59,6 +60,7 @@ function GroupChallenges() {
                                   start: new Date(s.day),
                                   end: new Date(s.day),
                                   allDay: true,
+                                  streak:s.streak,
                                   editable: false,
                                   clickable: true,
                                   problems:s.streak.problems,
@@ -73,7 +75,7 @@ function GroupChallenges() {
                                 console.log({
                                     id: s.streak._id,
                                     challenge:c.challenge,
-                                    title:  s.streak.problems.length +" problems", 
+                                    title:  s.streak.username+" ("+s.streak.firstname+" "+ s.streak.lastname+") | "+s.streak.problems.length +" problems", 
                                     start: new Date(s.day),
                                     end: new Date(s.day),
                                     allDay: true,
