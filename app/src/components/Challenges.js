@@ -21,6 +21,7 @@ import { createDispatchHook, useDispatch } from 'react-redux';
 import { setEditChallengeVisibility,setChallenge, refreshChallengeChart } from '../redux/editChallenge.js/editChallenge-actions';
 import { connect } from 'react-redux';
 import ChallengesSelectedContestants from './ChallengesSelectedContestants';
+import GroupChallenges from './GroupChallenges';
 function Challenges({refresh}) {
 
   const usersCollectionRef=collection(db,"users")
@@ -52,6 +53,7 @@ function Challenges({refresh}) {
   const[showGroupChallenges,setShowGroupChallenges]=useState(false)
   const[allGroupChallenges,setAllGroupChallenges]=useState()
   const[displayGroupChallenges,setDisplayGroupChallenges]=useState(false)
+  const[showGroupChallengesCalender,setShowGroupChallengesCalender]=useState(false)
   const dispatch=useDispatch()
   const selectionRange={
     startDate:startDate,
@@ -1171,83 +1173,10 @@ if(!isLoading && challenges!=null){
     <div class="flex-col  rounded-md p-3 w-full border-t-2 border-gray-400">
       <div class="flex w-full bg-gray-300 m-2 rounded-md p-3">
         <p class="font-bold">No Challenges Yet</p>
-        
+        <GroupChallenges/>
 
       </div>
-      <button class="bg-green-700 p-1 rounded-sm" onClick={async()=>{
-            var trevor={
-              "challengeId": 17946,
-              "userId": "Bq02JQzmhI3lNCKko9BW",
-              "success": true,
-              "passes": "1",
-              "initialPasses": "1",
-              "username": "_trevor.am_",
-              "firstname": "Trevor",
-              "lastname": "Myers",
-              "createdBy": "gs0K9MxVoU8nNDnfkwem",
-              "approved": true,
-              "dateApproved":new Date("2024-03-28T21:17:59.699+00:00"),
-              "denied": false
-          }
-         var notif
-          const d=doc(db,"users","gs0K9MxVoU8nNDnfkwem")
-          const data=(await getDoc(d)).data()
-          const gc=data.groupChallenges
-          gc.map((g)=>{
-            if(g.challengeId==trevor.challengeId){
-              console.log("match")
-              g.selectedContestants.push(trevor)
-              
 
-            }
-          })
-          const n={
-            message:"_trevor.am_ (Trevor Myers) has accepted your group challenge invitation for '2 a Day' from Thu Mar 28 2024 through Sun Mar 31 2024",
-            type:"GROUP_CHALLENGE_REQUEST_ACCEPTED",
-            time:trevor.dateApproved,
-            acknowledged:false,
-            challenge:trevor
-          }
-          const not=data.notifications
-    
-          not.push(n)
-
-          setTimeout(()=>{
-            notif=not
-          },50)
-
-          setTimeout(async()=>{
-            console.log(notif)
-            console.log(gc)
-           /* await updateDoc(d,{
-              notifications:notif,
-              groupChallenges:gc
-            })*/
-        },1000)
-        /*  console.log(data.data())
-          const n=  {
-            time: new Date("2024-03-28T21:17:59.699+00:00"),
-            type: "GROUP_CHALLENGE_REQUEST",
-            message: "_mirchoe_ (Michelle Badu) has request you to join a group challenge,2 a Day, with 0 other users.",
-            challengeId: 17946,
-            acknowledged:false
-        }
-        */
-         /* const requests=data.data().groupChallengeRequests
-          const not=data.data().notifications
-          const allNot=data.data().allNotifications
-          requests.push(trevor)
-          not.push(n)
-          allNot.push(n)*/
-          setTimeout(async()=>{
-          /* await  updateDoc(d,{
-            notifications:not,
-            groupChallengesRequests:requests
-           })*/
-          },1000)
-        }}>
-          <p class="text-white">add</p>
-        </button>
       <div class=" flex-col  bg-yellow-400 rounded-md p-3">
       
       <div class="flex w-full justify-end  rounded-md p-3 ">
@@ -1310,80 +1239,7 @@ if(!isLoading && challenges!=null){
       <div class="flex-col  rounded-md p-3 w-full  ">
         <div class="flex-col w-full">
           <div class="flex-col w-full">
-          <button class="bg-green-700 p-1 rounded-sm" onClick={async()=>{
-            var trevor={
-              "challengeId": 17946,
-              "userId": "Bq02JQzmhI3lNCKko9BW",
-              "success": true,
-              "passes": "1",
-              "initialPasses": "1",
-              "username": "_trevor.am_",
-              "firstname": "Trevor",
-              "lastname": "Myers",
-              "createdBy": "gs0K9MxVoU8nNDnfkwem",
-              "approved": true,
-              "dateApproved":new Date("2024-03-28T21:17:59.699+00:00"),
-              "denied": false
-          }
-         var notif
-          const d=doc(db,"users","gs0K9MxVoU8nNDnfkwem")
-          const data=(await getDoc(d)).data()
-          const gc=data.groupChallenges
-          gc.map((g)=>{
-            if(g.challengeId==trevor.challengeId){
-              console.log("match")
-              g.selectedContestants.push(trevor)
-              
-
-            }
-          })
-          const n={
-            message:"_trevor.am_ (Trevor Myers) has accepted your group challenge invitation for '2 a Day' from Thu Mar 28 2024 through Sun Mar 31 2024",
-            type:"GROUP_CHALLENGE_REQUEST_ACCEPTED",
-            time:trevor.dateApproved,
-            acknowledged:false,
-            challenge:trevor
-          }
-          const not=data.notifications
-    
-          not.push(n)
-
-          setTimeout(()=>{
-            notif=not
-          },50)
-
-          setTimeout(async()=>{
-            console.log(notif)
-            console.log(gc)
-           /* await updateDoc(d,{
-              notifications:notif,
-              groupChallenges:gc
-            })*/
-        },1000)
-        /*  console.log(data.data())
-          const n=  {
-            time: new Date("2024-03-28T21:17:59.699+00:00"),
-            type: "GROUP_CHALLENGE_REQUEST",
-            message: "_mirchoe_ (Michelle Badu) has request you to join a group challenge,2 a Day, with 0 other users.",
-            challengeId: 17946,
-            acknowledged:false
-        }
-        */
-         /* const requests=data.data().groupChallengeRequests
-          const not=data.data().notifications
-          const allNot=data.data().allNotifications
-          requests.push(trevor)
-          not.push(n)
-          allNot.push(n)*/
-          setTimeout(async()=>{
-          /* await  updateDoc(d,{
-            notifications:not,
-            groupChallengesRequests:requests
-           })*/
-          },1000)
-        }}>
-          <p class="text-white">add</p>
-        </button>
+          
             <p class="font-bold text-2xl">Your Challenges</p>
             <button class="bg-green-400 p-2 rounded-md" onClick={()=>{
               setShowGroupChallenges(!showGroupChallenges)
@@ -1391,8 +1247,12 @@ if(!isLoading && challenges!=null){
               <p class="text-white">See Group Challenges</p>
             </button>
           </div>
+          <div>
+        
+          
+          </div>
           {
-            showCurrentChallenge && !showGroupChallenges?
+            showCurrentChallenge && !showGroupChallenges && !showGroupChallengesCalender?
             <div>
                 <div class="bg-gray-200 rounded-md p-2 flex-col m-2">
                   <div class="flex w-full justify-between">
@@ -1502,8 +1362,24 @@ if(!isLoading && challenges!=null){
             </div>
 
           }
+            {
+            !showCurrentChallenge && !showGroupChallenges && showGroupChallengesCalender?
+            <div>
+                <div class="bg-gray-200 rounded-md p-2 flex-col m-2">
+                  <div class="flex w-full justify-between">
+                  
+                  <GroupChallenges/>
+                  </div>
+            
+                </div>
+            </div>:
+               <div>
+            </div>
+
+          }
           
       </div>
+    
       <div class="flex w-full">
         {
           showGroupChallenges && allGroupChallenges!=null?
@@ -1597,7 +1473,23 @@ if(!isLoading && challenges!=null){
         <div></div>
         }
       </div>
-      
+      <div class="flex w-full">
+      {
+            !showCurrentChallenge && showGroupChallenges ?
+            <div>
+                <div class="bg-gray-200 rounded-md p-2 w-full flex-col m-2">
+                  <div class="flex w-full justify-between">
+                  
+                  <GroupChallenges/>
+                  </div>
+            
+                </div>
+            </div>:
+               <div>
+            </div>
+
+          }
+      </div>
       <div class="flex w-full">
       {show && !showDelete && !showCreateGroupChallenge ?
       <div class="flex w-full">
@@ -1955,111 +1847,45 @@ if(!isLoading && challenges!=null){
         
 
       </div>
-      <button class="bg-green-700 p-1 rounded-sm" onClick={async()=>{
-            var trevor={
-              "challengeId": 17946,
-              "userId": "Bq02JQzmhI3lNCKko9BW",
-              "success": true,
-              "passes": "1",
-              "initialPasses": "1",
-              "username": "_trevor.am_",
-              "firstname": "Trevor",
-              "lastname": "Myers",
-              "createdBy": "gs0K9MxVoU8nNDnfkwem",
-              "approved": true,
-              "dateApproved":new Date("2024-03-28T21:17:59.699+00:00"),
-              "denied": false
-          }
-         var notif
-          const d=doc(db,"users","gs0K9MxVoU8nNDnfkwem")
-          const data=(await getDoc(d)).data()
-          //data.allUsersId.push("Bq02JQzmhI3lNCKko9BW")
-          
-          const gc=data.groupChallenges
+      <div>
+      <GroupChallenges/>
+      </div>
+      <div>
+      <div class="flex w-full">
+        {
+          showGroupChallenges && allGroupChallenges!=null?
+          <div class="bg-gray-200 rounded-md p-2 flex-col m-2 w-full">
+          <div class="flex w-full justify-between">
+            <p class="text-xl font-bold">Group Challenges</p>
+          </div>
+          <div class="flex w-full">
          
-
-          gc.map((g)=>{
-           
-            
-            
-            setTimeout(()=>{
-              if(g.challengeId==trevor.challengeId){
-                console.log("match")
-                g.selectedContestants.push(trevor)
-              
-                setTimeout(()=>{
-                 
-                  g.allUserIds.push("Bq02JQzmhI3lNCKko9BW")
-                  console.log(g)
-            
-  
-                },100)
-                //g.allUsersId.push("Bq02JQzmhI3lNCKko9BW")
-                
-  
-              }
-
-            })
-        
-          })
-          const n={
-            message:"_trevor.am_ (Trevor Myers) has accepted your group challenge invitation for '2 a Day' from Thu Mar 28 2024 through Sun Mar 31 2024",
-            type:"GROUP_CHALLENGE_REQUEST_ACCEPTED",
-            time:trevor.dateApproved,
-            acknowledged:false,
-            challenge:trevor
-          }
-          const not=data.notifications
-    
-          not.push(n)
-
-          setTimeout(()=>{
-            notif=not
-          },50)
-
-          setTimeout(async()=>{
-            console.log(notif)
-            console.log(gc)
-            await updateDoc(d,{
-              notifications:notif,
-              groupChallenges:gc
-            })
-        },1000)
-        /*  console.log(data.data())
-          const n=  {
-            time: new Date("2024-03-28T21:17:59.699+00:00"),
-            type: "GROUP_CHALLENGE_REQUEST",
-            message: "_mirchoe_ (Michelle Badu) has request you to join a group challenge,2 a Day, with 0 other users.",
-            challengeId: 17946,
-            acknowledged:false
+          </div>
+        </div>
+        :
+        <div></div>
         }
-        */
-         /* const requests=data.data().groupChallengeRequests
-          const not=data.data().notifications
-          const allNot=data.data().allNotifications
-          requests.push(trevor)
-          not.push(n)
-          allNot.push(n)*/
-          setTimeout(async()=>{
-          /* await  updateDoc(d,{
-            notifications:not,
-            groupChallengesRequests:requests
-           })*/
-          },1000)
-        }}>
-          <p class="text-white">add</p>
-        </button>
-      <div class=" flex-col  bg-yellow-400 rounded-md p-3">
-      <div class="flex w-full justify-end  rounded-md p-3 ">
-        <button class="bg-green-500 rounded-md p-3" onClick={()=>{
+      </div>
+      
+      <div class="flex w-full">
+      {show && !showDelete && !showCreateGroupChallenge ?
+      <div class="flex w-full">
+      <div class="flex-col w-2/3  bg-yellow-400 rounded-l-[5px]  rounded-md p-1 ">
+        <div class="flex w-full">
+        <div class="flex w-1/2 justify-start">
+          <p class="font-bold text-xl">Create New Challenge</p>
+        </div>
+        <div class="flex w-full justify-end">
+        <button class="bg-green-500 rounded-md p-2" onClick={()=>{
           setShow(!show)
-        }}> 
+          setShowDelete(false)
+          setCreateGroupChallenge(false)
+        }}>
           <p class="text-white">+</p>
         </button>
       </div>
-  
-      <div class="flex w-full justify-start"><p class="font-bold text-xl">Create New Challenge</p></div>
-      {show?
+      </div>
+
       <div class="flex-col m-3">
         <form onSubmit={submit} >
         <input type="text" class="flex w-full rounded-sm bg-white p-2 mb-2" placeholder="Title" onChange={(e)=>{
@@ -2070,6 +1896,7 @@ if(!isLoading && challenges!=null){
         }}/>
          <input type="number" class="flex w-1/2 rounded-sm bg-white p-2 mb-2"  default={0} placeholder="# of forgiveness passes" onChange={(e)=>{
           setPasses(e.target.value)
+          setInitialPasses(e.target.value)
         }}/>
         <div class="flex-col">
           <p class="text-xl font-bold">Start Date/End Date</p>
@@ -2079,7 +1906,7 @@ if(!isLoading && challenges!=null){
 
         </div>
         <div class="flex w-full mt-2 justify-center">
-          <button class="bg-red-500 rounded-md flex p-2" type="submit">
+          <button class="bg-green-500 rounded-md flex p-2" type="submit">
             <p class="text-white font-bold">Submit</p>
           </button>
           </div>
@@ -2087,11 +1914,308 @@ if(!isLoading && challenges!=null){
         
       
       </div>
+      </div>
+      <div class="flex-col w-1/8  bg-purple-400  rounded-l-[5px] ]rounded-md p-1 ">
+          <div class="flex"></div>
+
+          <div class="flex w-full justify-between">
+          <p class="font-bold text-xl text-start">Create Group Challenge</p>
+        </div>
+        <button class="bg-purple-700 rounded-md p-2" onClick={()=>{
+            setShow(false)
+            setShowDelete(false)
+            setShowCreateGroupChallenge(!showCreateGroupChallenge)
+          }}>
+            <IonIcon name="people-outline" style={{color:"white",font:"bold"}}/>
+          </button>
+      </div>
+      <div class="flex-col w-1/8  bg-orange-400 rounded-l-[5px]  rounded-md p-3 ">
+        <div class="flex"><p class="font-bold text-xl">Delete Challenge</p></div>
+        <button class="bg-red-500 rounded-md p-2" onClick={()=>{
+          setShowDelete(!showDelete)
+          setShow(false)
+          setCreateGroupChallenge(false)
+
+        }}>
+          <p class="text-white">-</p>
+        </button>
+      </div>
+      </div>
       :
       <div></div>
   }
+      {showCreateGroupChallenge && !showDelete && !show ?
+      <div class="flex w-full">
+        <div class="flex-col w-1/4  bg-yellow-400  rounded-l-[5px] ]rounded-md p-1 ">
+        <div class="flex"></div>
+
+        <div class="flex w-full justify-between">
+        <p class="font-bold text-xl text-start">Create  New Challenge</p>
+      </div>
+      <button class="bg-green-500 rounded-md p-2" onClick={()=>{
+          setShow(!show)
+          setShowDelete(false)
+          setShowCreateGroupChallenge(false)
+        }}>
+          <p class="text-white">+</p>
+        </button>
+      </div>
+      <div class="flex-col w-3/4  bg-purple-400 rounded-l-[5px]  rounded-md p-1 ">
+        <div class="flex w-full ">
+          <div class="flex w-1/2 justify-start">
+          <p class="font-bold text-xl text-start">Create Group Challenge</p>
+          </div>
+          <div class="flex w-1/2 justify-end">
+        <button class="bg-purple-700 rounded-md p-2" onClick={()=>{
+            setShow(false)
+            setShowDelete(false)
+            setShowCreateGroupChallenge(!showCreateGroupChallenge)
+          }}>
+           <IonIcon name="people-outline" style={{color:"white",font:"bold"}}/>
+          </button>
+          </div>
+        </div>
     
+
+      <div class="flex-col m-3">
+        <form onSubmit={submitGroupChallenge} >
+        <input type="text" name="name" class="flex w-full rounded-sm bg-white p-2 mb-2" placeholder="Title" onChange={(e)=>{
+        
+          const name=e.target.name
+          const value=e.target.value
+        
+          console.log(value,createGroupChallenge)
+          setCreateGroupChallenge((prev)=> {return ({...prev,name:value})})
+        }}/>
+        <input type="number" name="no_questions" class="flex w-1/2 rounded-sm bg-white p-2 mb-2"  default={5} placeholder="# of Questions" onChange={(e)=>{
+               const name=e.target.name
+               const value=e.target.value
+             
+               console.log(value,createGroupChallenge)
+               setCreateGroupChallenge((prev)=> {return ({...prev,no_questions:value})})
+        }}/>
+         <input type="number" name="no_passes"  class="flex w-1/2 rounded-sm bg-white p-2 mb-2"  default={0} placeholder="# of forgiveness passes" onChange={(e)=>{
+              const name=e.target.name
+              const value=e.target.value
+            
+              console.log({name:value},createGroupChallenge)
+              setCreateGroupChallenge(prev=> {return({...prev,no_passes:value,initialPasses:value})})
+        }}/>
+      <p class="font-bold text-xl">
+        Contestants
+      </p>
+    
+     <ChallengesSelectedContestants setSelectedContestants={setSelectedContestants} selectedContestants={selectedContestants} contestantsChanged={contestantsChanged}/>
+     
+ 
+         <select name="cars" class=" flex p-2 rounded-md w-full" id="cars" onChange={(e)=>{
+         console.log(selectedContestants)
+          
+        
+          if(selectedContestants.length>0){
+            const exists=selectedContestants.filter((c)=>{
+              console.log(e.target.value,c)
+              if( c==e.target.value){
+                 return true
+              }
+             })
+             console.log(exists)
+          if(!exists.includes(true)){
+           const ppl=selectedContestants
+           ppl.push(e.target.value)
+            setTimeout(()=>{
+              console.log(ppl)
+              setSelectedContestants(ppl)
+              setContestantsChanged(!contestantsChanged)
+          },500)
+          }
+          
+          }else{
+            const ppl=selectedContestants
+            ppl.push(e.target.value)
+
+            setTimeout(()=>{
+              setSelectedContestants(ppl)
+              setContestantsChanged(!contestantsChanged)
+
+            },1500)
+
+          }
+         }}>
+              {
+                ourUser.followers.map((f)=>{
+                  return(<option class="flex-col p-2 border-b-2 border-gray-300 ">
+                    <p class="font-bold" value={f}>
+                      {f.username}
+                      </p></option>)
+                })
+              } 
+            </select>
+        <div class="flex-col">
+          <p class="text-xl font-bold">Start Date/End Date</p>
+          <DateRangePicker min={new Date()} ranges={[selectionGroupRange]}onChange={(selection)=>{
+            console.log(selection.selection.startDate)
+            console.log(selectionGroupRange)
+         
+            setStartDateGroup(selection.selection.startDate)
+            setEndDateGroup(selection.selection.endDate)
+            setCreateGroupChallenge(prev=> {return({...prev,key:"selection",startDate:startDate,endDate:endDate})})
+
+          }} 
+             minDates={new Date()} 
+             />
+          
+
+        </div>
+        <div class="flex w-full mt-2 justify-center">
+          <button class="bg-green-500 rounded-md flex p-2" type="submit">
+            <p class="text-white font-bold">Submit</p>
+          </button>
+          </div>
+        </form>
+        
+      
+      </div>
+      </div>
+      <div class="flex-col w-full  bg-orange-400  rounded-l-[5px] p-1">
+              <div class="flex"></div>
+
+              <div class="flex w-full justify-between">
+            <p class="font-bold text-xl text-start">Delete Challenge</p>
+         
+           </div>
+           <button class="bg-red-500 rounded-md p-2" onClick={()=>{
+                setShowDelete(!showDelete)
+                setShowCreateGroupChallenge(false)
+                setShow(false)
+              }}>
+             <p class="text-white">-</p>
+             </button>
+          </div>
+      </div>
+      :
+      <div></div>
+  }
+     
+{!show && showDelete && !showCreateGroupChallenge?
+<div class="flex w-full">
+<div class="flex-col w-1/8  bg-yellow-400  rounded-l-[5px] ]rounded-md p-1 ">
+        <div class="flex"></div>
+
+        <div class="flex w-full justify-between">
+        <p class="font-bold text-xl text-start">Create  New Challenge</p>
+      </div>
+      <button class="bg-green-500 rounded-md p-2" onClick={()=>{
+          setShow(!show)
+          setShowDelete(false)
+          setShowCreateGroupChallenge(false)
+        }}>
+          <p class="text-white">+</p>
+        </button>
+      </div>
+      <div class="flex-col w-1/8  bg-purple-400  rounded-l-[5px] ]rounded-md p-1 ">
+            <div class="flex"></div>
+
+            <div class="flex w-full justify-between">
+            <p class="font-bold text-xl text-start">Create Group Challenge</p>
+          </div>
+          <button class="bg-purple-700 rounded-md p-2" onClick={()=>{
+              setShow(false)
+              setShowDelete(false)
+              setShowCreateGroupChallenge(!showCreateGroupChallenge)
+            }}>
+            <IonIcon name="people-outline" style={{color:"white",font:"bold"}}/>
+            </button> 
+      </div>
+
+      <div class="flex-col w-3/4  bg-orange-400  rounded-r-[5px] p-3 ">
+
+        <div class="flex w-full justify-between">
+        <p class="font-bold text-xl text-start">Delete Challenge</p>
+        <button class="bg-red-500 rounded-md p-2" onClick={()=>{
+          setShowDelete(!showDelete)
+          setShow(false)
+          setShowCreateGroupChallenge(false)
+        }}>
+          <p class="text-white">-</p>
+        </button>
+      </div>
+
+      <div class="flex-col m-3">
+       
+        <div class="h-[20vh] overflow-y-scroll overflow-hidden w-full bg-white">
+          {
+            challenges.map((c)=>{
+              if(c.challenge!=null){
+                console.log()
+              return(
+                <DeleteChallengeComponent challenge={c.challenge}/>
+              )
+              }
+            })
+          }
+        </div>
+        
+      
+      </div>
+      </div>
+
+        
+      </div>
+      :
+      <div></div>
+  }
+   
   </div>
+  {!show && !showDelete && !showCreateGroupChallenge ?
+  <div class="flex w-full">
+      <div class="flex-col  bg-yellow-400 rounded-l-[5px] p-1 w-full ">
+        <div class="flex"></div>
+
+        <div class="flex w-full justify-between">
+        <p class="font-bold text-xl text-start">Create New Challenge</p>
+        <button class="bg-green-500 rounded-md p-2" onClick={()=>{
+          setShow(!show)
+          setShowDelete(false)
+          setShowCreateGroupChallenge(false)
+        }}>
+          <p class="text-white">+</p>
+        </button>
+      </div>
+    </div>
+    <div class="flex-col w-full  bg-purple-400  rounded-l-[5px] p-1">
+              <div class="flex"></div>
+
+              <div class="flex w-full justify-between">
+        <p class="font-bold text-xl text-start">Create Group Challenge</p>
+        <button class="bg-purple-700 rounded-md p-2" onClick={()=>{
+          setShowCreateGroupChallenge(!showCreateGroupChallenge)
+          setShow(false)
+          setShowDelete(false)
+        }}> 
+      <IonIcon name="people-outline" style={{color:"white"}}/>       
+        </button>
+        </div>
+      </div>
+      <div class="flex-col w-full  bg-orange-400  rounded-l-[5px] p-1">
+              <div class="flex"></div>
+
+              <div class="flex w-full justify-between">
+            <p class="font-bold text-xl text-start">Delete Challenge</p>
+            <button class="bg-red-500 rounded-md p-2" onClick={()=>{
+                setShowDelete(!showDelete)
+              }}>
+             <p class="text-white">-</p>
+             </button>
+           </div>
+          </div>
+  </div>
+      :
+      <div></div>
+  }
+    </div>
+      
+    
     </div>
   )
 }

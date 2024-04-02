@@ -15,13 +15,72 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
   console.log(selectedYear)
 
   const[isLoading,setIsLoading]=useState(true)
+  const [data,setData]=useState()
   
   
   const [problems,setProblems]=useState()
   console.log("\n",streaks)
   useEffect(()=>{
     const prom=new Promise(async(resolve,reject)=>{
-      resolve()
+      setData( {
+ 
+        labels:streaks.map((d)=>{
+          return d.day.toString()
+        }),
+        datasets:[
+          {
+            labels:streaks.map((d)=>{
+              if(useSelectedYear){
+                if(d.day.includes(selectedYear.toString())){
+                  if(useSelectedMonth){
+                    if(d.day.includes(selectedMonth)){
+                      return d.day
+                    }
+                  }else{
+                    return d.day
+                  }
+                }
+              }else{
+                if(useSelectedMonth){
+                  if(d.day.includes(selectedMonth)){
+                    return d.day
+                  }
+                }else{
+                  return d.day
+                }
+              }
+            }),
+            data:streaks.map((d)=>{
+                if(useSelectedYear){
+                if(d.day.includes(selectedYear.toString())){
+                  if(useSelectedMonth){
+                    if(d.day.includes(selectedMonth)){
+                      return d.problems.length
+                    }
+                  }else{
+                    return d.problems.length
+                  }
+                }
+              }else{
+                if(useSelectedMonth){
+                  if(d.day.includes(selectedMonth)){
+                    return d.problems.length
+                  }
+                }else{
+                  return d.problems.length
+                }
+              }
+            })
+          }
+        ]
+       
+          
+        
+      })
+      setTimeout(()=>{
+        resolve()
+
+      },1000)
       })
 
 
@@ -66,54 +125,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
   };
 
  
-  const data= {
-    labels:streaks.map((m) => {
-    if(useSelectedYear){
-      if(m.day.includes(selectedYear)){
-        if(useSelectedMonth){
-          if(m.day.includes(selectedMonth)){
-            return m.day
-          }
-        }else{
-          return m.day
-        }
-      }
-    }else{
-      return m.day
-    }
-    }),
-    datasets: [
-      {
-        base:0,
-        xAxisId:"Problems",
-        labels: streaks.filter((d)=>{
-          if(useSelectedYear){
-            if(d.day.includes(selectedYear)){
-              if(useSelectedMonth){
-                if(d.day.includes(selectedMonth)){
-                  return d.problems.length
-                }
-              }else{
-                return d.problems.length
-              }
-            }
-          }else{
-            return d.problems.length
-          }
-        }),
-        data: streaks.map((d) => {
-       if(useSelectedYear){
-          if(d.day.includes(selectedYear)){
-            return d.problems.length
-          }
-       }else{
-        return d.problems.length
-       }
-      }),
-        backgroundColor: "rgba(50, 270, 100, 0.5)",
-      },
-    ],
-  };
+
 
  async function remove(e,s,p){
   e.preventDefault()
@@ -143,29 +155,29 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
  if(!isLoading && streaks.length!=0){
   //console.log(streaks)
  console.log("useSelectedYear",useSelectedYear,"selected Year:",selectedYear," useSelected Month:",useSelectedMonth," selected Month:",selectedMonth)
- 
+ console.log(data)
   
   return (
-    <div class="flex h-[550px]  w-full m-2 border-l-2 border-gray-500 p-3 z-1  ">
-      <div class={streaks.length>4?"flex w-full":"flex w-full"}>
+    <div class="flex h-[550px]  w-full border-l-2 border-gray-500 p-3 z-1  m-5">
+      <div class={streaks.length>4?"flex ":"flex"}>
       { 
       streaks!=null ?
       <div class=" flex-col z-1 ">
-        <div class="h-1/3">
+        <div class="h-1/3"> 
             <Bar class="z-l"options={options} data={data} height={null} width={null} />
             </div>
-            <div class="flex  w-[470px] overflow-x-scroll overflow-hidden h-2/3 pt-6" >
+            <div class={`flex  w-[${data.datasets[0].data.length>5? "80":"50"}vw] overflow-x-scroll overflow-hidden h-2/3 pt-6`} >
           
             {streaks.map((s)=>{
               if(s!=null || s!={}){
             
               return(
-                <div class="flex-col m-2 mb-1 ">
+                <div class="flex-col m-2 mb-1 border-r-2 border-gray-300 ">
                 <p class="text-md font-bold">
                 {useSelectedYear && useSelectedMonth && s.day.includes(selectedMonth) && s.day.includes(selectedYear.toString())? 
                 <div>
                     <p>{s.day}</p>
-                    <ul class={`h-[250px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
+                    <ul class={`h-[100px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
                   {
                     s.problems.map((p)=>{
                     
@@ -210,7 +222,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
                     {useSelectedYear && !useSelectedMonth && s.day.includes(selectedYear.toString())? 
                       <div>
                       <p>{s.day}</p>
-                      <ul class={`h-[250px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
+                      <ul class={`h-[100px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
                     {
                       s.problems.map((p)=>{
                       
@@ -257,7 +269,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
                  {!useSelectedYear ?   
                  <div>
                     <p>{s.day}</p>
-                    <ul class={`h-[250px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
+                    <ul class={`h-[150px] ${s.problems.length>2?"overflow-y-scroll overflow-hidden ":"" }`}>
                   {
                     s.problems.map((p)=>{
                

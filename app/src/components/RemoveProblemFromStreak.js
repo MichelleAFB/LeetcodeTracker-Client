@@ -4,6 +4,7 @@ import { db } from '../firebase/firebase';
 import { getDocs } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
 import {useState} from 'react'
+import IonIcon from '@reacticons/ionicons';
 function RemoveProblemFromStreak({s,p}) {
   const[isLoading,setIsLoading]=useState(true)
   const[problem,setProblem]=useState()
@@ -55,7 +56,7 @@ function RemoveProblemFromStreak({s,p}) {
                           remove(e,s,p)
                         }}>
                         <button type="submit" class="bg-red-500 p-1 rounded-md m-2">
-                          <p class="text-white">x</p>
+                          <IonIcon name="close-outline" style={{color:"white"}}/>
                         </button>
                         </form>
                         <p class="text-xs m-2">-{problem.title} </p></div>
