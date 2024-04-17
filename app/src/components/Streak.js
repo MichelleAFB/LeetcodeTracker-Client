@@ -154,12 +154,12 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
 
  if(!isLoading && streaks.length!=0){
   //console.log(streaks)
- console.log("useSelectedYear",useSelectedYear,"selected Year:",selectedYear," useSelected Month:",useSelectedMonth," selected Month:",selectedMonth)
- console.log(data)
+ //console.log("useSelectedYear",useSelectedYear,"selected Year:",selectedYear," useSelected Month:",useSelectedMonth," selected Month:",selectedMonth)
+ //console.log(data)
   
   return (
     <div class="flex h-[550px]  w-full border-l-2 border-gray-500 p-3 z-1  m-5">
-      <div class={streaks.length>4?"flex ":"flex"}>
+      <div class={streaks.length>4?"w-[50vw] overflow-x-scroll overflow-hidden ":"flex"}>
       { 
       streaks!=null ?
       <div class=" flex-col z-1 ">

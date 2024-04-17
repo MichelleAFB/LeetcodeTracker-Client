@@ -274,7 +274,8 @@ function ChallengeRequestModal({challenge,visibility,disabled}) {
                     }
                
                     setTimeout(()=>{
-                      axios.post("http://localhost:3022/update-group-challenge-contestant/"+challenge.userId,{groupChallenge:newGroupChallenge,user:changed,case:"CONTESTANT_GROUP_CHALLENGE_ACCEPTED"}).then((response)=>{
+                      
+                      axios.post("http://localhost:3022/update-group-challenge-contestant/"+challenge.userId,{createdBy:groupChallenge.userId,groupChallenge:newGroupChallenge,user:changed,case:"CONTESTANT_GROUP_CHALLENGE_ACCEPTED"}).then((response)=>{
                         console.log(response)
                         if(response.data.success){
                           alert("SUCCESS: you are now participating in "+groupChallenge.title)

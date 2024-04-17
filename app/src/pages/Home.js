@@ -111,23 +111,21 @@ function Home({problem,visibility,leetCodeVisiblity}) {
             }
         </div>
         <div class="flex w-full">     
-         <div class="  flex-col bg-gray-400 p-5 z-1 ">
+         <div class="w-1/2 flex-col bg-gray-400 z-1 ">
         
       <AddProblem/>
         <ProblemList/>
       </div>
 
-      <div class="w-1/2 flex-col overflow-y-scroll h-screen  p-5 sticky overflow-hidden  ">
 
-        <div>
+        <div class="w-1/2 flex-col bg-white z-1 ">
        
-          <p class=" mt-5 text-4xl z-10">Add More Problems</p>
+          <p class=" text-center mt-5 text-4xl z-10">Add More Problems</p>
             <  AllProblems/>
-         
          </div>
 
   
-        </div>
+      
         </div>
       </div>
     </div>

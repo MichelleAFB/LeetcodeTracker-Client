@@ -82,7 +82,7 @@ function Header({ourUser,visibility}) {
         <div class="flex-col w-1/5 mr-0 justify-end">
          <div class="flex-col justify-end">
         
-           <div class="group relative m-12 flex w-2/3 justify-center">
+           <div class="group relative  flex w-2/3 justify-center">
            <button class="justify-end flex w-full m-2" >
               <p class="text-md text-white m-0">{user.firstname} {user.lastname}</p>
              {user!=null ? <IonIcon onClick={async()=>{

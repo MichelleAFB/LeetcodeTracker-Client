@@ -45,7 +45,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       problemTitle=problemTitle.replace(/\s/g, "");
       problemTitle=problemTitle.replace(/{[()]}/g, "");
       console.log(docTitle + " "+problemTitle)
-      if(docTitle==problemTitle){
+      if(docTitle==problemTitle && doc.data().userId==user.userId){
         console.log(docTitle + " "+problemTitle)
         
        
@@ -65,7 +65,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       getProblemsList(ourProblem).then(()=>{
         
         var problemData=JSON.parse(sessionStorage.getItem('currentProblem'))
-        if(problemData!=null){
+        if(problemData!=null ){
           setPrompt(ourProblem.prompt)
           setDataStructure(problemData.problem.dataStructure)
           setCategory(problemData.problem.category)
@@ -309,7 +309,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
               }
 
               setDocument(ourProblem)
-            }    if(problemData==null){
+            }   else if(problemData==null){
              
               const p=JSON.parse(sessionStorage.getItem('currentProblem'))
                 console.log(problemData)
@@ -348,8 +348,12 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       userId:user.userId,
                       leetcodeId:(ourProblem.problemID!=null? ourProblem.questionId:-1),
                       examples:{0:"N/A",date:currDate},
-                      boilerCode:`public class Main{
-                        public static void main(String[]args){
+                      boilerCode:`
+         public class Main{
+
+                      
+                      
+        public static void main(String[]args){
 
                         }
                       }`,

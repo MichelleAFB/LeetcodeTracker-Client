@@ -779,7 +779,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
 
    */
   return (
-    <div class="bg-gray-400 w-1/2  p-3 z-10">
+    <div class="bg-gray-400   p-3 z-10">
       <div class="flex w-1/2 justify-end">
         <button class="" onClick={()=>{
           

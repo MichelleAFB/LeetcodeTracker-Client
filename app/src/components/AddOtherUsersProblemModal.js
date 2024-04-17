@@ -227,6 +227,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
                   </select>
             <button class="bg-green-700 rounded-md p-3 justify-center" onClick={()=>{
               //console.log("prompt:"+ ourProblem.prompt)
+              console.log(ourProblem)
               console.log("title:"+ourProblem.title)
               console.log("link:"+ourProblem.link)
               console.log("level:"+ourProblem.difficulty)
@@ -235,12 +236,13 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
             
 
               if(ourProblem!=null){
-              const  docRefer=doc(db,"problems",ourProblem.id)
+                console.log(problemId)
+              const  docRefer=doc(db,"problems",problemId)
              
                 
               const setDocument=async(ourProblem)=>{
                 console.log(ourProblem)
-                const  docRefer= doc(db,"problems",ourProblem.id)
+                const  docRefer= doc(db,"problems",problemId)
                 console.log(docRefer)
                 //READ DATA
                 
