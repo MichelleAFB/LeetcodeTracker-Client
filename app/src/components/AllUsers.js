@@ -44,7 +44,7 @@ function AllUsers() {
     if(!isLoading){
   
     return (
-      <div class="flex  p-2 justify-between">
+      <div class="flex  p-2 justify-between border-b-2 border-gray-500 bg-gray-200">
         {users.map((u)=>{
              
               const self=JSON.parse(sessionStorage.getItem("user"))

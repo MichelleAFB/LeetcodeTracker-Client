@@ -106,7 +106,7 @@ const [attempts,setAttempts]=useState()
   useEffect(()=>{
     console.log("reloading")
     const prom=new Promise((resolve,reject)=>{
-
+      
       if (enterPress && ctrlPress) {
    
         handleCompile();
@@ -117,6 +117,37 @@ const [attempts,setAttempts]=useState()
         //READ DATA
         try{
           const user=JSON.parse(sessionStorage.getItem("user"))
+          const userRef=doc(db,"users",user.userId)
+        
+          await updateDoc(userRef,{
+            myTopicTags:[ "Find Sub:X Inside",
+            "Sorting",
+                   "String to Number/Number to String",
+                 "Sliding Window",
+                "Recursion",
+                "KSmallest/KBiggest",
+                "Array Processing",
+                   "Math",
+                "Traverse"]
+           
+          })
+          /*userDocs.docs.map(async(u)=>{
+            const d=doc(u)
+            await updateDoc(db,"users",u.id,{
+              myTopicTags:[ "Find Sub:X Inside",
+              "Sorting",
+                     "String to Number/Number to String",
+                   "Sliding Window",
+                  "Recursion",
+                  "KSmallest/KBiggest",
+                  "Array Processing",
+                     "Math",
+                  "Traverse"]
+             
+            })
+          })
+          */
+        
           const userType=JSON.parse(sessionStorage.getItem("userType"))
 
         const data=await getDocs(problemsListCollectionRef)
@@ -475,16 +506,18 @@ console.log(params)
  
       { problem.problem.prompt!=null || problem.problem.prompt!="" &&showAllPrompts?
        <div class="p-3">
-         <p class="whitespace-pre-wrap font-bold m-3 text-white">
+         <p class="whitespace-pre-wrap font-bold m-3 text-xs text-white">
               {problem.problem.prompt.replace(/\n\n\n/g,"\n ")}
          </p>
-         <p class="whitespace-pre-wrap font-semibold m-3 text-gray-400" onClick={()=>{
+         <button class="flex p-1" onClick={()=>{
            setShowAllPrompt(!showAllPrompts)
-         }}>..See Less</p>
+         }}>
+         <p class="whitespace-pre-wrap font-semibold m-3 text-gray-400" >..See Less</p>
+         </button>
        </div>
       :
       <div class="p-3">
-        <p class="whitespace-pre-wrap font-bold m-3 text-white">
+        <p class="whitespace-pre-wrap text-xs font-bold m-3 text-white">
              {prompt.replace(/\n\n\n/g,"\n ").substring(0,700)}
         </p>
         <p class="whitespace-pre-wrap font-semibold m-3 text-gray-400" onClick={()=>{
@@ -659,8 +692,8 @@ console.log(params)
                    prompt:prompt,
                    examples:examples,
                    level:level,
-                   index:timeIndex
-                  
+                   index:timeIndex,
+                 
                  }).then((response)=>{
                   console.log(response)
                    
@@ -695,7 +728,8 @@ console.log(params)
                     prompt:prompt,
                     examples:examples,
                     level:level,
-                    index:timeIndex
+                    index:timeIndex,
+                  
                    
                   }).then((response)=>{
                     console.log(response)
@@ -743,7 +777,8 @@ console.log(params)
                     prompt:prompt,
                     examples:examples,
                     level:level,
-                    index:timeIndex
+                    index:timeIndex,
+                   
                    
                   }).then((response)=>{
                     console.log(response)

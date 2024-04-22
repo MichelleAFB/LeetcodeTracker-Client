@@ -52,6 +52,7 @@ function EnvironmentVariables() {
 
         <div class="flex-col  rounded-sm m-2">
           <p class="text-xl font-semibold">Question setting:</p>
+
           <div class="flex-col bg-[#F7E187] p-3">
             <p class="text-lg font-bold">Indexes</p>
             <div class="flex m-2">
@@ -135,9 +136,56 @@ function EnvironmentVariables() {
             
 
           </div>
+
+
+          <div class="flex-col bg-[#F7F170] p-3 mt-2">
+            <p class="text-lg font-bold">Question Options</p>
+            <div class="flex m-2">
+              
+            </div>
+            <p>When do you want to designate questions as in good health, declining and critical?</p>
+            
+            <div class="flex justify-between">
+              <div class="flex">
+                <label><p class="font-semibold">Good Health:</p></label>
+              
+                
+              </div>
+              <div class="flex">
+                <label><p class="font-semibold">Declining Health:</p></label>
+               
+              </div>
+              <div class="flex">
+                <label class=""><p class="font-semibold">Critical Health:</p></label>
+           
+              </div>
+            </div>
+
+            <div class="flex w-full justify-center">
+              <button class="bg-green-500 rounded-sm justify-center w-1/3 align-bottomr" onClick={async()=>{
+                const userRef=doc(db,"users",user.userId)
+                console.log(goodDays)
+                console.log(declining)
+                console.log(critical)
+                if(declining.end!=null && goodDays.end!=null){
+                await updateDoc(userRef,{
+                    healthyIndex:goodDays
+                })
+                await updateDoc(userRef,{
+                  decliningIndex:declining,
+              })
+              await updateDoc(userRef,{
+                criticalIndex:critical
+            })
+              }
+                alert("Successfully updated indexes.")
+              }}>
+                    <p class="text-white font-bold mt-2">Submit</p>
+               </button>
+            </div>
+          </div>
                   
         </div>
-
       </div>
     </div>
   )

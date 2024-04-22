@@ -15,7 +15,10 @@ function GroupChallenges({allChallenges,setAllGroupChallenges}) {
     const[challenges,setChallenges]=useState()
     const[events,setEvents]=useState()
     const navigate=useNavigate()
-
+  const [selectedChallenge,setSelectedChallenge]=useState()
+  const [useSelectedChallenge,setUseSelectedChallenge]=useState(false)
+  const [allEvents,setAllEvents]=useState()
+  const[challengesSelectors,setChallengeSelecters]=useState()
     function renderChallengeColor(){
      /* var letters = '0123456789ABCDEF';
       //  r = 255*((R/255.0)^ (1/1.5));
@@ -31,6 +34,37 @@ function GroupChallenges({allChallenges,setAllGroupChallenges}) {
     }
     return random_rgb()
     }
+    function showChallenge(cha){
+      console.log("SETTING SELECTION CHALLENGE",cha.event.extendedProps.challenge.challengeId)
+      setIsLoading(true)
+      if(useSelectedChallenge){
+        setEvents(allEvents)
+        setUseSelectedChallenge(false)
+       setTimeout(()=>{
+        setIsLoading(false)
+       },200)
+      }else{
+        setSelectedChallenge(cha.event.extendedProps.challenge.challengeId)
+        const newEvents=events.filter((e)=>{
+        
+          if(cha.event.extendedProps.challenge.challengeId==e.challengeId  ){
+           
+            return e
+          }
+         
+        })
+        setTimeout(()=>{
+          console.log("newEvents:",newEvents.length,newEvents)
+          setEvents(newEvents)
+          setTimeout(()=>{
+            setUseSelectedChallenge(true)
+            setTimeout(()=>{
+              setIsLoading(false)
+             },200)
+          },200)
+        },500)
+      }
+    }
     useEffect(()=>{
       if(allChallenges==null){
         const arr=[]
@@ -40,6 +74,7 @@ function GroupChallenges({allChallenges,setAllGroupChallenges}) {
         const groupCha=[]
         const ourUser=JSON.parse(sessionStorage.getItem("user"))
         const allCha=[]
+        const challengeButtons=[]
         const prom=new Promise((resolve,reject)=>{
           axios.get("http://localhost:3022/group-challenges-2-2/"+ourUser.userId).then(async(response1)=>{
           var i=0
@@ -53,14 +88,39 @@ function GroupChallenges({allChallenges,setAllGroupChallenges}) {
               allCha.push(g.challengeId)
             const allDays=[]
             const allUsers=[]
-         
+              challengeButtons.push({
+                text:g.title,
+                click:function(g,setUseSelectedChallenge,setSelectedChallenge){
+                  if(useSelectedChallenge){
+                    setUseSelectedChallenge(false)
+                  }else{
+                    setSelectedChallenge(gg)
+                    setTimeout(()=>{
+                      setUseSelectedChallenge(true)
+                    },200)
+                  }
+                }
+              })
+              function showChallenge(cha){
+                console.log("SETTING SELECTION CHALLENGE")
+                if(useSelectedChallenge){
+                  setUseSelectedChallenge(false)
+                }else{
+                  setSelectedChallenge(cha)
+                  setTimeout(()=>{
+                    setUseSelectedChallenge(true)
+                  },200)
+                }
+              }
             groupCha.push({
               id: g._id,
+              challengeId:g.challengeId,
               title:  g.title +" ( "+g.no_questions+" problems per day)",
               start: new Date(g.startDate),
               end: new Date(g.endDate),
               allDay: true,
               challenge:g,
+              
               editable: false,
               clickable: true,
               overlap: true,
@@ -84,6 +144,7 @@ function GroupChallenges({allChallenges,setAllGroupChallenges}) {
         
               groupCha.push({
                 id: c.day,
+                challengeId:g.challengeId,
                 title:  c.user.username +" ( "+c.streak.problems.length+" problems)",
                 start: new Date(c.date),
                 end: new Date(c.date),
@@ -128,7 +189,9 @@ function GroupChallenges({allChallenges,setAllGroupChallenges}) {
                 var i=0
                 console.log(challenges)
                 if(groupCha.length>0){
+                  setChallengeSelecters(challengeButtons)
                   setEvents(groupCha)
+                  setAllEvents(groupCha)
             }
             setTimeout(()=>{
               resolve()
@@ -154,7 +217,8 @@ function GroupChallenges({allChallenges,setAllGroupChallenges}) {
         
         })
       }else{
-        setEvents(allChallenges)
+       setEvents(allChallenges)
+       setAllEvents(allChallenges)
         setTimeout(()=>{
           setIsLoading(false)
         },400)
@@ -166,20 +230,21 @@ function GroupChallenges({allChallenges,setAllGroupChallenges}) {
 */
 
 if(!isLoading){
-  console.log(events)
+ // console.log(events)
+
  if(events.length>0){
-    setAllGroupChallenges(events)
+    setAllGroupChallenges(allEvents)
     return (
-        <div class="flex w-full">
-                            <FullCalendar
+      
+                  <FullCalendar
                plugins={[dayGridPlugin]}
+              eventClick={(ev)=>showChallenge(ev)}
                handleMouseEnter={()=>{
                 console.log("hello")
                }}
                events={events}
-               onClick={(e)=>{
-                console.log(e.target.value)
-               }}
+    
+               customButtons={challengesSelectors}
                eventDidMount={(event)=>{
                // console.log(event.event.extendedProps)
                 const cha=event.event.extendedProps.challenge
@@ -188,7 +253,7 @@ if(!isLoading){
                 const ev=event.event.extendedProps.titles
             
                // console.log("\n\n")
-
+           
                 if(type=="challenge"){
                   const ev=event.event.extendedProps.titles
            
@@ -196,6 +261,7 @@ if(!isLoading){
                 return new bootstrap.Popover(event.el,{
                   placement:"top",
                   trigger:"hover",
+                  click:showChallenge(cha),
                   customClass:"popoverStyle",
                   content:`<div class="flex-col bg-gray-300 rounded-md p-3">
                   <p class="font-bold">${new Date(cha.startDate).toString().substring(0,15)}-${new Date(cha.endDate).toString().substring(0,15)}</p>
@@ -219,7 +285,6 @@ if(!isLoading){
              
                   const start=new Date(cha.challenge.startDate)
                   const today=new Date()
-                console.log("streak props",event.event.extendedProps.streak.user.firstname,event.event.extendedProps.streak.streak.problems.length,event.event.extendedProps.message)
                   function trigger(){console.log("hi")}
                 
                 if(message!=null){
@@ -247,11 +312,11 @@ if(!isLoading){
 
                
                contentHeight="300px"
-               
-
+               width="300px"
+               aspectRatio={3}
 
 />
-        </div>
+     
       )
  }else{
     return (
@@ -260,7 +325,7 @@ if(!isLoading){
  }
 }else{
     return (
-        <div>No GroupChallenges</div>
+      <div class="loading-spinner"/>
       )
 }
 }

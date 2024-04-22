@@ -38,7 +38,9 @@ function Auth() {
   useEffect(()=>{
     sessionStorage.clear()
     const prom=new Promise((resolve,reject)=>{
-      axios.get("https://leetcodetracker.onrender.com").then((response)=>{
+      axios.get("https://leetcodetracker.onrender.com/allTags").then((response)=>{
+        if(response.data.success){
+          sessionStorage.setItem("topicTags",JSON.stringify(response.data.tags))
         dispatch(setHeaderVisibility(false))
         dispatch(setUser(false))
         console.log(response.data)
@@ -46,6 +48,7 @@ function Auth() {
           sessionStorage.removeItem("signInType")
           
       resolve()
+    }
       })
     
     })
@@ -388,6 +391,7 @@ function Auth() {
         console.log(user)
         const id=Math.floor(Math.random()*100000)
         const today= new Date()
+        const tags=JSON.parse(sessionStorage.getItem("topicTags"))
         await addDoc(collection(db,"users"),{
            userId:id,     
           email: email,
@@ -402,7 +406,8 @@ function Auth() {
            challenges:[],
            currentChallenge:null,
            userType:"Google",
-           lastLogin: new Date()
+           lastLogin: new Date(),
+           myTopicTags:tags
         })
 
         

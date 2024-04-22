@@ -21,6 +21,8 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
   const [problems,setProblems]=useState()
   console.log("\n",streaks)
   useEffect(()=>{
+    console.log("selectedYear:"+selectedYear+ " useSelectedYear:"+useSelectedYear)
+    console.log("selectedMonth:"+selectedMonth+ " useSelectedMonth:"+useSelectedMonth+"\n")
     const prom=new Promise(async(resolve,reject)=>{
       setData( {
  
@@ -33,7 +35,11 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
               if(useSelectedYear){
                 if(d.day.includes(selectedYear.toString())){
                   if(useSelectedMonth){
-                    if(d.day.includes(selectedMonth)){
+                    if(useSelectedYear){
+                      if(d.day.includes(selectedMonth) && d.day.includes(selectedYear.toString())){
+                        return d.day
+                      }
+                    }else{
                       return d.day
                     }
                   }else{
@@ -63,9 +69,13 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
                 }
               }else{
                 if(useSelectedMonth){
-                  if(d.day.includes(selectedMonth)){
+                  if(useSelectedYear){
+                  if(d.day.includes(selectedMonth) && d.day.includes(selectedYear.toString())){
                     return d.problems.length
                   }
+                }else{
+                  return d.problems.length
+                }
                 }else{
                   return d.problems.length
                 }
@@ -159,7 +169,7 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
   
   return (
     <div class="flex h-[550px]  w-full border-l-2 border-gray-500 p-3 z-1  m-5">
-      <div class={streaks.length>4?"w-[50vw] overflow-x-scroll overflow-hidden ":"flex"}>
+      <div class={streaks.length>4?"w-[50vw] overflow-x-scroll overflow-hidden ":"w-[50vw] overflow-x-scroll overflow-hidden "}>
       { 
       streaks!=null ?
       <div class=" flex-col z-1 ">

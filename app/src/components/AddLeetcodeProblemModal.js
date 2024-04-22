@@ -8,7 +8,7 @@ import { addLeetcodeProblemReload, setLeetcodeProblemVisibility } from '../redux
 
 //firbase
 import { db } from '../firebase/firebase'
-import {getDocs,collection,setDoc,doc,updateDoc,addDoc} from 'firebase/firestore'
+import {getDocs,collection,setDoc,doc,updateDoc,addDoc, onSnapshot, getDoc} from 'firebase/firestore'
 function AddLeetcodeProblemModal({visibility,ourProblem}) {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -44,9 +44,9 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
       var problemTitle=p.title.toUpperCase()
       problemTitle=problemTitle.replace(/\s/g, "");
       problemTitle=problemTitle.replace(/{[()]}/g, "");
-      console.log(docTitle + " "+problemTitle)
+   
       if(docTitle==problemTitle && doc.data().userId==user.userId){
-        console.log(docTitle + " "+problemTitle)
+        
         
        
         setProblem({problem:doc.data(),id:doc.id})
@@ -62,18 +62,58 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
 
   useEffect(()=>{
     const prom=new Promise((resolve,reject)=>{
-      getProblemsList(ourProblem).then(()=>{
-        
-        var problemData=JSON.parse(sessionStorage.getItem('currentProblem'))
+    
+      getProblemsList(ourProblem).then(async()=>{
+        axios.get("http://localhost:3022/allTags").then(async(response)=>{     
+             var problemData=JSON.parse(sessionStorage.getItem('currentProblem'))
         if(problemData!=null ){
+          var topictags=response.data.tags
+        
+          const user=JSON.parse(sessionStorage.getItem("user"))
+          const userRef= doc(db,"users",user.userId)
+         
+        
+          const userData= (await getDoc(userRef)).data()
+          if(userData.myTopicTags!=null){
+            console.log("MINE")
+            userData.myTopicTags.map((t)=>{
+              topictags.push(t)
+            })
+            setTags(topictags)
+          }else{
+            setTags(topictags)
+          }
+         
+           
+         
           setPrompt(ourProblem.prompt)
           setDataStructure(problemData.problem.dataStructure)
           setCategory(problemData.problem.category)
           setAcRate(problemData.problem.acRate!=null? problemData.problem.acRate:0)
+        }else{
+          
+          var topictags=response.data.tags
+          const user=JSON.parse(sessionStorage.getItem("user"))
+          const userRef= doc(db,"users",user.userId)
+         
+         
+          const userData= (await getDoc(userRef)).data()
+          if(userData.myTopicTags!=null){
+            console.log("MINE")
+            userData.myTopicTags.map((t)=>{
+              topictags.push(t)
+            })
+            setTags(topictags)
+          }else{
+            setTags(topictags)
+          }
+         
+        
         }
         setTimeout(()=>{
           resolve()
         },1000)
+      })
       })
 
     })
@@ -100,7 +140,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
     }
     */
    console.log(problemData,"ourproblem:",ourProblem)
-    
+    console.log("length:",tags,typeof(tags))
   return (
     <div class='bg-gray-200' data-testId="modal-public">
      
@@ -138,7 +178,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
               <div class="flex w-full m-3">
               {
                   ourProblem.link!=null?
-                  <p class="text-black font-bold"><p class="text-green-400 font-bold ml-2">l{ourProblem.link}</p></p>
+                  <p class="text-black font-bold"><p class="text-green-400 font-bold ml-2">{ourProblem.link}</p></p>
                   :
                   <p></p>
                 }
@@ -146,7 +186,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
               
               <div class="flex w-full">
                 <p class="text-md font-bold">Difficulty:</p>
-                {ourProblem.level}
+              
                 {
                   ourProblem.difficulty=="Easy"?
                   <p class="text-green-400 font-bold ml-2">{ourProblem.difficulty}</p>
@@ -199,23 +239,20 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
              </div>
             
               <div class="flex flex-col">
-                    <select
-                  id='category'
+              <input type="text" list="categories" class="m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1" />
+                    <datalist id="categories"
+                
                    class=' m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1'
                          onChange={(e)=>{
                            console.log(e.target.value)
                            setCategory(e.target.value)
                          }} >   
-                       <option value ="Find Sub:X Inside" selected>Find Sub:X Inside</option>
-                       <option value="Sorting">Sorting</option>
-                       <option value="String to Number/Number to String">String to Number/Number to String</option>
-                      <option value="Sliding Window">Sliding Window</option>
-                      <option value="Recursion">Recursion</option>
-                      <option value="KSmallest">KSmallest/KBiggest</option>
-                       <option value="Array Processing">Array Processing</option>
-                      <option value="Math">Math</option>
-                      <option value="Traverse">Traverse</option>
-                </select>
+                       {
+                        tags.map((t)=>{
+                          return(<option value={t.toString()}>{t.toString()}</option>)
+                        })
+                       }
+                </datalist>
                 <select
                   id='category'
                    class=' m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1'
@@ -348,7 +385,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       userId:user.userId,
                       leetcodeId:(ourProblem.problemID!=null? ourProblem.questionId:-1),
                       examples:{0:"N/A",date:currDate},
-                      boilerCode:`
+                      boilerCode:`import java.util.*;
          public class Main{
 
                       

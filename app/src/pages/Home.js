@@ -20,7 +20,7 @@ import {setUser,setHeaderVisibility} from '../redux/user/editUser-actions'
 import AllUsers from '../components/AllUsers'
 function Home({problem,visibility,leetCodeVisiblity}) {
   const dispatch=useDispatch()
-  console.log(performance.getEntriesByType("resource"))
+ 
   const[user,setOurUser]=useState()
   const [newUsername,setUsername]=useState()
   const [isLoading,setIsLoading]=useState(true)
@@ -34,6 +34,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
       const prom=new Promise(async(resolve,reject)=>{
         setOurUser(JSON.parse(sessionStorage.getItem("user")))
         dispatch(setUser(JSON.parse(sessionStorage.getItem("user"))))
+       
         setTimeout(()=>{
           dispatch(setHeaderVisibility(true))
         },100)

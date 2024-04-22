@@ -1,12 +1,12 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-
+import axios from 'axios'
 //assets
 import { IconButton } from '@chakra-ui/react'
 
 //firebase
-import {getDocs,collection,doc,setDoc,addDoc} from 'firebase/firestore'
+import {getDocs,collection,doc,setDoc,addDoc,getDoc} from 'firebase/firestore'
 import { db } from '../firebase/firebase'
 import { useDispatch } from 'react-redux'
 import { addLeetcodeProblemReload } from '../redux/addLeetcodeProblem.js/addLeecodeProblem-reducer'
@@ -25,50 +25,55 @@ function AddProblem() {
   const[currentExample,setCurrentExample]=useState()
   const[isLoading,setIsLoading]=useState(true)
   const[acRate,setAcRate]=useState()
+ const[tags,setTags]=useState()
 
   const[show,setShow]=useState(false)
   const dispatch=useDispatch()
   useEffect(()=>{
-    //TODO:ALLOW TO ADD NEW CATEGORY,DATASTRUCTURE
-    /*const prom=new Promise((resolve,reject)=>{
-      const categories=[   "Display Manipulation" ,
-      "Find Sub:X Inside",
-      "Sorting",
-      "String to Number/Number to String",
-      "Sliding Window",
-      "Recursion",
-      "KSmallest",
-      "Array Processing",
-      "Math",
-      "Traverse"]
+    const prom=new Promise((resolve,reject)=>{
+
   
-      const dataStructures=[
-        "ArrayList" ,
-                    "LinkedList",
-                    "Array",
-                    "Matrix",
-                    "Hash",
-                    "Stack",
-                   "Matrix",
-                   "BST",
-                   "Graph",
-                    "Set",
-                    "etc"
-      ]
+    axios.get("http://localhost:3022/allTags").then(async(response)=>{
+      var topictags=response.data.tags
+      const user=JSON.parse(sessionStorage.getItem("user"))
+      const userRef= doc(db,"users",user.userId)
+     
+     
+      const userData= (await getDoc(userRef)).data()
+      if(userData.myTopicTags!=null){
+        console.log("MINE")
+        userData.myTopicTags.map((t)=>{
+          topictags.push(t)
+        })
+        setTags(topictags)
+        setTimeout(()=>{
+          resolve()
+       },100)
+      }else{
+        setTags(topictags)
+       setTimeout(()=>{
+          resolve()
+       },100)
+      }
+    })
+    })
+
+    prom.then(()=>{
+      setIsLoading(false)
+    })
+  },[])
   
-      sessionStorage.setItem("dataStructures",JSON.stringify(dataStructure))
-      sessionStorage.setItem("categories",JSON.stringify(categories))
-      resolve()
-    })*/
+  
 
 
    
 
-  })
+ 
 
   const navigate=useNavigate()
 
 //TODO:ADD LINK INPUT
+if(!isLoading){
   return (
     <div class="flex-col bg-inherit w-full m-2  p-3 rounded-md w-1/2">
         <button class="bg-green-500 p-3 rounded-md flex w-full justify-center" onClick={()=>{
@@ -130,34 +135,22 @@ function AddProblem() {
 
           <div class="flex p-3 m2">
             <label>Category: </label>
-          <select
+            <input type="text" list="category" class="m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1"/>
+          <datalist
                id='category'
                 class=' m-2  w-full text-gray-900 text-sm rounded-md border-l border-gray-100 p-1'
                       onChange={(e)=>{
                         console.log(e.target.value)
                         setCategory(e.target.value)
                       }} >   
-                  <option value="Display Manipulation" >Display Manipulation</option>
-                  <option value="Display Manipulation" >Display Manipulation</option>
-                  <option value ="Find Sub:X Inside">Find Sub:X Inside</option>
-                  <option value="Sorting">Sorting</option>
-                  <option value="String to Number/Number to String">String to Number/Number to String</option>
-                  <option value="Sliding Window">Sliding Window</option>
-                  <option value="Dynamic Programming">Dynamic Programming</option>
-                  <option value="Recursion">Recursion</option>
-                  <option value="KSmallest">KSmallest/KBiggest</option>
-                  <option value="Array Processing">Array Processing</option>
-                  <option value="Math">Math</option>
-                  <option value="Traverse">Traverse</option>
-                  <option value="Merge">Merge</option>
-                  <option value="Remove X from">Remove X from</option>
-                  <option value="Copy">Copy</option>
-                  <option value="Find Unique">Find Unique</option>
-                  <option value="Intervals">Intervals</option>
-
+               {
+                tags.map((t)=>{
+                  return(<option value={t}>{t}</option>)
+                })
+               }
                  
                   
-           </select>
+           </datalist>
           </div>
           <div class="flex p-3 m2">
             <label>Data Structure: </label>
@@ -248,6 +241,9 @@ function AddProblem() {
       }
     </div>
   )
+    }else{
+      return(<div></div>)
+    }
 }
 console.log()
 export default AddProblem

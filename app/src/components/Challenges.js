@@ -1291,23 +1291,18 @@ if(!isLoading && challenges!=null){
   />
                 </div>
             </div>:
-               <div>
-            </div>
-
-          }
-        {
-          showGroupChallenges ?
+          <div>
           <div class="bg-gray-200 rounded-md p-2 flex-col m-2">
-          <div class="flex w-full justify-between">
-            <p class="text-xl font-bold">Group Challenges</p>
+              <div class="flex w-full justify-center">
+              <GroupChallenges setAllGroupChallenges={setAllGroupChallenges} allChallenges={allGroupChallenges}/>
+
+
+              </div>
+
+            </div>
           </div>
-          <div class="flex w-full">
-            <GroupChallenges setAllGroupChallenges={setAllGroupChallenges} allChallenges={allGroupChallenges}/>
-          </div>
-        </div>
-        :
-        <div></div>
-        }
+          }
+       
           
       </div>
     
@@ -1689,7 +1684,7 @@ if(!isLoading && challenges!=null){
           <div class="flex w-full justify-between">
             <p class="text-xl font-bold">Group Challenges</p>
           </div>
-          <div class="flex w-full">
+          <div class="flex w-full justify-center">
           <GroupChallenges setAllGroupChallenges={setAllGroupChallenges} allChallenges={allGroupChallenges}/>
           </div>
         </div>
@@ -2054,7 +2049,20 @@ else if(isLoading){
   return(<div>No </div>)
 }
 }
-
+/**
+ * 
+ *  {
+          showGroupChallenges ?
+          <div class="bg-gray-200 rounded-md p-2 flex-col m-2">
+         
+            <p class="text-xl font-bold">Group Challenges</p>
+            <GroupChallenges setAllGroupChallenges={setAllGroupChallenges} allChallenges={allGroupChallenges}/>
+    
+        </div>
+        :
+        <div></div>
+        }
+ */
 const mapStateToProps = (state, props) => {
   var refresh= state.editChallenge.refresh
  

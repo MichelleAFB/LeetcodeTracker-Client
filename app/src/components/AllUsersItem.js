@@ -102,7 +102,7 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
     return(
         <div class="p-2 flex-col">
             <div class="flex-col">
-                <button class="p-1 flex-col" onClick={()=>{
+                <button class="p-1 flex-col items-center " onClick={()=>{
                    
                     if(user.userId.stringValue!=null){
                     navigate("/user/"+user.userId)
@@ -114,7 +114,7 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
              
                 </button>
                 <div class="flex-col">
-                    <button class="rounded-sm flex p-2" onClick={()=>{
+                    <button class="rounded-sm flex p-2 m-0" onClick={()=>{
                        const prom=new Promise((resolve,reject)=>{
                     
                         
@@ -132,9 +132,9 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
                     })
 
                     }}>
-                        <p class="text-white bg-purple-600  text-xs">{user.followers!=null?user.followers.length:"0"} followers</p>
+                        <p class="text-white bg-purple-600  text-xs">{user.followers!=null?user.followers.length:0} followers</p>
                     </button>
-                    <button class="rounded-sm flex  p-2" onClick={()=>{
+                    <button class="rounded-sm flex  m-0 p-2" onClick={()=>{
                         const prom=new Promise((resolve,reject)=>{
                          
                          
@@ -154,7 +154,7 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
                        
 
                     }}>
-                        <p class="text-white bg-purple-600  text-xs">following {user.following!=null?user.following.length:"0"} </p>
+                        <p class="text-white bg-purple-600  text-xs">following {user.following!=null?user.following.length:0} </p>
                     </button>
                 </div>
             </div>

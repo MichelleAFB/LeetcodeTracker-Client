@@ -96,7 +96,7 @@ function StreakChart({allStreaks,streaks}) {
    
    })
    */
-  },[selectedYear])
+  },[selectedYear,selectedMonth,useSelectedMonth])
 
 
   const [may,setMay]=useState()
@@ -344,8 +344,14 @@ function StreakChart({allStreaks,streaks}) {
               return true
             }
           }else {
-
-            return true
+            if(useSelectedMonth){
+              if(s.day.includes(selectedMonth)){
+                return true
+              }
+            }else{
+              return true
+            }
+           
           }
           })
     

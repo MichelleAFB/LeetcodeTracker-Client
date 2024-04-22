@@ -48,13 +48,7 @@ function App({user,visibility}) {
       <ChallengeRequestModal/>
 
 
-      {
-        JSON.parse(sessionStorage.getItem("user"))!=null?
-        <Header/>
-        :
-        <Header  />
-
-      }
+      <Header  />
       <AllUsers/>
       <Routes>
        

@@ -18,6 +18,7 @@ import { db } from '../firebase/firebase'
 import { getDoc } from 'firebase/firestore'
 import { setOtherUsersProblem, setOtherUsersProblemVisibility,setCurrentUser,setOtherUser } from '../redux/addOtherUsersProblem/addOtherUsersProblem-reducer'
 import { addLeetcodeProblemReload } from '../redux/addLeetcodeProblem.js/addLeecodeProblem-reducer'
+import axios from 'axios'
 function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,handleOldest}) {
  /*
     if id arguement is present, it means it is another user viewing this users problem list. and attempting to
@@ -50,13 +51,40 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
       const date=d[0]+ " "+d[1]+" "+d[2]+" "+d[3]
       const u=await getDoc(us)
       setUser(u.data())
-     
+     if(problem.problem.link==null || problem.problem.acRate==null || problem.problem.difficulty==null || problem.problem.level==null){
+      axios.post("http://localhost:3022/getProblemByTitle",{title:problem.problem.title}).then(async(response)=>{
+      if(response.data.success){
+        const problemRef=doc(db,"problems",problem.id)
+        await updateDoc(problemRef,{
+          acRate:response.data.problem.acRate,
+          difficulty:response.data.problem.difficulty,
+          level:response.data.problem.level,
+          link:response.data.problem.link
+        }).then(()=>{
+          last=date
+          setDateLast(date)
+          setTimeout(()=>{
+            resolve()
+          },200)
+        })
+    
 
+      }else{
       last=date
       setDateLast(date)
       setTimeout(()=>{
         resolve()
       },400)
+    }
+      })
+    }else{
+      last=date
+      setDateLast(date)
+      setTimeout(()=>{
+        resolve()
+      },400)
+    }
+      
       
     })
 

@@ -13,17 +13,23 @@ function AllProblems() {
   const[filtered,setFiltered]=useState()
   const[search,setSearch]=useState(false)
   const[url,setUrl]=useState()
-
+  const[searchByCategory,setSearchByCategory]=useState(false)
+  const[tags,setTags]=useState()
+  const[category,setCategory]=useState(null)
   useEffect(()=>{
 
     const getProblems=async()=>{
-      axios.get("https://leetcodetracker.onrender.com/problems").then((response)=>{
+      axios.get("http://localhost:3022/problems").then((response)=>{
         
         setProblems(response.data.problems)
         setFiltered(response.data.problems)
-        setTimeout(()=>{
-          return response.data.problem
-        },1000)
+        axios.get("http://localhost:3022/allTags").then((response)=>{
+          setTags(response.data.tags)
+          setTimeout(()=>{
+            return response.data.problem
+          },1000)
+        })
+   
       
       })
     }
@@ -66,7 +72,8 @@ function AllProblems() {
       
       
       const eve=ev.title
-      
+      console.log(ev.tags)
+      if(category==null || category.length<1){
       if(evie.includes(str)){ 
         evieSplit.map((o) => {
           if(o.includes(str)){
@@ -79,6 +86,24 @@ function AllProblems() {
         })
         
       }
+    }else if(category!=null || category.length>0){
+      if(evie.includes(str) ){ 
+        if(ev.tags.includes(category)){
+        evieSplit.map((o) => {
+          if(o.includes(str)){
+            //console.log(evie.includes(str))
+          
+          
+            if(!fil.includes(ev))
+            fil.push(ev)
+          }else{
+            fil.push(ev)
+          }
+        })
+      }
+      }
+
+    }
     })
       resolve(fil)
     })
@@ -91,7 +116,7 @@ function AllProblems() {
     console.log("filter not working")
   )   
 }
-
+ 
   if(!isLoading && problems!=null){
   return ( 
     <div class="flex h-screen w-full flex-col border-gray-100 bg-gray-100 border-b-2 rounded-md m-4 p-3 z-auto">
@@ -113,8 +138,33 @@ function AllProblems() {
       }}onChange={(e)=>{
         handleSearch(e)
       }}/>
-      
-  { search && filtered!=null?
+    <div class="flex">
+  
+  {tags!=null?
+      <div>
+      <input list="tag-list" class="flex-wifull border-gray-500 rounded-sm m-2" onChange={(e)=>{
+        console.log(e.target.value)
+        setCategory(e.target.value)
+        setTimeout(()=>{
+          handleSearch(e)
+        },200)
+      }}/>
+      <datalist id="tag-list" name="tag-list">
+        {
+          tags.map((t)=>{
+            return(<option value={t}>{t}</option>)
+          })
+        }
+      </datalist>
+      </div>
+      :
+      <div>
+      </div>
+      }
+     
+    </div>
+    <p class="">{filtered.length} Questions</p>
+  { (search || category!=null ) && filtered!=null?
       <div class=" h-full overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
         {filtered.map((p)=>{
           if(p.prompt!=null){
@@ -130,6 +180,7 @@ if(p.prompt!=null){
   }        })}
       </div>
       }
+      
     </div>
   )
   }else{
