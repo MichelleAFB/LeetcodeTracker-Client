@@ -49,7 +49,7 @@ function AllProblems() {
 
   },[])
 
-  const handleSearch = (e) => {
+  const handleSearch = (e,tag) => {
     if(e.target.value==null || e.target.value==""){
       const fil=problems
       setFiltered(problems)
@@ -73,7 +73,7 @@ function AllProblems() {
       
       const eve=ev.title
       console.log(ev.tags)
-      if(category==null || category.length<1){
+      if(tag==null ){
       if(evie.includes(str)){ 
         evieSplit.map((o) => {
           if(o.includes(str)){
@@ -86,9 +86,9 @@ function AllProblems() {
         })
         
       }
-    }else if(category!=null || category.length>0){
+    }else if(tag!=null && tag.length>0){
       if(evie.includes(str) ){ 
-        if(ev.tags.includes(category)){
+        if(ev.tags.includes(tag)){
         evieSplit.map((o) => {
           if(o.includes(str)){
             //console.log(evie.includes(str))
@@ -109,6 +109,7 @@ function AllProblems() {
     })
 
     prom.then(() => {
+      
       setFiltered(fil)
       console.log("filtered should be")
       console.log(filtered)
@@ -142,11 +143,12 @@ function AllProblems() {
   
   {tags!=null?
       <div>
+        <p class="font-bold">Category:</p>
       <input list="tag-list" class="flex-wifull border-gray-500 rounded-sm m-2" onChange={(e)=>{
         console.log(e.target.value)
         setCategory(e.target.value)
         setTimeout(()=>{
-          handleSearch(e)
+          handleSearch(e,e.target.value)
         },200)
       }}/>
       <datalist id="tag-list" name="tag-list">
@@ -156,6 +158,7 @@ function AllProblems() {
           })
         }
       </datalist>
+      <p class="">{filtered.length} Questions - {tags.includes(category)? category:""}</p>
       </div>
       :
       <div>
@@ -163,8 +166,8 @@ function AllProblems() {
       }
      
     </div>
-    <p class="">{filtered.length} Questions</p>
-  { (search || category!=null ) && filtered!=null?
+   
+  { (search || category!=null && category.length!=0 ) && filtered!=null?
       <div class=" h-full overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
         {filtered.map((p)=>{
           if(p.prompt!=null){

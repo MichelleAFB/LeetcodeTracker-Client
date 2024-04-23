@@ -25,6 +25,13 @@ function AllProblemsItem({problem}) {
       <div class="border-b border-gray-600 v=border-3">
       <p class="text-center font-bold text-xl">{problem.title}</p>
       </div>
+      <div class={`flex ${problem.tags.length<3? "w-[10vw]":"w-[15vw]"} `}>
+        {
+          problem.tags.map((t)=>{
+            return(<p class="text-xs text-gray-400 mr-2 border-r-2 border-gray-300">{t} </p>)
+          })
+        }
+      </div>
       <div class="flex flex-col">
         <a target="_blank" rel="noopener noreferrer" class="text-center hover:text-yellow-600 font-semibold"href={problem.link}>{problem.link}</a>
       </div>
