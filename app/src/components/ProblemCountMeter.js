@@ -17,7 +17,7 @@ function ProblemCountMeter({color,count,backgroundColor,hideCount,index}) {
 
     prom.then(()=>{
       const c=JSON.parse(sessionStorage.getItem(color.toString()))
-      console.log("c"+c+" "+typeof(c))
+     
       var level=count>0 ? getLevel(c):0
       setCountString(level.toString())
     
@@ -29,7 +29,7 @@ function ProblemCountMeter({color,count,backgroundColor,hideCount,index}) {
   },[])
 
   if(!isLoading){
-  console.log(color+": "+countString)
+
   if(color=="green"){
   return (
 

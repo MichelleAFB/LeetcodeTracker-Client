@@ -14,8 +14,8 @@ import { Link } from 'react-router-dom'
 
 //firebase
 import { db } from '../firebase/firebase'
-import {getDocs,collection,setDoc,doc,updateDoc} from 'firebase/firestore'
-
+import {getDocs,collection,setDoc,doc,updateDoc, getDoc} from 'firebase/firestore'
+import Select from "react-select";
 //window
 import CodeEditorWindow from "../components/components/CodeEditorWindow";
 
@@ -32,6 +32,8 @@ import CustomInput from "../components/components/CustomInput";
 import OutputDetails from "../components/components/OutputDetails";
 import ThemeDropdown from "../components/components/ThemeDropdown";
 import LanguagesDropdown from "../components/components/LanguagesDropdown";
+import DeleteBoilerTemplateComponents from '../components/components/DeleteBoilerTemplateComponents'
+import IonIcon from '@reacticons/ionicons'
 
 const javascriptDefault = `// some comment`;
  
@@ -48,7 +50,7 @@ const [attempts,setAttempts]=useState()
   const[boilerCode,setBoilerCode]=useState()
   const[useBoilerCode,setuseBoilerCode]=useState(false)
   const[showAllPrompts,setShowAllPrompt]=useState(false)
-
+  const[setTemplate,setSetTemplate]=useState(false)
   const[currentVariable,setCurrentVariable]=useState({dataType:null, auxDataType:null,arrayLength:null, arrayHeight:null,name:null,value:null})
   const [useTestCase,setUseTestCase]=useState(false)
   const[method,setMethod]=useState()
@@ -56,7 +58,8 @@ const [attempts,setAttempts]=useState()
   const[structure,setStructure]=useState([])
   const[correctTestCaseAnswer,setCorrectTestCaseAnswer]=useState()
   const[groupChallenges,setGroupChallenge]=useState(JSON.parse(sessionStorage.getItem("currentGroupChallenges")))
-
+  const[showTemplates,setShowTemplates]=useState(false)
+  const[selectedTemplate,setSelectedTemplate]=useState()
   const [language, setLanguage] = useState(
     {
       id: 4,
@@ -95,9 +98,11 @@ const [attempts,setAttempts]=useState()
   const [selectedLanguage,setSelectedLanguage]=useState({id:4,name:'Jave (JDK (OpenJDK 14.0.1'})
   const[token,setToken]=useState()
   const[reload,setReload]=useState(true)
+  const[user,setUser]=useState()
   const editorRef=useRef()
   const userId=useParams().id
   const problemsListCollectionRef=collection(db,"problems")
+  const[boilerCodeTemplates,setBoilerCodeTemplates]=useState()
 
   
   console.log("ID LENGHT",userId)
@@ -116,9 +121,32 @@ const [attempts,setAttempts]=useState()
 
         //READ DATA
         try{
-          const user=JSON.parse(sessionStorage.getItem("user"))
-          const userRef=doc(db,"users",user.userId)
-        
+          const use=JSON.parse(sessionStorage.getItem("user"))
+          const userRef=doc(db,"users",use.userId)
+          const userData=await getDoc(userRef)
+          console.log(userData)
+          /*axios.post("http://localhost:3022/create-user",{user:userData.data()}).then((response)=>{
+
+          })*/
+
+          setUser(userData.data())
+          if(userData.data().boilerCodeTemplates !=null){
+            const templates=userData.data().boilerCodeTemplates
+            
+            if(templates!=null){
+              if(templates.length>0){
+                templates.push({title:userData.data().title,template:userData.data().boilerCode})
+                setBoilerCodeTemplates(templates)
+                setSelectedTemplate({title:userData.data().title,template:userData.data().boilerCode})
+              }else{
+                setBoilerCodeTemplates([{title:userData.data().title,template:userData.data().boilerCode}])
+                setSelectedTemplate({title:userData.data().title,template:userData.data().boilerCode})
+              }
+            }else{
+              setBoilerCodeTemplates([{title:userData.data().title,template:userData.data().boilerCode}])
+              setSelectedTemplate({title:userData.data().title,template:userData.data().boilerCode})
+            }
+          }
           await updateDoc(userRef,{
             myTopicTags:[ "Find Sub:X Inside",
             "Sorting",
@@ -149,6 +177,7 @@ const [attempts,setAttempts]=useState()
           */
         
           const userType=JSON.parse(sessionStorage.getItem("userType"))
+        
 
         const data=await getDocs(problemsListCollectionRef)
         data.docs.map((doc)=>{
@@ -174,6 +203,19 @@ const [attempts,setAttempts]=useState()
             }
           
             if(doc.data().boilerCode!=null && doc.data().hasOwnProperty("boilerCode")){
+             /* const templates=doc.data().boilerCodeTemplates
+              console.log(doc.data())
+              if(templates!=null){
+                if(templates.length>0){
+                  templates.push({title:doc.data().title,template:doc.data().boilerCode})
+                  setBoilerCodeTemplates(templates)
+                }else{
+                  setBoilerCodeTemplates([{title:doc.data().title,template:doc.data().boilerCode}])
+                }
+              }else{
+                setBoilerCodeTemplates([{title:doc.data().title,template:doc.data().boilerCode}])
+
+              }*/
               setBoilerCode(doc.data().boilerCode)
               setInitialBoilerCode(doc.data().boilerCode)
               setCode(doc.data().boilerCode)
@@ -442,7 +484,7 @@ console.log(params)
   */
   if(!isLoading && problem!=null){
 
-  
+  console.log("code",code.replace(/\s/g,"").toUpperCase())
     
     const oldAttempts=problem.problem.attempts
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
@@ -550,6 +592,7 @@ console.log(params)
         </div> 
         <div class="flex w-full justify-between">
         {userId==null || userId.length==0?
+        <div>
         <button class="bg-purple-600 rounded-md p-3 m-3 flex " onClick={()=>{
         
         
@@ -567,7 +610,6 @@ console.log(params)
         
 
           });
-
         }
 
           const setProblems=async(problem)=>{
@@ -602,7 +644,94 @@ console.log(params)
       }}> 
         <p class="text-white font-bold">Add Boiler Code</p>
       </button>
+      <button class="bg-purple-700 rounded-sm p-2" onClick={async()=>{
+           
+            var dont="import java.util.*;\n         public class Main{\n\n …                        }\n                      }"
+            dont.replace(/\s/g,"").toUpperCase()
+     
+         
+          const user=JSON.parse(sessionStorage.getItem("user"))
+         const  userRefer=doc(db,"users",user.userId)
+        var userData=await getDoc(userRefer)
+        var userId=userData.id
+        userData=userData.data()
+        if(userData.boilerCodeTemplates==null || userData.boilerCodeTemplates.length==0){
+          if(problem.problem.boilerCode.replace(/\s/g,"").toUpperCase()!=dont){
+            const template={title:problem.problem.title,template:problem.problem.boilerCode}
+            console.log(template)
+            await updateDoc(userRefer,{
+              boilerCodeTemplates:[template]
+            }).then(()=>{
+              alert("success: New boilerCode template created!")
+            })
+          }else if(code.replace(/\s/g,"").toUpperCase()!=dont){
+            const template={title:problem.problem.title,template:code}
+            console.log(template)
+            await updateDoc(userRefer,{
+              boilerCodeTemplates:[template]
+            }).then(()=>{
+              alert("success: New boilerCode template created!")
+            })
+          }
+        }else if(userData.boilerCodeTemplates!=null && userData.boilerCodeTemplates.length>0){
+          const templates=userData.boilerCodeTemplates
+          if(problem.problem.boilerCode.replace(/\s/g,"").toUpperCase()!=dont){
+
+          const template={title:problem.problem.title,template:problem.problem.boilerCode}
+          templates.push(template)
+          await updateDoc(userRefer,{
+            boilerCodeTemplates:templates
+          }).then(()=>{
+            alert("success: New boilerCode template created!")
+          })
+        }else if(code.replace(/\s/g,"").toUpperCase()!=dont){
+          const template={title:problem.problem.title,template:code}
+          templates.push(template)
+          await updateDoc(userRefer,{
+            boilerCodeTemplates:templates
+          }).then(()=>{
+            alert("success: New boilerCode template created!")
+          })
+        }
+        }
+         // setProblems(problem)
+
+
+      }}>
+        <p class="text-white">
+          Add New Boiler Template
+        </p>
+      </button>
+      {user.boilerCodeTemplates!=null?
+      <select class="bg-gray-300 p-2 rounded-md m-2" onClick={(e)=>{
+        console.log(e.target.value)
+        setCode(e.target.value)
+        setSetTemplate(!setTemplate)
+      }}>
+        {
+          boilerCodeTemplates.map((b)=>{
+            return(<option class="flex bg-gray-500 flex justify-apart" value={b.template}>{b.title}<button class="" onClick={()=>{
+              console.log(b.title)
+            }}><IonIcon name="close-outline"></IonIcon></button></option>)
+          })
+        }
+      </select>
+      :
+      <div></div>
+  }
+      </div>
       :<div></div>
+      }
+      {
+        selectedTemplate!=null?
+        <div class="flex-col" onClick={()=>{
+          setShowTemplates(!showTemplates)
+        }}>
+
+        </div>
+        :
+        <div>
+        </div>
       }
       {userId==null || userId.length==0?
       <button class="bg-cyan-600 rounded-md p-3 w-1/3 m-2" onClick={(e)=>{
@@ -615,11 +744,15 @@ console.log(params)
               setSendingStreak(true)
 
               const  docRefer=doc(db,"problems",problem.id)
+             
               //READ DATA
               try{
                 const user=JSON.parse(sessionStorage.getItem("user"))
                 const userType=JSON.parse(sessionStorage.getItem("userType"))
-      
+                const userRef=doc(db,"users",user.userId)
+                await updateDoc(userRef,{
+                  lastLogin:new Date()
+                 })
               const data=await getDocs(problemsListCollectionRef)
               data.docs.map((d)=>{
                
@@ -676,7 +809,7 @@ console.log(params)
                  // bigAttempts.attempts[index]={attempt:code,date:currDate}
                   console.log("SETTING DOC")
                   console.log(bigAttempts)
-                 
+              
                   await updateDoc(docRefer, {
                     id:problem.id,
                    title:problem.problem.title,
@@ -805,28 +938,66 @@ console.log(params)
                    
                    const user=JSON.parse(sessionStorage.getItem("user"))
                    console.log(problem)
-                   if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                      const latitude = position.coords.latitude;
-                      const longitude = position.coords.longitude;
-                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                    });
-                  } else {
-                    console.log("Geolocation is not supported by this browser.");
-                  }
-                  if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                      const latitude = position.coords.latitude;
-                      const longitude = position.coords.longitude;
-                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
-                      axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges,latitude:latitude,longitude:longitude}).then((response)=>{
+
+                   console.log(user)
+                    
+                      axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges}).then((response)=>{
                       
                       console.log(response)
+                    var checkAllStreaks=JSON.parse(sessionStorage.getItem("groupChallengesData"))
+                      var checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart")) 
+                   
                       if(response.data.message!=null){
+                        if(checkAllStreaks!=null){
+                          checkAllStreaks.needsRefresh=true;
+  
+                          sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
+                       //sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
+                        }
+                        const checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart"))
+                        if(checkMonthChart!=null){
+               
+                          checkMonthChart.months.map((c)=>{
+                            console.log(month[new Date().getMonth()])
+                            const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+                            if(month[new Date().getMonth()]==c.month){
+                              c.problems++
+                             // checkMonthChart.needsRefresh=true;
+  
+                              sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
+  
+                            }
+                          })
+                        checkMonthChart.needsRefresh=true;
+                       // sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
+                        }
                         alert(response.data.message)
                         setSendingStreak(false)
 
                       }else if(response.data.success){
+                        if(checkAllStreaks!=null){
+                          checkAllStreaks.needsRefresh=true;
+  
+                          sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
+                       //sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
+                        }
+                        const checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart"))
+                        if(checkMonthChart!=null){
+                          checkMonthChart.months.map((c)=>{
+                            console.log(c)
+                            const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+                           console.log(("month"+month[new Date().getMonth()]))
+                            if(month[new Date().getMonth()]==c.month){
+                              c.problems++
+                              checkMonthChart.needsRefresh=true;
+  
+                              sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
+  
+                            }
+                          })
+                        checkMonthChart.needsRefresh=true;
+                       // sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
+                        }
                         const user =JSON.parse(sessionStorage.getItem("user"))
                         var day=new Date()
                         const date=day.toString().substring(0,15)
@@ -846,10 +1017,8 @@ console.log(params)
                       }
                       
                      })
-                    });
-                  } else {
-                    alert("Geolocation is not supported by this browser.");
-                  }
+                    
+               
                     
            
             
@@ -866,6 +1035,7 @@ console.log(params)
         <div className="flex flex-col w-3/4 h-full justify-start items-end">
           <CodeEditorWindow
             code={code}
+            setTemplate={setTemplate}
             onChange={onChange} 
             theme={theme.value}
           />

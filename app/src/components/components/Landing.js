@@ -114,10 +114,12 @@ console.log(btoa(customInput))
   const handleCompile = async() => {
     setProcessing(true);
     console.log(btoa(code))
+    console.log("customInput btoa:"+btoa(customInput))
     const formData = {
       language_id: language.id,
       // encode source code in base64
       source_code: btoa(code),
+      enable_command_line_arguments:true,
       stdin: btoa(customInput),
     };
     const options = {
@@ -172,6 +174,10 @@ console.log(btoa(customInput))
         "X-RapidAPI-Host": process.env.REACT_APP_RAPID_API_HOST,
         "X-RapidAPI-Key": process.env.REACT_APP_RAPID_API_KEY,
       },
+      body:{
+        enable_command_line_arguments:true,
+        command_line_arguments:customInput
+      }
     };
     try {
       let response = await axios.request(options);

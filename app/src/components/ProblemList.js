@@ -115,7 +115,7 @@ function ProblemList({id,reload}) {
               index++
            }
            setTimeout(()=>{
-            console.log(index)
+        
             if(use.healthyIndex==null){
             if(index<7){
               GREEN=GREEN+1
@@ -363,6 +363,14 @@ setTimeout(()=>{
                 }
               }
 
+            }else if(red){
+              if(ev.problem.index!=null){
+                if( ev.problem.index>=14){
+                  if(!fil.includes(ev))
+                   fil.push(ev)
+                }
+              }
+
             }else if(!red && !green && !orange){
               if(!fil.includes(ev)){
                 fil.push(ev)
@@ -498,7 +506,7 @@ const handleSearchByDataStructure = (e) => {
 }
 
 const handleSearchByRed= () => {
- 
+ console.log("\n\nserach red")
 
   const fil=[]
 
@@ -536,7 +544,7 @@ const handleSearchByRed= () => {
       index++
    }
    setTimeout(()=>{
-      if(index>14){
+      if(index>=14){
         if(searchByCategory){
           if(ev.category==category){
         fil.push(ev) 
@@ -558,7 +566,7 @@ const handleSearchByRed= () => {
       }
    },100)
   })
-  console.log(fil)
+  console.log("FILL",fil)
     resolve(fil)
   })
 
@@ -1202,6 +1210,7 @@ const user=JSON.parse(sessionStorage.getItem("user"))
  
     return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
     { filtered.map((p)=>{
+      console.log("\n\nREDDD")
      console.log(p)
       return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
       })

@@ -22,6 +22,7 @@ import { setEditChallengeVisibility,setChallenge, refreshChallengeChart } from '
 import { connect } from 'react-redux';
 import ChallengesSelectedContestants from './ChallengesSelectedContestants';
 import GroupChallenges from './GroupChallenges';
+import GroupChallengeViewer from './GroupChallengeViewer';
 function Challenges({refresh}) {
 
   const usersCollectionRef=collection(db,"users")
@@ -54,6 +55,7 @@ function Challenges({refresh}) {
   const[allGroupChallenges,setAllGroupChallenges]=useState()
   const[displayGroupChallenges,setDisplayGroupChallenges]=useState(false)
   const[showGroupChallengesCalender,setShowGroupChallengesCalender]=useState(false)
+  const[groupChallengeView,setGroupChallengeView]=useState()
   const dispatch=useDispatch()
   const selectionRange={
     startDate:startDate,
@@ -90,12 +92,12 @@ function Challenges({refresh}) {
       const d=await getDocs(u)
       const user=d.docs.filter((f)=>{
         if(f.data().userId==ourUser.userId){
-          console.log("MATCH",d,f.data())
+        
           
           return f.data()
         }
       })
-      console.log(user)
+      
       sessionStorage.setItem("user",JSON.stringify(user[0].data()))
       
         if(response.data.currentChallenge!=null){
@@ -404,6 +406,7 @@ async function submitGroupChallenge(e){
               console.log(response)
               if(response.data.success){
                 alert("SUCCESS: sent out requests for group challenge, "+newChallenge.name)
+                setCreateGroupChallenge(false)
               }
             })
 
@@ -1162,7 +1165,7 @@ function findEvent(ev){
   return challenges.filter((e)=> e.title==ev.event._def.title )
 }
 if(!isLoading && challenges!=null){
-  console.log(allGroupChallenges)
+
  if(challenges!=null){
    function renderEventContent(event) {
 
@@ -1293,9 +1296,10 @@ if(!isLoading && challenges!=null){
             </div>:
           <div>
           <div class="bg-gray-200 rounded-md p-2 flex-col m-2">
-              <div class="flex w-full justify-center">
-              <GroupChallenges setAllGroupChallenges={setAllGroupChallenges} allChallenges={allGroupChallenges}/>
-
+              <div class="flex w-full justify-center w-[100vw]">
+              <GroupChallenges groupChallengeView={groupChallengeView} setGroupChallengeView={setGroupChallengeView} setAllGroupChallenges={setAllGroupChallenges} allChallenges={allGroupChallenges}/>
+              
+              <GroupChallengeViewer challenge={groupChallengeView} problemCounter={groupChallengeView} setGroupChallengeView={setGroupChallengeView}/>
 
               </div>
 
@@ -1685,7 +1689,8 @@ if(!isLoading && challenges!=null){
             <p class="text-xl font-bold">Group Challenges</p>
           </div>
           <div class="flex w-full justify-center">
-          <GroupChallenges setAllGroupChallenges={setAllGroupChallenges} allChallenges={allGroupChallenges}/>
+          <GroupChallenges groupChallengeView={groupChallengeView} setGroupChallengeView={setGroupChallengeView} setAllGroupChallenges={setAllGroupChallenges} allChallenges={allGroupChallenges}/>
+          <GroupChallengeViewer challenge={groupChallengeView} setGroupChallengeView={setGroupChallengeView}/>
           </div>
         </div>
         :

@@ -178,7 +178,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
               <div class="flex w-full m-3">
               {
                   ourProblem.link!=null?
-                  <p class="text-black font-bold"><p class="text-green-400 font-bold ml-2">{ourProblem.link}</p></p>
+                  <a href={ourProblem.link} target="_blank"  class="text-black font-bold"><p class="text-green-400 font-bold ml-2">{ourProblem.link}</p></a>
                   :
                   <p></p>
                 }
@@ -386,14 +386,12 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       leetcodeId:(ourProblem.problemID!=null? ourProblem.questionId:-1),
                       examples:{0:"N/A",date:currDate},
                       boilerCode:`import java.util.*;
-         public class Main{
-
+                      public class Main{ 
                       
+                          public static void main(String[] args){
                       
-        public static void main(String[]args){
-
-                        }
-                      }`,
+                          }
+                        }`,
                       link:ourProblem.link,
                       prompt:ourProblem.prompt,
                       examples:{0:"attempt",date:currDate},

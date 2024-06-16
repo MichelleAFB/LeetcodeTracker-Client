@@ -24,7 +24,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
   const dispatch=useDispatch()
 
   const problemsListCollectionRef=collection(db,"problems")
-
+  console.log(problemId)
   useEffect(()=>{
     if(visibility){
     console.log("user:",user)
@@ -63,7 +63,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
   if(visibility && !isLoading){ 
     const problemsListCollectionRef=collection(db,"problems")
 
-    
+    console.log(ourProblem)
    
     
   return (
@@ -98,7 +98,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
               <div class="flex w-full m-3">
               {
                   ourProblem.link!=null?
-                  <p class="text-black font-bold"><p class="text-green-400 font-bold ml-2">l{ourProblem.link}</p></p>
+                  <p class="text-black font-bold"><p class="text-green-400 font-bold ml-2">{ourProblem.link}</p></p>
                   :
                   <p class="text-black font-bold">
                     <span class="text-purple-600">(Suggested):</span>
@@ -233,7 +233,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
               console.log("level:"+ourProblem.difficulty)
               console.log("dataStructure:"+dataStructure)
               console.log("category:"+category)
-            
+              console.log(problemId)
 
               if(ourProblem!=null){
                 console.log(problemId)
@@ -268,7 +268,14 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
                     attempts:[{attempt:"N/A",date:currDate}],
                     solution:ourProblem.solution!=null? ourProblem.solution:"",
                     userId:user.userId,
-                    boilerCode:ourProblem.boilerCode,
+                    boilerCode:ourProblem.boilerCode!=null? ourProblem.boilerCode:`import java.util.*;
+                    public class Main{ 
+                    
+                        public static void main(String[] args){
+                    
+                        }
+                      }`,
+                    
                     link:ourProblem.link!=null?ourProblem.link:link,
                     prompt:ourProblem.prompt,
                     examples:ourProblem.examples!=null? ourProblem.examples:[],
@@ -291,7 +298,13 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
                     attempts:[{attempt:"N/A",date:currDate}],
                     solution:ourProblem.solution!=null? ourProblem.solution:"",
                     userId:user.userId,
-                    boilerCode:ourProblem.boilerCode,
+                    boilerCode:ourProblem.boilerCode!=null? ourProblem.boilerCode:`import java.util.*;
+                    public class Main{ 
+                    
+                        public static void main(String[] args){
+                    
+                        }
+                      }`,
                     link:ourProblem.link!=null?ourProblem.link:link,
                     prompt:ourProblem.prompt,
                     examples:ourProblem.examples!=null? ourProblem.examples:[],
@@ -347,7 +360,7 @@ const mapStateToProps = (state, props) => {
    ourProblem:problem.problem,
    user:ourUser,
    otherUser:other,
-   problemId:problem.problem.id
+   problemId:problem.id
   };
 }
 };

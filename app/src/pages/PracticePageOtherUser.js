@@ -770,7 +770,13 @@ console.log(params)
                    const user=JSON.parse(sessionStorage.getItem("user"))
                    console.log(problem)
                     axios.post("https://leetcodetracker.onrender.com/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
-                      
+                      const checkAllStreaks=JSON.parse(sessionStorage.getItem("allStreaks"))
+                      checkAllStreaks.needsRefresh=true;
+                      sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
+
+                      const checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart"))
+                      checkMonthChart.needsRefresh=true;
+                      sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
                       console.log(response)
                       if(response.data.message!=null){
                         alert(response.data.message)

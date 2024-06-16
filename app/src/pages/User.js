@@ -6,6 +6,12 @@ import { collection,doc,getDoc,query,where,getDocs,updateDoc } from "firebase/fi
 import { useDispatch } from "react-redux"
 import { setEditFFUser } from "../redux/editFollowersAndFollowing/editFollowersAndFollowing-actions"
 import ProblemList from "../components/ProblemList"
+import Streak from "../components/Streak"
+import {Image, Video, Transformation} from 'cloudinary-react';
+
+
+import {Cloudinary} from "@cloudinary/url-gen";
+import StreakChart from "../components/StreakChart"
 function User(){
     const id=useParams().id
     const [user,setUser]=useState()
@@ -14,16 +20,25 @@ function User(){
     const[isLoading,setIsLoading]=useState(true)
     const[lastLogin,setLastLogin]=useState()
     const [streaks,setStreaks]=useState()
-
+    const [currentStreaks,setCurrentStreaks]=useState()
     const[longestStreak,setLongestStreak]=useState()
     const[currentChallenge,setCurrentChallenge]=useState()
     const[notFollowing,setNotFollowing]=useState(true)
     const[loggedIn,setLoggedIn]=useState(true)
+    const[avi,setAvi]=useState()
     const dispatch=useDispatch()
     //ourUser=user we are viewing
     //user=logged in user
 
     const[alreadyFollowing,setAlreadyFollowing]=useState(false)
+
+        const cld = new Cloudinary({
+            cloud: {
+              cloudName: 'michelle-badu',
+              apiKey:'877163957659927',
+              apiSecret:'NBk67NDZKIxpnGE06FUDFLSisp8'
+            }
+          })
     useEffect(()=>{
         const ref=collection(db,"users")
         const prom=new Promise(async(resolve,reject)=>{
@@ -42,6 +57,16 @@ function User(){
                 
                  
                     const s=us.data()
+                    console.log("\n\n\nMATCH")
+                    console.log(us.data())
+                    console.log(us.data().profilePicUrl)
+                    if(us.data().profilePicUrl!=null){
+                       var arr=us.data().profilePicUrl.split("/")
+                     var url=arr[0]+"/"+arr[1]+"/"+arr[2]+"/"+arr[3]+"/"+arr[4]+"/"+arr[5]+"/s--_CcTRt4G--/t_user-page-profile/"+arr[6]+"/"+arr[7]
+   
+                       const a1=cld.image(url);
+                       setAvi(a1)
+                    }
                   
                     if(s.followers!=null){
 
@@ -100,7 +125,15 @@ function User(){
                 
                 setLongestStreak(longest)
                 setTimeout(()=>{
-                    resolve1()
+                    axios.get("http://localhost:3022/current-streak/"+id).then((response)=>{
+                        if(response.data.success){
+                            setCurrentStreaks(response.data.streaks)
+                        }
+                        setTimeout(()=>{
+                            resolve1()
+                        },200)
+                    })
+                    //resolve1()
                 },600)
             }
             })
@@ -108,6 +141,7 @@ function User(){
 
          prom1.then(()=>{
             setStreaks(allStreaks)
+            
             setTimeout(()=>{
                 setIsLoading()
 
@@ -138,11 +172,13 @@ function User(){
         return new Date(Date.UTC(b[0], --b[1], b[2], b[3], b[4], b[5], b[6]));
       }
     if(!isLoading){
-
+console.log(avi)
         if(!notFound && loggedIn){
           
 
-         
+         console.log(currentStreaks)
+         const date=new Date()
+         console.log(date.toUTCString())
     
   
     return(
@@ -151,9 +187,22 @@ function User(){
             <div class="flex w-full">
                 <div class="flex-col">
                     <div class="flex">
+                        <div class="flex-col m-2">
                         <p class="text-4xl font-bold">{user.firstname} {user.lastname} </p>
+                        <p class="text-purple-500 text-xs font-bold mt-1"> Last active {lastLogin!=null?lastLogin.toString().substring(0,15):"N/A"}</p>
+                        <p class="text-md font-semibold m-0">joined {createTime.toLocaleString('en-EN',{month:'long'})} {createTime.getUTCFullYear()}</p>
+
+                        </div>
+                       
+                        {avi!=null?
+                            <Image cloudName="michelle-badu" publicID={avi.publicID}   crop="limit"
+                                width="170"
+                                height="16">
+                        <Transformation height={300} crop="scale" quality="auto" fetchFormat="auto" />
+                            
+                        </Image>:<div></div>
+                        }
                         <div class="flex-col gap-y-1 ml-2">
-                        <p class="text-purple-500 text-xs font-bold"> Last active {lastLogin!=null?lastLogin.toString().substring(0,15):"N/A"}</p>
                            { 
                            user.username!=null  && ourUser.username!=null && notFollowing==true ?
                            <button class="bg-gray-600 rounded-md  pb-1 pt-1 pr-2 pl-2" onClick={()=>{
@@ -271,7 +320,6 @@ function User(){
                         </div>
                     </div>
             
-                <p class="text-md font-semibold">joined {createTime.toLocaleString('en-EN',{month:'long'})} {createTime.getUTCFullYear()}</p>
                    
                 </div>
                
@@ -310,6 +358,8 @@ function User(){
                             <div class="flex-col">
                                 <p class="text-lg font-bold">Streaks</p>
                                 <p>Longest streak length: {longestStreak!=null?longestStreak.length:""}</p>
+                                {currentStreaks!=null ?    <Streak  streaks={currentStreaks} selectedMonth={null} useSelectedMonth={false} selectedYear={2024} useSelectedYear={false} />:<div></div>}
+
                             </div>
                         </div>
 

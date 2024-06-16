@@ -6,6 +6,7 @@ import { setChallengeRequestModalVisibility,setChallengeRequest } from '../redux
 import { collection,doc,getDocs,getDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase/firebase'
 import axios from 'axios'
+import IonIcon from '@reacticons/ionicons'
 function ChallengeRequestModal({challenge,visibility,disabled}) {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -126,7 +127,9 @@ function ChallengeRequestModal({challenge,visibility,disabled}) {
               dispatch(setChallengeRequestModalVisibility(false))
             })
           }}>
-            <p class="text-white">x</p>
+           <IonIcon name="close-outline" style={{color:"white"}} onClick={()=>{
+                  setIsLoading(true)
+                }}/>
           </button>
         </div>
         <div class="flex-col w-full p-3">
@@ -182,7 +185,7 @@ function ChallengeRequestModal({challenge,visibility,disabled}) {
             }
 
           </div>
-          {disabled==false?
+          {disabled==false && challenge.denied!=true && challenge.approved!=true?
 
           <div class="flex w-full justify-around m-2">
             <button class="bg-green-500 rounded-sm p-1" onClick={()=>{

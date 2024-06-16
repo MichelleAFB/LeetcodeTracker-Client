@@ -82,10 +82,18 @@ export function MonthChart() {
       console.log(err)
     }
       })
-   
+      const checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart"))
+      
+  
+  
      
-      axios.get("https://leetcodetracker.onrender.com/monthCharts/"+user.userId+"/"+selectedYear).then((response)=>{
+      axios.get("http://localhost:3022/monthCharts/"+user.userId+"/"+selectedYear).then((response)=>{
         if(response.data.success){
+          console.log(response.data)
+          const storeMonthChart=response.data
+          storeMonthChart.needsRefresh=false
+          storeMonthChart.lastFetched=new Date().toString()
+          sessionStorage.setItem("monthChart",JSON.stringify(storeMonthChart))
           console.log(response.data)
             setMonths(response.data.months)
             setComplete(true)
@@ -96,6 +104,7 @@ export function MonthChart() {
             })
         }
       })
+    
     })
 
     prom.then(()=>{
@@ -105,13 +114,14 @@ export function MonthChart() {
 
   },[])
   if(!isLoading && complete){
-    
+      console.log("months",months)
      const data = {
       labels: ['January', 'February', 'March', 'April', 'May', 'June',"July","August","September","October","November","December"],
       datasets: [
         {
           label:["Total problems:"],
           data: months.map((m)=>{
+            console.log(m.month,m.problems)
             return m.problems
           }),
        
@@ -160,7 +170,7 @@ export function MonthChart() {
        
          
             const user=JSON.parse(sessionStorage.getItem("user"))
-            axios.get("https://leetcodetracker.onrender.com/monthCharts/"+user.userId+"/"+e.target.value).then((response)=>{
+            axios.get("http://localhost:3022/monthCharts/"+user.userId+"/"+e.target.value).then((response)=>{
               if(response.data.success){
                 setSelectedYear(e.target.value)
       

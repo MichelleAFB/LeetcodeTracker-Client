@@ -1,13 +1,17 @@
 import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate ,useLocation, Link} from 'react-router-dom'
-import { connect, useDispatch } from 'react-redux'
+
+ 
 
 import { query,doc,collection,getDocs,where, updateDoc,getDoc} from 'firebase/firestore'
 import { db } from '../../firebase/firebase'
 import IonIcon from '@reacticons/ionicons'
 import { setChallengeRequestModalVisibility,setChallengeRequest } from '../../redux/groupChallangeRequest/groupChallenge-actions'
 import OpenChallengeRequestButton from './OpenChallengeRequestButton'
+import Notification from './Notification'
+
+import { useDispatch, connect} from 'react-redux'
 
 function Header({ourUser,visibility}) {
 
@@ -18,12 +22,14 @@ function Header({ourUser,visibility}) {
   const[showAllNotifications,setShowAllNotifications]=useState(false)
   const location=useLocation()
  const dispatch=useDispatch()
+
   useEffect(()=>{
 
     const prom=new Promise(async(resolve,reject)=>{
       const u=JSON.parse(sessionStorage.getItem("user"))
       const q = query(collection(db, "users"), where("email", "==", u.email));
-
+      
+      
       const querySnapshot = await getDocs(q);
     var us=[]
    querySnapshot.forEach((doc) => {
@@ -64,11 +70,16 @@ function Header({ourUser,visibility}) {
 
   }
 
-
+ 
+  
+  
+  
+ 
 
   if(visibility && !isLoading){
    console.log(user.allNotifications)
    console.log(user.notifications)
+   console.log(user)
   return (
     <div class="w-full  ">
     <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
@@ -83,13 +94,35 @@ function Header({ourUser,visibility}) {
          <div class="flex-col justify-end">
         
            <div class="group relative  flex w-2/3 justify-center">
-           <button class="justify-end flex w-full m-2" >
+           <button class="flex" >
               <p class="text-md text-white m-0">{user.firstname} {user.lastname}</p>
-             {user!=null ? <IonIcon onClick={async()=>{
-          
-           setHasNotifications(!hasNotifications)
+             {user!=null ? 
 
-          }} name="notifications-outline" size="large"/>:<p></p>}
+<IonIcon class={user.hasNewNotifications?`animate__animated animate__pulse  animate__infinite	infinite animate__rubberBand`:``} onClick={async()=>{
+          //class="justify-end flex w-full m-2"
+          const prom=new Promise(async(resolve,reject)=>{
+            const refer=doc(db,"users",user.userId)
+            if(user.hasNewNotifications){
+            const update=await updateDoc(refer,{
+              
+              hasNewNotifications:false
+             // allNotifications:an
+
+            }).then(()=>{
+              resolve()
+            })
+          }else{
+            resolve()
+          }
+          })
+          prom.then(()=>{
+            setHasNotifications(!hasNotifications)
+          })
+       
+
+         }} name="notifications-outline"  style={{color:user.hasNewNotifications?"green":"white"}}  size="large"/>
+
+:<p></p>}
            </button>  
           </div>
           
@@ -116,159 +149,9 @@ function Header({ourUser,visibility}) {
               { user.notifications.map((n)=>{
                   if(n.acknowledged!=null && n.acknowledged==false ){
                     console.log("SHOULD NOT BE DISABLED")
-                  return(
-                    <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
-                      <div class="flex w-full justify-end p-1">
-                        <button class="bg-gray-600 p-1 rounded-sm" onClick={async()=>{
-                          function findNote(arr,n){
-                            var pos
-                            var i=0;
-                            arr.map((a)=>{
-                              if(a.time.toString()==n.time.toString()){
-                                pos=i
-                              }
-                              i++
-                            })
-                            return pos==null? -1:pos
-                          }
-                          console.log("CLICK")
-                          const refer=doc(db,"users",user.userId)
-                          const d=await getDoc(refer)
-                          const data=d.data()
-                          console.log(data)
-                          const nn=data.notifications
-                          const an=data.allNotifications
-                          const aIndex=findNote(an,n)
-                          const nIndex=findNote(nn,n)
-                          an.map((d)=>{
-                            d.acknowledged=true
-                          })
-                          console.log(aIndex,nIndex)
-                          if(nIndex!=-1){
-                            var newNotifications=nn
-                            newNotifications[nIndex].acknowledged=true
-                            newNotifications[nIndex].timeAcknowledged=new Date()
-                            console.log(newNotifications)
-                            if(aIndex==-1){
-                              const updateNote=newNotifications[nIndex]
-                              an.push(updateNote)
-                            }
-                            newNotifications.splice(nIndex,1)
-                          setTimeout(async()=>{
-                            const update=await updateDoc(refer,{
-                              notifications:newNotifications,
-                              allNotifications:an
-
-                            })
-                           
-                          },100)
-                          }
-
-                        }}>
-                          <IonIcon name="close-outline" style={{color:"white"}}/>
-                        </button>
-                      </div>
-                  <p class=" font-bold text-white text-3xs">
-                    {n.message}-
-                  </p>
-                  {n.type!=null && n.type=="GROUP_CHALLENGE_REQUEST"?
-                  <div class="flex p-3">
-                    
-                    {
-                      user.groupChallengeRequests.map((r)=>{
-                        if(n.challengeId==r.challengeId){
-                          console.log(r.dateApproved)
-                          return(<div class="flex-col w-full">
-                            {r.approved==true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-800">Accepted-{`(${new Date(r.dateApproved.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateApproved.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
-                            {r.denied==true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{`(${new Date(r.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
-                            <OpenChallengeRequestButton challenge={r} disabled={r.approved!=true && r.denied!=true? false:true}/>
-                            </div>)
-                        }
-                      })
-                    }
-                  </div>
-                  :
-                  <div></div>
-                  }
-                  <p class="text-gray-200 font-semi-bold text-xs">{new Date(n.time.seconds*1000).toString().substring(0,25)}</p>
-                  </div>)
+                  return(<Notification user={user} n={n}/> )
                 }else if(n.acknowledged==null){
-                  return(
-                    <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
-                      <div class="flex w-full justify-end p-1">
-                        <button class="bg-gray-600 p-1 rounded-sm" onClick={async()=>{
-                          function findNote(arr,n){
-                            var pos
-                            var i=0;
-                            arr.map((a)=>{
-                              if(a.time.toString()==n.time.toString()){
-                                pos=i
-                              }
-                              i++
-                            })
-                            return pos==null? -1:pos
-                          }
-                          console.log("CLICK")
-
-                          const refer=doc(db,"users",user.userId)
-                          const d=await getDoc(refer)
-                          const data=d.data()
-                          console.log(data)
-                          const nn=data.notifications
-                          const an=data.allNotifications
-                          const aIndex=findNote(an,n)
-                          const nIndex=findNote(nn,n)
-                          an.map((d)=>{
-                            d.acknowledged=true
-                          })
-                          console.log(aIndex,nIndex)
-                          if(nIndex!=-1){
-                            var newNotifications=nn
-                            newNotifications[nIndex].acknowledged=true
-                            newNotifications[nIndex].timeAcknowledged=new Date()
-                            console.log(newNotifications)
-                            if(aIndex==-1){
-                              const updateNote=newNotifications[nIndex]
-                              an.push(updateNote)
-                            }
-                            newNotifications.splice(nIndex,1)
-                          setTimeout(async()=>{
-                            const update=await updateDoc(refer,{
-                              notifications:newNotifications,
-                              allNotifications:an
-
-                            })
-                         
-                          },100)
-                          }
-
-                        }}>
-                          <IonIcon name="close-outline" style={{color:"white"}}/>
-                        </button>
-                      </div>
-                  <p class=" font-bold text-white text-3xs">
-                    {n.message}-
-                  </p>
-                  {n.type!=null && n.type=="GROUP_CHALLENGE_REQUEST"?
-                  <div class="flex p-3">
-                    {
-                      user.groupChallengeRequests.map((r)=>{
-                        if(n.challengeId==r.challengeId){
-                          console.log(r.dateApproved)
-                          return(<div class="flex-col w-full">
-                            {r.approved==true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-800">Accepted-{`(${new Date(r.dateApproved.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateApproved.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
-                            {r.denied==true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{`(${new Date(r.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
-                            <OpenChallengeRequestButton challenge={r} disabled={r.approved!=true && r.denied!=true? false:true}/>
-                            </div>)
-                        }
-                      })
-                    }
-                  </div>
-                  :
-                  <div></div>
-                  }
-                  <p class="text-gray-200 font-semi-bold text-xs">{new Date(n.time.seconds*1000).toString().substring(0,25)}</p>
-                  </div>)
+                  return(<Notification user={user} n={n}/> )
                 }
                 })
               }
@@ -280,41 +163,31 @@ function Header({ourUser,visibility}) {
 
 
 
-            <ul class={`h-[${user.allNotifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden`}>
+              <div class="flex-col">
+              {user.allNotifications.length !=0?
+                <ul class={`h-[${user.allNotifications.length || user.notifications.length >3?60:30}vh] overflow-y-scroll overflow-hidden`}>
+
               { user.allNotifications.map((n)=>{
                   
-                  return(
-                    <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
-                      
-                  <p class=" font-bold text-white text-3xs">
-                    {n.message}-
-                  </p>
-                  {n.type!=null && n.type=="GROUP_CHALLENGE_REQUEST"?
-                  <div class="flex p-3">
-                    
-                    {
-                      user.groupChallengeRequests.map((r)=>{
-                        if(n.challengeId==r.challengeId){
-                          console.log(r.dateApproved)
-                          return(<div class="flex-col w-full">
-                            {r.approved==true ?<p class="font-semi-bold">Status:<span class="font-normal text-green-800">Accepted-{`(${new Date(r.dateApproved.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateApproved.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateApproved.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
-                            {r.denied==true ?<p class="font-semi-bold">Status:<span class="font-normal text-red-500">Rejected-{`(${new Date(r.dateDenied.seconds *1000).toString().substring(0,15)}) ${Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))>12? (Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18))-12).toString()+(new Date(r.dateDenied.seconds *1000).toString().substring(18,25))+"PM":Number(new Date(r.dateDenied.seconds *1000).toString().substring(16,18)).toString()+"AM"}`}</span></p>:<p></p>}
-                            <OpenChallengeRequestButton challenge={r} disabled={r.approved!=true && r.denied!=true? false:true}/>
-                            </div>)
-                        }
-                      })
-                    }
-                  </div>
-                  :
-                  <div></div>
-                  }
-                  <p class="text-gray-200 font-semi-bold text-xs">{new Date(n.time.seconds*1000).toString().substring(0,25)}</p>
-                  </div>)
+                  return(<Notification user={user} n={n}/> )
                 
                 })
               }
+              </ul>
+              :
+              <ul class={`h-[${user.allNotifications.length || user.notifications.length >3?60:30}vh] overflow-y-scroll overflow-hidden`}>
 
-            </ul>
+              { user.notifications.map((n)=>{
+                  
+                  return(<Notification user={user} n={n}/> )
+                
+                })
+              }
+              </ul>
+
+           
+              }
+              </div>
             
             }
             </div></span>

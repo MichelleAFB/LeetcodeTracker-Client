@@ -19,7 +19,7 @@ function StreakChart({allStreaks,streaks}) {
  // const[streaks,setStreaks]=useState()
   const[streakGroups,setStreakGroup]=useState()
   const[isLoading,setIsLoading]=useState(false)
-  const[seeAllStreaks,setSeeAllStreaks]=useState(true)
+  const[seeAllStreaks,setSeeAllStreaks]=useState(allStreaks!=null?true:false)
   const[allYears,setAllYears]=useState()
   const[selectedYear,setSelectedYear]=useState(new Date().getUTCFullYear())
   const[useSelectedMonth,setUseSelectedMonth]=useState(false)
@@ -191,10 +191,12 @@ function StreakChart({allStreaks,streaks}) {
 
 
 
-  console.log(months)
+
   
-  if(!isLoading && streaks!=null){
+  if(!isLoading && (streaks!=null || allStreaks!=null)){
   console.log(selectedYear)
+  console.log(allStreaks)
+  console.log(streaks)
  
    /* const data = {
       labels:problems.map((p)=> {return p.day}),
@@ -235,13 +237,14 @@ function StreakChart({allStreaks,streaks}) {
       <p class="text-5xl"></p>
   }
  */
+console.log("\n\n\n\ncurrent streaks",streaks)
  
   return (
     <div class="m-2 flex    border-gray-300 border-t-2 m p-2 "> 
       
       <p>{}</p>
    
-   {allStreaks.length>0  ?
+   {allStreaks!=null   ?
     <div class="flex flex-col p-2">
 
 <div class="flex justify-around">
@@ -320,7 +323,7 @@ function StreakChart({allStreaks,streaks}) {
               }
       </div>
    
-      {seeAllStreaks?
+      {seeAllStreaks && (allStreaks!=null &&allStreaks.length>0)?
       
       <div class="flex-col ">
           
@@ -389,8 +392,9 @@ function StreakChart({allStreaks,streaks}) {
 
       </div>:
       <p class="text-5xl"></p>
+      
   }
-  {allStreaks.length==0 && streaks.length==0 ?
+  {allStreaks==null && streaks==null ?
     <div class="flex flex-col w-full p-10">
       <p class="text-5xl">No streaks yet..</p>
       </div>:
