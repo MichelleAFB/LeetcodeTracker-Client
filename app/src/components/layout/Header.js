@@ -10,49 +10,46 @@ import IonIcon from '@reacticons/ionicons'
 import { setChallengeRequestModalVisibility,setChallengeRequest } from '../../redux/groupChallangeRequest/groupChallenge-actions'
 import OpenChallengeRequestButton from './OpenChallengeRequestButton'
 import Notification from './Notification'
-
+import { io } from 'socket.io-client'
 import { useDispatch, connect} from 'react-redux'
-
-function Header({ourUser,visibility}) {
+import { Manager } from "socket.io-client";
+function Header({ourUser,visibility,socket}) {
 
   const[isLoading,setIsLoading]=useState(true)
   const [user,setUser]=useState()
   const[hasNotifications,setHasNotifications]=useState(false)
   const[reload,setReload]=useState(false)
   const[showAllNotifications,setShowAllNotifications]=useState(false)
+  const [manager,setManager]=useState()
   const location=useLocation()
  const dispatch=useDispatch()
-
+  
   useEffect(()=>{
-
+ 
     const prom=new Promise(async(resolve,reject)=>{
       const u=JSON.parse(sessionStorage.getItem("user"))
       const q = query(collection(db, "users"), where("email", "==", u.email));
+      socket.emit("NEW_USER_SESSION",{user:u,source:"HEADER"})
+      socket.on("RECIEVED_NEW_USER",(data)=>{
+        console.log("\n\nRECIEVED",data)
+       })
       
       
       const querySnapshot = await getDocs(q);
     var us=[]
    querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    
+
           us.push(doc.data())
        
        
         });
        
      setTimeout(()=>{
-     
-    
- 
       setUser(us[0])
       setTimeout(()=>{
         resolve()
       },800)
      },800)
-        
-       
- 
-  
     })
 
     prom.then(()=>{
@@ -71,15 +68,21 @@ function Header({ourUser,visibility}) {
   }
 
  
+  /*
   
-  
-  
- 
+  socket.on("mass_message_recieved",(data)=>{
+    console(data.message)
+    console.log("HERE")
+  })*/
+
 
   if(visibility && !isLoading){
    console.log(user.allNotifications)
    console.log(user.notifications)
    console.log(user)
+   console.log("in header",socket)
+  
+   
   return (
     <div class="w-full  ">
     <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
@@ -95,6 +98,12 @@ function Header({ourUser,visibility}) {
         
            <div class="group relative  flex w-2/3 justify-center">
            <button class="flex" >
+            <button class="bg-green-400 p-3" onClick={()=>{
+                
+              socket.emit("send_message",{message:"hello from :"+user.firstname})
+            }}>
+              button
+            </button>
               <p class="text-md text-white m-0">{user.firstname} {user.lastname}</p>
              {user!=null ? 
 
@@ -149,9 +158,9 @@ function Header({ourUser,visibility}) {
               { user.notifications.map((n)=>{
                   if(n.acknowledged!=null && n.acknowledged==false ){
                     console.log("SHOULD NOT BE DISABLED")
-                  return(<Notification user={user} n={n}/> )
+                  return(<Notification user={user} n={n} notifications={user.notifications}  allNotifications={user.allNotifications} /> )
                 }else if(n.acknowledged==null){
-                  return(<Notification user={user} n={n}/> )
+                  return(<Notification user={user} n={n} notifications={user.notifications}  allNotifications={user.allNotifications}/> )
                 }
                 })
               }
@@ -169,7 +178,7 @@ function Header({ourUser,visibility}) {
 
               { user.allNotifications.map((n)=>{
                   
-                  return(<Notification user={user} n={n}/> )
+                  return(<Notification user={user} n={n} notifications={user.notifications}  allNotifications={user.allNotifications}/> )
                 
                 })
               }
@@ -179,7 +188,7 @@ function Header({ourUser,visibility}) {
 
               { user.notifications.map((n)=>{
                   
-                  return(<Notification user={user} n={n}/> )
+                  return(<Notification user={user} n={n}  notifications={user.notifications}  allNotifications={user.allNotifications}/> )
                 
                 })
               }
@@ -233,11 +242,12 @@ function Header({ourUser,visibility}) {
 
 const mapStateToProps = (state, props) => {
   var visibility= state.user.visibility
- 
+  var socket=state.socket.socket;
+  console.log("in header",socket)
 
   return {
    visibility:visibility,
-  
+  socket:socket
   };
 };
 

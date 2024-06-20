@@ -7,7 +7,9 @@ import { editChallengeReducer } from './editChallenge.js/editChallenge-reducer'
 import { editFollowersAndFollowingReducer } from './editFollowersAndFollowing/editFollowersAndFollowing-reducer'
 import { addOtherUsersProblemReducer } from './addOtherUsersProblem/addOtherUsersProblem-actions'
 import { groupChallengeReducer } from './groupChallangeRequest/groupChallenge-reducer'
+import { socketReducer } from './socket/socket-reducer'
 export const rootReducer=combineReducers({
+  socket:socketReducer,
   editProblem:editProblemReducer,
   user:editUserReducer,
   leetcodeProblem:leetcodeProblemReducer,

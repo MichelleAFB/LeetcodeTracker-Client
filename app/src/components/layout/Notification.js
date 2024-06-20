@@ -212,7 +212,10 @@ function Notification({user,n}) {
                     const updateNote=newNotifications[nIndex]
                     an.push(updateNote)
                   }
+                  console.log("old Notifications",user.notifications)
                   newNotifications.splice(nIndex,1)
+                  console.log("new Notifications",newNotifications)
+                  /*
                 setTimeout(async()=>{
                   console.log("ALLNOTIFICATION NEW:",an)
                   const update=await updateDoc(refer,{
@@ -223,6 +226,7 @@ function Notification({user,n}) {
                   })
                
                 },100)
+                */
                 }
 
               }}>

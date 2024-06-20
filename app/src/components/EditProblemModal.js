@@ -47,7 +47,7 @@ function EditProblemModal({ourProblem,visibility}) {
       setExamples(ourProblem.problem.examples)
       setProblem(ourProblem.problem)
       getProblemsList(ourProblem.id).then((response)=>{
-        console.log(response)
+     
        
        
           resolve()
@@ -59,8 +59,7 @@ function EditProblemModal({ourProblem,visibility}) {
       if(visibility){
         
         var p=JSON.parse(sessionStorage.getItem('currentProblem')) 
-        console.log(p)
-        console.log(p) 
+
 
         const prom1=new Promise((resolve1,reject1)=>{
         
@@ -88,7 +87,7 @@ function EditProblemModal({ourProblem,visibility}) {
 
   
   const getProblemsList=async(id)=>{
-    console.log(id)
+
     //READ DATA
     try{
       const user=JSON.parse(sessionStorage.getItem("user"))
@@ -100,8 +99,7 @@ function EditProblemModal({ourProblem,visibility}) {
       console.log(doc.id +" "+id )
       if(doc.id==id){
         
-        console.log("found" )
-        console.log(doc.data())
+     
         setProblem({problem:doc.data(),id:doc.id})
         sessionStorage.setItem("currentProblem",JSON.stringify({problem:doc.data(),id:doc.id}))
         

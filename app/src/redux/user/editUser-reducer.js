@@ -8,15 +8,14 @@ const initialState = {
 export const editUserReducer = (state = initialState, action) => {
   switch (action.type) {
     case actionTypes.SET_USER:
-      console.log("REDUX:SETTING EDIT user");
+
       return {
         ...state,
         user: action.payload.user,
       };
 
     case actionTypes.SET_HEADER_VISIBILITY:
-      console.log("REDUX:SETTING EDIT user",action.payload);
-      
+  
       return {
         ...state,
         visibility: action.payload.visibility,

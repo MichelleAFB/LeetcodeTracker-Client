@@ -86,7 +86,10 @@ function GroupChallengeViewer({challenge }) {
         console.log("winners",winners)
         console.log("challenge:",challenge)
         console.log(mostProblems)
+console.log(ourProblemCounter)
         if(new Date()>new Date(challenge.endDate)){
+            console.log("here",challenge)
+            try{
   return (
     <div class="flex m-2 ">
         {challenge!=null?
@@ -122,8 +125,11 @@ function GroupChallengeViewer({challenge }) {
                     <div>
                           {
                             challenge.selectedContestants.map((c)=>{
+                                console.log(c)
                                 if(mostProblems.id==c.userId){
-                                   return(<p>{c.firstname} {c.lastname} -{mostProblems.count} problems</p>)
+                                    console.log(mostProblems)
+                                    
+                                  return(<p>{c.firstname} {c.lastname} -{Object.keys(mostProblems.count).length>0? mostProblems.count.problems:mostProblems.count} problems</p>)
                                 }
                             })
                         }
@@ -143,10 +149,13 @@ function GroupChallengeViewer({challenge }) {
                         <div class="h-[50vh] overflow-y-scroll overflow-hidden">
                             {
                                 losers.map((l)=>{
+                                    console.log("losers:",l)
+                                 
+                               
                                     if(winners.length>0){
-                                    return<div class="flex "><p class="text-sm">{l.userStats.firstname} {l.userStats.lastname} {l.rank-winners.length+1}{getSuffix(l.rank-winners.length)}</p></div>
+                                    return<div class="flex "><p class="text-sm">{l.userStats.firstname} {l.userStats.lastname} {l.rank}{getSuffix(l.rank)}</p></div>
                                     }else{
-                                        return<div class="flex "><p class="text-sm">{l.userStats.firstname} {l.userStats.lastname} {l.rank-winners.length}{getSuffix(l.rank-winners.length)}</p></div>
+                                        return<div class="flex "><p class="text-sm">{l.userStats.firstname} {l.userStats.lastname} {l.rank}{getSuffix(l.rank)}</p></div>
 
                                     }
                                 })
@@ -166,6 +175,8 @@ function GroupChallengeViewer({challenge }) {
                         <div class="h-[50vh] overflow-y-scroll overflow-hidden">
                             {
                                 winners.map((w)=>{
+                                    console.log("winners:",w)
+                                
                                     return(<div class="flex"><p><p>{w.userStats.firstname} {w.userStats.lastname}{ "("+w.userStats.username+")"}</p> </p></div>)
                                 })
                             }
@@ -183,6 +194,10 @@ function GroupChallengeViewer({challenge }) {
     }
     </div>
   )
+}catch(err){
+    return(<p>heo</p>)
+    console.log(err)
+}
 }else{
     {
         Object.keys(challenge.problemCounter).forEach((k)=>{
@@ -198,9 +213,10 @@ function GroupChallengeViewer({challenge }) {
         <p>Problems</p>
         <ul class="bg-green-500 p-3">
             {
-                Object.keys(challenge.problemCounter).forEach((k)=>{
-                    return(<li><p>{k}:{challenge.problemCounter[k] } problems</p></li>)
-                })
+              ourProblemCounter.map((c)=>{
+                console.log(c)
+                return(<div>hi</div>)
+              })
             }
         </ul>
     </div>

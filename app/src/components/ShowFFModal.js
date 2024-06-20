@@ -39,11 +39,7 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
     },[visibility,setFollowers,setFollowing])
  
  if(!isLoading && visibility && user!=null){
-    console.log(user.firstname)
-    console.log(user.followers)
-    console.log(user.following)
-    console.log(showFollowing)
-    console.log(showFollowers)
+  
     if(showFollowers){
     return (
     <div class='bg-gray-200' data-testId="modal-public">
@@ -180,7 +176,7 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
 }
 
 const mapStateToProps = (state, props) => {
-    console.log(state.editFollowersAndFollowing)
+
     var visibility= state.editFollowersAndFollowing.ffVisibility
     var setFollowers=state.editFollowersAndFollowing.setFollowers
     var setFolllowing=state.editFollowersAndFollowing.setFollowing

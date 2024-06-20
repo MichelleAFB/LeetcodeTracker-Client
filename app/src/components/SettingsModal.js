@@ -96,7 +96,7 @@ const mapStateToProps = (state, props) => {
   var visibility= state.settings.visibility;
   var type=state.settings.type
   var content=state.settings.content
-  console.log("visibility"+visibility)
+ 
 
   return {
    visibility:visibility,

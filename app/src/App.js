@@ -25,15 +25,71 @@ import ShowFFModal from './components/ShowFFModal';
 import AddOtherUsersProblemModal from './components/AddOtherUsersProblemModal';
 import ChallengeRequestModal from './components/ChallengeRequestModal';
 import axios from 'axios';
-function App({user,visibility}) {
+import { socket } from './socket';
+import { setSocket } from './redux/socket/socket-actions';
+import { useDispatch } from 'react-redux';
+import { io } from 'socket.io-client';
 
-  const[isLoading,setIsLoading]=useState(true)
-  console.log(visibility)
+function App({user,visibility,socket}) {
+const dispatch=useDispatch()
+
+  
+const[isLoading,setIsLoading]=useState(true)
+const[connected,setConnected]=useState(false)
+const[ourRoom,setOurRoom]=useState()
+const [ourSocket,setOurSocket]=useState()
+
+ 
   useEffect(()=>{
+    const user=JSON.parse(sessionStorage.getItem("user"))
+    const prom=new Promise((resolve,reject)=>{
+      console.log("in app",socket)
+      if(socket!=null){
+      if(!socket.connected){
+      var socket=io.connect("http://localhost:3042")
+      console.log(Object.keys(socket))
+      if(user!==null){
+      socket.emit("NEW_USER_SESSION",{user:user,message:"hi",room:socket.id})
+      console.log("IN app",socket)
+        setOurSocket(socket)
+        dispatch(setSocket(socket))
+      setTimeout(()=>{
+        console.log("SOCKET SET")
+        resolve()
+      },200)
+    }else{
+      resolve()
+    }
+    }else{
+      console.log("socket GOOD",socket)
+      resolve()
+    }
+  }else{
+    console.log("SOCKET GOOD",socket)
+    var s=io.connect("http://localhost:3042")
+    dispatch(setSocket(s))
+    setOurSocket(s)
+    setTimeout(()=>{
+      resolve()
+    },500)
+  }
+      
 
+
+
+    })
+    prom.then(()=>{
+      console.log("here")
+      setIsLoading(false)
+    })
+    
 
   },[visibility]) 
   
+if(!isLoading){
+  socket.emit("NEW_USER_SESSION",{user:user,id:socket.id,source:"APP"},()=>{
+    console.log("DONE")
+  })
 
   return (
     <div class="flex-col ">
@@ -69,23 +125,30 @@ function App({user,visibility}) {
     </Router>
     </div>
   );
+}else{
+  return(<div></div>)
+}
 }
 
 const mapStateToProps = (state, props) => {
   var visibility= state.user.visibility;
   var user=state.user.user
-  console.log("visibility in APP.JS"+visibility)
+  var socket=state.socket.socket
+  console.log("visibility in APP.JS"+visibility,socket)
   if(user==null){
     user=JSON.parse(sessionStorage.getItem("user"))
   }
   if(visibility==null){
     visibility=JSON.parse(sessionStorage.getItem("headerVisibility"))
+    
     console.log(visibility)
   }
 
   return {
    visibility:visibility,
-   user:user
+   user:user,
+   socket:socket
+  
   };
 };
 

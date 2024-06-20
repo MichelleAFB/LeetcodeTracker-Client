@@ -38,14 +38,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
     setFinalEvents(allEvents)
   },[allEvents])
     function renderChallengeColor(){
-     /* var letters = '0123456789ABCDEF';
-      //  r = 255*((R/255.0)^ (1/1.5));
-      var color = '#';
-      for (var i = 0; i < 6; i++) {
-        color += letters[Math.floor(Math.random() * 16)];
-      }
-      return color;
-    */
+ 
       function random_rgb() {
         var o = Math.round, r = Math.random, s = 255;
         return 'rgb(' + o(r()*s*.5) + ',' + o(r()*s*.5) + ',' + o(r()*s*.5) + ')';
@@ -97,6 +90,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
         const groupCha=[]
         const ourUser=JSON.parse(sessionStorage.getItem("user"))
         const allCha=[]
+        const allChaAndAllDay=[]
         const colors=[]
         const allDays=[]
         const allUsers=[]
@@ -177,8 +171,10 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
             })
       
           }
-     
-          if(!allDays.includes(gg.streaks[0].streak.day )){
+          if(allDays.includes(gg.streaks[0].streak.day ) && allChaAndAllDay.includes(gg.challengeId+gg.streaks[0].streak.day)){
+
+          }else{
+            allChaAndAllDay.push(gg.challengeId+gg.streaks[0].streak.day)
             try{
             allDays.push(gg.streaks[0].streak.day)
             }catch(err){

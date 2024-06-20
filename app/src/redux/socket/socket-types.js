@@ -1,0 +1,2 @@
+export const TOGGLE_SOCKET="TOGGLE_SOCKET"
+export const SET_SOCKET="SET_SOCKET"

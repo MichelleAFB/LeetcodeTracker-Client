@@ -435,7 +435,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
 const mapStateToProps = (state, props) => {
   var visibility= state.leetcodeProblem.visibility
   var problem=state.leetcodeProblem.problem
-  console.log("visibility"+visibility)
+
 
   return {
    visibility:visibility,

@@ -27,12 +27,12 @@ function Home({problem,visibility,leetCodeVisiblity}) {
   const[hasUsername,setHasUserName]=useState(true)
 
   useEffect(()=>{
-    const webSocket = new WebSocket('ws://localhost:3042/');
+    /*const webSocket = new WebSocket('ws://localhost:3042/');
     webSocket.addEventListener("open", event => {
       webSocket.send("Connection established");
     })
     webSocket.onmessage = (event) => {
-      console.log(event)
+   
       
     };
     
@@ -43,7 +43,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
       webSocket.send(inputMessage.value)
       inputMessage.value = ""
       event.preventDefault();
-    }
+    }*/
     if(sessionStorage.getItem("user")!=null){
       if(JSON.parse(sessionStorage.getItem("user").username==null)){
         setHasUserName(false)

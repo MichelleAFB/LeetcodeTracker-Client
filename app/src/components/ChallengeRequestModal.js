@@ -7,7 +7,7 @@ import { collection,doc,getDocs,getDoc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase/firebase'
 import axios from 'axios'
 import IonIcon from '@reacticons/ionicons'
-function ChallengeRequestModal({challenge,visibility,disabled}) {
+function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
 
   const[isLoading,setIsLoading]=useState(true)
   const[groupChallenge,setGroupChallenge]=useState()
@@ -423,13 +423,15 @@ const mapStateToProps = (state, props) => {
   var visibility= state.groupChallenge.visibility
   var challenge=state.groupChallenge.challenge
   var disabled=state.groupChallenge.disabled
+  var socket=state.socket.socket
 
  
 
   return {
    visibility:visibility,
   challenge:challenge,
-  disabled:disabled
+  disabled:disabled,
+  socket:socket
   };
 };
 export default connect(mapStateToProps)(ChallengeRequestModal)

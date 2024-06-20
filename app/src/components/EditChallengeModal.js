@@ -113,7 +113,7 @@ function EditChallengeModal({visibility,challenge}) {
 const mapStateToProps = (state, props) => {
     var visibility= state.editChallenge.visibility
     var challenge=state.editChallenge.challenge
-    console.log("visibility"+visibility)
+
   
     return {
      visibility:visibility,

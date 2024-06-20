@@ -28,8 +28,7 @@ function AllUsers() {
    setTimeout(()=>{
     resolve()
    },300)
-        }catch(err){
-  
+        }catch(err){ 
 }
   })
 
