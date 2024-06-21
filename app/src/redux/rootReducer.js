@@ -8,7 +8,9 @@ import { editFollowersAndFollowingReducer } from './editFollowersAndFollowing/ed
 import { addOtherUsersProblemReducer } from './addOtherUsersProblem/addOtherUsersProblem-actions'
 import { groupChallengeReducer } from './groupChallangeRequest/groupChallenge-reducer'
 import { socketReducer } from './socket/socket-reducer'
+import { reloadReducer } from './reload/reload-reducer'
 export const rootReducer=combineReducers({
+  reload:reloadReducer,
   socket:socketReducer,
   editProblem:editProblemReducer,
   user:editUserReducer,

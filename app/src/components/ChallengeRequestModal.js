@@ -231,9 +231,11 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
                     }else{
                       newNots=[notification]
                     }
+                    if(newAllNots!=null){
                     if(newAllNots.length>0){
                       newAllNots.push(notification)
-                    }else{
+                    }}
+                    else{
                       newAllNots=[notification]
                     }
                     const updateHost=await updateDoc(hostRef,{
@@ -281,6 +283,9 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
                       axios.post("http://localhost:3022/update-group-challenge-contestant/"+challenge.userId,{createdBy:groupChallenge.userId,groupChallenge:newGroupChallenge,user:changed,case:"CONTESTANT_GROUP_CHALLENGE_ACCEPTED"}).then((response)=>{
                         console.log(response)
                         if(response.data.success){
+                          const user=JSON.parse(sessionStorage.getItem("user"))
+                          socket.emit("UPDATE_NOTIFICATIONS",{user:groupChallenge,message:"ACEEPTED CHALLENGE REQUEST",sender:user.userId})
+
                           alert("SUCCESS: you are now participating in "+groupChallenge.title)
                           setIsLoading(true)
                         }
@@ -390,6 +395,9 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
                       axios.post("http://localhost:3022/update-group-challenge-contestant/"+challenge.userId,{groupChallenge:newGroupChallenge,user:changed,case:"CONTESTANT_GROUP_CHALLENGE_REJECTED"}).then((response)=>{
                         console.log(response)
                         if(response.data.success){
+                          const user=JSON.parse(sessionStorage.getItem("user"))
+                          socket.emit("UPDATE_NOTIFICATIONS",{message:"REJECTED CHALLENGE REQUEST",user:groupChallenge,sender:user.userId})
+
                           alert("SUCCESS: you are not participating in "+groupChallenge.title)
                           setIsLoading(true)
                         }

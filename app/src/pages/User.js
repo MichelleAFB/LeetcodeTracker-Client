@@ -3,7 +3,7 @@ import {useState,useEffect} from 'react'
 import { db } from "../firebase/firebase"
 import axios from "axios"
 import { collection,doc,getDoc,query,where,getDocs,updateDoc } from "firebase/firestore"
-import { useDispatch } from "react-redux"
+import { connect, useDispatch } from "react-redux"
 import { setEditFFUser } from "../redux/editFollowersAndFollowing/editFollowersAndFollowing-actions"
 import ProblemList from "../components/ProblemList"
 import Streak from "../components/Streak"
@@ -12,7 +12,7 @@ import {Image, Video, Transformation} from 'cloudinary-react';
 
 import {Cloudinary} from "@cloudinary/url-gen";
 import StreakChart from "../components/StreakChart"
-function User(){
+function User({socket}){
     const id=useParams().id
     const [user,setUser]=useState()
     const [createTime,setCreateTime]=useState()
@@ -40,6 +40,7 @@ function User(){
             }
           })
     useEffect(()=>{
+        console.log("Socket in USER",socket)
         const ref=collection(db,"users")
         const prom=new Promise(async(resolve,reject)=>{
        
@@ -203,10 +204,19 @@ console.log(avi)
                         </Image>:<div></div>
                         }
                         <div class="flex-col gap-y-1 ml-2">
+                            <button clas="bg-purple-500 p-3" onClick={()=>{
+                                console.log("user",user)
+                                console.log("other",ourUser)
+                                socket.emit("UPDATE_NOTIFICATIONS",{"user":user})
+                            }}>
+                                Add
+                            </button>
                            { 
                            user.username!=null  && ourUser.username!=null && notFollowing==true ?
-                           <button class="bg-gray-600 rounded-md  pb-1 pt-1 pr-2 pl-2" onClick={()=>{
+                           <button class="bg-gray-600 rounded-md  pb-1 pt-1 pr-2 pl-2" onClick={async()=>{
                             const ourUser=JSON.parse(sessionStorage.getItem("user"))
+                           
+                            
                                 axios.post("http://localhost:3022/follow-user/"+user.username+"/"+ourUser.username).then(async(response)=>{
                                     if(response.data.success){
                                         sessionStorage.setItem("user",JSON.stringify(response.data.user))
@@ -214,6 +224,8 @@ console.log(avi)
                                         const refer=collection(db,"users")
                                         const docs=await getDocs(refer)
                                         docs.docs.map(async(d)=>{
+                                            console.log(d)
+                                          
                                             //add this user to the other users followers
                                             if(d.data().userId==ourUser.userId){
                                                 const thefollowed=doc(db,"users", d._key.path.segments[d._key.path.segments.length-1])
@@ -282,21 +294,33 @@ console.log(avi)
                                                             const notifications= user.notifications
                                                             notifications.push({message:"New follower: "+ourUser.username+" started following you!",time:new Date()})
                                                             await  updateDoc(thefollowed,{
-                                                                "notifications":notifications
-                                                               })
-                                                               await  updateDoc(thefollowed,{
+                                                                "notifications":notifications,
                                                                 "hasNewNotifications":true
                                                                })
+                                                              
                                                         }else{
                                                             await  updateDoc(thefollowed,{
-                                                                "notifications":[{message:"New follower: "+ourUser.username+" started following you!",time:new Date()}]
-                                                               })
-                                                               await  updateDoc(thefollowed,{
+                                                                "notifications":[{message:"New follower: "+ourUser.username+" started following you!",time:new Date()}],
                                                                 "hasNewNotifications":true
-                                                               })
+                                                            })
+                                                               
 
                                                         }
-                                                        setTimeout(()=>{
+                                                        setTimeout(async()=>{
+                                                            socket.emit("UPDATE_NOTIFICATIONS",{"user":user,sender:ourUser})
+                                                       
+                                                            const ref=collection(db,"users")
+                                                            const u=await getDocs(ref,ourUser.userId)
+                                                            var goodRef
+                                                            u.docs.map((c)=>{
+                                                                if(c.id==ourUser.userId){
+                                                                    goodRef=c.data()
+                                                                    console.log(goodRef)
+                                                                }
+                                                            })
+                                                            console.log(u,goodRef)
+                                                           
+                                                            sessionStorage.setItem("user",JSON.stringify(goodRef))
                                                             dispatch(setEditFFUser(ourUser))
                                                             setTimeout(()=>{
                                                                 dispatch(setEditFFUser(user))
@@ -443,5 +467,13 @@ console.log(avi)
     }
 
 }
+const mapStateToProps = (state, props) => {
+    var socket=state.socket.socket
+    
+  
+    return {
+    socket:socket,
 
-export default User
+    };
+  };
+export default connect(mapStateToProps)(User)

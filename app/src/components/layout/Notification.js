@@ -52,7 +52,7 @@ function Notification({user,n}) {
                 console.log("ALLNOTIFICATION NEW:",an)
 
                 const update=await updateDoc(refer,{
-                  notifications:newNotifications,
+                 // notifications:newNotifications,
                   hasNewNotifications:newNotifications.length==0?false:true
                  // allNotifications:an
 

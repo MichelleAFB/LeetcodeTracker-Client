@@ -13,7 +13,8 @@ import Notification from './Notification'
 import { io } from 'socket.io-client'
 import { useDispatch, connect} from 'react-redux'
 import { Manager } from "socket.io-client";
-function Header({ourUser,visibility,socket}) {
+import { setNotificationReload } from '../../redux/reload/reload-actions'
+function Header({ourUser,visibility,socket,notificationReload}) {
 
   const[isLoading,setIsLoading]=useState(true)
   const [user,setUser]=useState()
@@ -58,7 +59,7 @@ function Header({ourUser,visibility,socket}) {
     
     })
 
-  },[visibility,hasNotifications,reload,showAllNotifications])
+  },[visibility,hasNotifications,reload,showAllNotifications,notificationReload])
 
 
   const navigate=useNavigate()
@@ -74,11 +75,19 @@ function Header({ourUser,visibility,socket}) {
     console(data.message)
     console.log("HERE")
   })*/
-
+  socket.on("NOTIFICATIONS_UPDATED",(data)=>{
+    var i=0
+    if(i==0){
+    console.log(data)
+    dispatch(setNotificationReload(!reload))
+    console.log("HERE")
+    i++
+    }
+  })
 
   if(visibility && !isLoading){
-   console.log(user.allNotifications)
-   console.log(user.notifications)
+   console.log("allNotifications:",user.allNotifications)
+   console.log("notifications:",user.notifications)
    console.log(user)
    console.log("in header",socket)
   
@@ -242,12 +251,14 @@ function Header({ourUser,visibility,socket}) {
 
 const mapStateToProps = (state, props) => {
   var visibility= state.user.visibility
+   var notificationReload=state.reload.notificationReload
   var socket=state.socket.socket;
   console.log("in header",socket)
 
   return {
    visibility:visibility,
-  socket:socket
+  socket:socket,
+  notificationReload:notificationReload
   };
 };
 

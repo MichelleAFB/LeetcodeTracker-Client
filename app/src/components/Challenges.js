@@ -23,7 +23,7 @@ import { connect } from 'react-redux';
 import ChallengesSelectedContestants from './ChallengesSelectedContestants';
 import GroupChallenges from './GroupChallenges';
 import GroupChallengeViewer from './GroupChallengeViewer';
-function Challenges({refresh}) {
+function Challenges({refresh,socket}) {
 
   const usersCollectionRef=collection(db,"users")
   //const data=await getDocs(usersCollectionRef)
@@ -404,6 +404,7 @@ async function submitGroupChallenge(e){
           setTimeout(()=>{
             axios.post("http://localhost:3022/update-group-challenge-contestant/"+ourUser.userId,{createdBy:ourUser.userId,case:"CREATE_GROUP_CHALLENGE_FOR_CREATOR",user:updatedRefer.data(),challenge:newChallenge}).then((response)=>{
               console.log(response)
+              socket.emit("UPDATE_NOTIFICATIONS",{message:"NEW GROUP CHALLENGE REQUEST",users:ids})
               if(response.data.success){
                 alert("SUCCESS: sent out requests for group challenge, "+newChallenge.name)
                 setCreateGroupChallenge(false)
@@ -422,6 +423,7 @@ async function submitGroupChallenge(e){
           setTimeout(()=>{
             axios.post("http://localhost:3022/update-group-challenge-contestant/"+ourUser.userId,{createdBy:ourUser.userId,case:"CREATE_GROUP_CHALLENGE_FOR_CREATOR",user:updatedRefer.data(),challenge:newChallenge}).then((response)=>{
               console.log(response)
+              socket.emit("UPDATE_NOTIFICATIONS",{message:"NEW GROUP CHALLENGE REQUEST",users:ids})
               if(response.data.success){
                 alert("SUCCESS: sent out requests for group challenge, "+newChallenge.name)
               }
@@ -481,7 +483,8 @@ async function submitGroupChallenge(e){
             setTimeout(async()=>{
               const updateData=await getDoc(refer)
              axios.post("http://localhost:3022/update-group-challenge-contestant/"+p.userId,{user:updateData.data(),case:"CREATE_GROUP_CHALLENGE_REQUEST"}).then((response)=>{
-              console.log(response)
+              socket.emit("UPDATE_NOTIFICATIONS",{message:"NEW GROUP CHALLENGE REQUEST",users:ids})
+             console.log(response)
              })
             },500)
            
@@ -2070,10 +2073,12 @@ else if(isLoading){
  */
 const mapStateToProps = (state, props) => {
   var refresh= state.editChallenge.refresh
- 
+ var socket=state.socket.socket
 
   return {
- refresh:refresh
+ refresh:refresh,
+ socket:socket
+
   };
 };
 export default connect(mapStateToProps)(Challenges)
