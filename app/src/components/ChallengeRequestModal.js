@@ -96,7 +96,10 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
     console.log("index:",ind)
     return ind!=null?ind:-1
   }
+  async function sendNotifications(decision){
+    socket.emit("UPDATE_NOTIFICATIONS",{message:decision=="REJECTED"?"GROUP_CHALLENGE_REQUEST_REJECTED":"GROUP_CHALLENGE_REQUEST_REJECTED",user:host})
 
+  }
   if(!isLoading){
     console.log("challenge request:",challenge)
     console.log("groupChallenge:",groupChallenge)
@@ -189,6 +192,7 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
 
           <div class="flex w-full justify-around m-2">
             <button class="bg-green-500 rounded-sm p-1" onClick={()=>{
+              sendNotifications("ACCEPTED")
               groupChallenge.selectedContestants.map(async(c)=>{
                 if(c.userId==challenge.userId){
                   var allgroups=allGroupChallenges
@@ -219,7 +223,7 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
                       acknowledged:false
                     }
                     console.log(notification)
-                    /*****HOST */
+                    //HOST 
                     const hostRef=doc(db,"users",host.userId)
                     const hostData=await getDoc(hostRef)
                     console.log(hostData.data().notifications)
@@ -244,7 +248,7 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
                       hasNewNotifications:true,
                       groupChallenges:allgroups
                     })
-                    /*****CONTESTANT */
+                    //CONTESTANT 
                     const contRef=doc(db,"users",challenge.userId)
                     var contData=await getDoc(contRef)
                     contData=contData.data()
@@ -298,6 +302,7 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
               <p class="text-white">Approve</p>
             </button>
             <button class="bg-red-500 rounded-sm p-1" onClick={()=>{
+              sendNotifications("REJECTED")
               groupChallenge.selectedContestants.map(async(c)=>{
                 if(c.userId==challenge.userId){
                   var allgroups=allGroupChallenges
@@ -327,7 +332,7 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
                       acknowledged:false
                     }
                     console.log(notification)
-                    /*****HOST */
+                    //HOST
                     const hostRef=doc(db,"users",host.userId)
                     const hostData=await getDoc(hostRef)
                     console.log(hostData.data().notifications)
@@ -350,7 +355,7 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
                       hasNewNotifications:true,
                       groupChallenges:allgroups
                     })
-                    /*****CONTESTANT */
+                    //CONTESTANT
                     const contRef=doc(db,"users",challenge.userId)
                     var changed
                     var contData=await getDoc(contRef)

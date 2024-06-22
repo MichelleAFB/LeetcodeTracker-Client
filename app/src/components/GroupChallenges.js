@@ -171,6 +171,8 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
             })
       
           }
+          if(gg.streak!=null){
+            if(gg.streaks.length>0){
           if(allDays.includes(gg.streaks[0].streak.day ) && allChaAndAllDay.includes(gg.challengeId+gg.streaks[0].streak.day)){
 
           }else{
@@ -224,6 +226,8 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
   
             })
           }
+        }
+        }
             i++
             if(i>=response1.data.challenges.length){
      

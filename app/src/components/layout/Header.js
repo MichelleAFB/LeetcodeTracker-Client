@@ -79,7 +79,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
     var i=0
     if(i==0){
     console.log(data)
-    dispatch(setNotificationReload(!reload))
+    dispatch(setNotificationReload(!notificationReload))
     console.log("HERE")
     i++
     }
@@ -163,7 +163,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
                 <p class="text-white text-small">Show all notifications</p>
               </div>
               {!showAllNotifications?
-            <ul class={`h-[${user.notifications.length>3?60:30}vh] overflow-y-scroll overflow-hidden `}>
+            <ul class={`h-[${user.notifications.length>3?60:30}vh] flex-col-reverse overflow-y-scroll overflow-hidden `}>
               { user.notifications.map((n)=>{
                   if(n.acknowledged!=null && n.acknowledged==false ){
                     console.log("SHOULD NOT BE DISABLED")
@@ -183,7 +183,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
 
               <div class="flex-col">
               {user.allNotifications.length !=0?
-                <ul class={`h-[${user.allNotifications.length || user.notifications.length >3?60:30}vh] overflow-y-scroll overflow-hidden`}>
+                <ul class={`h-[${user.allNotifications.length || user.notifications.length >3?60:30}vh] flex-col-reverse overflow-y-scroll overflow-hidden`}>
 
               { user.allNotifications.map((n)=>{
                   

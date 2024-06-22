@@ -307,7 +307,7 @@ console.log(avi)
 
                                                         }
                                                         setTimeout(async()=>{
-                                                            socket.emit("UPDATE_NOTIFICATIONS",{"user":user,sender:ourUser})
+                                                            socket.emit("UPDATE_NOTIFICATIONS",{"user":user,sender:ourUser,message:"NEW_FOLLOWER_ALERT"})
                                                        
                                                             const ref=collection(db,"users")
                                                             const u=await getDocs(ref,ourUser.userId)

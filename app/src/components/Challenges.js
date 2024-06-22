@@ -321,7 +321,7 @@ async function checkCurrent(){
   return Math.random() * (max - min) + min;
 }
 
-async function submitGroupChallenge(e){
+async function sendNotifications(e){
   e.preventDefault()
   console.log(createGroupChallenge)
   console.log(selectedContestants)
@@ -355,6 +355,50 @@ async function submitGroupChallenge(e){
   d.docs.map(async(d)=>{
   
     if(d.data().userId==ourUser.userId){
+      socket.emit("UPDATE_NOTIFICATIONS",{message:"NEW_GROUP_CHALLENGE_REQUEST",users:allusers})
+      console.log("NOTIFICATIONS SENT")
+      
+    }
+  })
+}
+async function submitGroupChallenge(e){
+  sendNotifications(e)
+  e.preventDefault()
+  
+  console.log(createGroupChallenge)
+  console.log(selectedContestants)
+  const collectionRef=collection(db,"users")
+  
+  const length=getDatesArray(startDateGroup,endDateGroup).length
+  const d=await getDocs(collectionRef)
+  const challengeId=Math.floor(randomNumber(0,60000))
+  const allusers=[]
+  const allUsers=d.docs.map((f)=>{
+    if(selectedContestants.includes(f.data().username)){
+     
+     
+     
+      const u={challengeId:challengeId,userId:f.data().userId,success:true,passes:Number(createGroupChallenge.no_passes),initialPasses:Number(createGroupChallenge.no_passes),username:f.data().username,firstname:f.data().firstname,lastname:f.data().lastname,createdBy:ourUser.userId,approved:false,denied:false}
+      
+      return u
+    }
+  })
+  console.log(allUsers.length+" before")
+  var i=0
+ allUsers.map(( element )=> {
+    if(element!=null){
+      allusers.push(element)
+    }
+ });
+ // allusers.splice(allusers.length-1,1)
+
+
+  
+  d.docs.map(async(d)=>{
+  
+    if(d.data().userId==ourUser.userId){
+      console.log(allusers)
+      
       
    
       if(selectedContestants.length<1){
@@ -483,7 +527,7 @@ async function submitGroupChallenge(e){
             setTimeout(async()=>{
               const updateData=await getDoc(refer)
              axios.post("http://localhost:3022/update-group-challenge-contestant/"+p.userId,{user:updateData.data(),case:"CREATE_GROUP_CHALLENGE_REQUEST"}).then((response)=>{
-              socket.emit("UPDATE_NOTIFICATIONS",{message:"NEW GROUP CHALLENGE REQUEST",users:ids})
+              socket.emit("UPDATE_NOTIFICATIONS",{message:"NEW GROUP CHALLENGE REQUEST",users:allusers})
              console.log(response)
              })
             },500)
@@ -500,6 +544,7 @@ async function submitGroupChallenge(e){
       },2000)
       }
     }
+ 
   })
 
   
