@@ -4,7 +4,7 @@ import {useState,useEffect} from 'react'
 import axios from 'axios';
 
 import { useDispatch,connect } from 'react-redux';
-import { addLeetcodeProblemReload, setLeetcodeProblemVisibility } from '../redux/addLeetcodeProblem.js/addLeecodeProblem-reducer';
+import { addLeetcodeProblemReload, setLeetcodeProblem, setLeetcodeProblemVisibility } from '../redux/addLeetcodeProblem.js/addLeecodeProblem-reducer';
 
 //firbase
 import { db } from '../firebase/firebase'
@@ -141,6 +141,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
     */
    console.log(problemData,"ourproblem:",ourProblem)
     console.log("length:",tags,typeof(tags))
+    if(ourProblem!=null){
   return (
     <div class='bg-gray-200' data-testId="modal-public">
      
@@ -338,6 +339,11 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                     
                       console.log(response)
                       console.log("success")
+                      dispatch(setLeetcodeProblem(null))
+                      setTimeout(()=>{
+                        dispatch(addLeetcodeProblemReload())
+                        dispatch(setLeetcodeProblemVisibility(false))
+                    },100)
                      // setIsLoading(true)
                     });
                   }
@@ -399,8 +405,12 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                      
                     }).then((response)=>{
                       alert("SUCCESS:ADDED LEETCODE PROBLEM " )
-                      dispatch(addLeetcodeProblemReload())
-                      dispatch(setLeetcodeProblemVisibility(false))
+                      dispatch(setLeetcodeProblem(null))
+                      setTimeout(()=>{
+                        dispatch(addLeetcodeProblemReload())
+                        dispatch(setLeetcodeProblemVisibility(false))
+                    },100)
+                     
 
                   
                       
@@ -428,6 +438,7 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
     </div>
   </div>
   )
+     }
   }else{
     return(<div></div>)
   }

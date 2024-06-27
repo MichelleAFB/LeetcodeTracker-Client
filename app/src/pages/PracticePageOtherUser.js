@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Cookies from 'js-cookie'
 import { Link } from 'react-router-dom'
 
-
+import { connect,useDispatch} from 'react-redux'
 
 
 //firebase
@@ -35,8 +35,8 @@ import LanguagesDropdown from "../components/components/LanguagesDropdown";
 
 const javascriptDefault = `// some comment`;
  
-function PracticePageOtherUser() {
-
+function PracticePageOtherUser({socket}) {
+  const dispatch=useDispatch()
 const[sendingstreak,setSendingStreak]=useState(false)
 const [attempts,setAttempts]=useState()
   const [code, setCode] = useState(javascriptDefault);
@@ -408,6 +408,12 @@ console.log(params)
     })
   },360000)
   */
+  socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+    console.log("\n\n\n FROM SOCKET",data)
+    if(data.groupChallenge!=null){
+  
+    }
+   })
   if(!isLoading && problem!=null){
 
   
@@ -779,6 +785,7 @@ console.log(params)
                       sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
                       console.log(response)
                       if(response.data.message!=null){
+                        socket.emit("UPDATE_GROUP_CHALLENGE",{user:user})
                         alert(response.data.message)
                         setSendingStreak(false)
 
@@ -1250,5 +1257,11 @@ console.log(params)
   return(<div></div>)
 }
 }
+const mapStateToProps = (state, props) => {
+  var socket=state.socket.socket
 
-export default PracticePageOtherUser
+  return {
+   socket:socket
+  };
+};
+export default connect(mapStateToProps)(PracticePageOtherUser)

@@ -21,6 +21,8 @@ import { useNavigate } from 'react-router-dom';
 import Overlay from 'react-bootstrap';
 import ChallengePopOver from './ChallengePopOver';
 import GroupChallengeStreakPopOver from './GroupChallengeSteakPopOver';
+import { useDispatch, useSelector } from 'react-redux';
+import { setGroupChallenges } from '../redux/socket/socket-actions';
 function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges,setAllGroupChallenges}) {
 
     const[isLoading,setIsLoading]=useState(true)
@@ -33,6 +35,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
   const[challengesSelectors,setChallengeSelecters]=useState()
   const[showModal,setShowModal]=useState(false)
   const[finalevents,setFinalEvents]=useState()
+  const dispatch=useDispatch()
   const finalEvents=useMemo((allEvents)=>{
     console.log("in memo:",allEvents)
     setFinalEvents(allEvents)
@@ -81,7 +84,12 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
         },500)
       }
     }
+    const reduxGc=useSelector((state)=>
+      state.socket.groupChallenges
+    )
+    console.log("REDUX GC",reduxGc)
     useEffect(()=>{
+      if(reduxGc==null){
       if(allChallenges==null){
         const arr=[]
         var cha=[]
@@ -171,7 +179,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
             })
       
           }
-          if(gg.streak!=null){
+          if(gg.streaks!=null){
             if(gg.streaks.length>0){
           if(allDays.includes(gg.streaks[0].streak.day ) && allChaAndAllDay.includes(gg.challengeId+gg.streaks[0].streak.day)){
 
@@ -248,6 +256,9 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
                   setChallengeSelecters(challengeButtons)
                   setEvents(groupCha)
                   setAllEvents(groupCha)
+                  if(reduxGc==null){
+                  dispatch(setGroupChallenges(groupCha))
+                  }
             }
             setTimeout(()=>{
               resolve()
@@ -272,7 +283,18 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
       
         
         })
-      }/*else if(events==null && allChallenges!=null){
+    }else{
+      const prom=new Promise((resolve,reject)=>{
+        setAllEvents(reduxGc)
+        setAllGroupChallenges(reduxGc)
+        setTimeout(()=>{
+          resolve()
+        },300)
+      })
+      prom.then(()=>{
+        setIsLoading(false)
+      })
+    }}/*else if(events==null && allChallenges!=null){
         const prom=new Promise((resolve,reject)=>{
           setEvents(allChallenges)
          

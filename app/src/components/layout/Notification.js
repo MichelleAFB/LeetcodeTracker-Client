@@ -11,7 +11,7 @@ function Notification({user,n}) {
 
     if(n.acknowledged!=null && n.acknowledged==false ){
       return(
-        <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
+        <div class="flex-col m-1 p-1 bg-cyan-500 rounded-sm gap-y-0">
           <div class="flex w-full justify-end p-1">
             <button class="bg-gray-600 p-1 rounded-sm" onClick={async()=>{
               function findNote(arr,n){
@@ -42,28 +42,37 @@ function Notification({user,n}) {
                 var newNotifications=nn
                 newNotifications[nIndex].acknowledged=true
                 newNotifications[nIndex].timeAcknowledged=new Date()
-                console.log(newNotifications)
+             
                 if(aIndex==-1){
                   const updateNote=newNotifications[nIndex]
                   an.push(updateNote)
+                }else{
+                  an[aIndex].acknowledged=true
+                  an[aIndex].timeAcknowledged=new Date()
+                 
                 }
                 newNotifications.splice(nIndex,1)
+                console.log("old all notifications",data.allNotifications)
+                console.log("new all Notifications",newNotifications)
               setTimeout(async()=>{
-                console.log("ALLNOTIFICATION NEW:",an)
-
+                console.log(" old new notifications",nn)
+                console.log("new new :",newNotifications)
+                console.log(newNotifications.length==0?false:true)
+                   
                 const update=await updateDoc(refer,{
-                 // notifications:newNotifications,
-                  hasNewNotifications:newNotifications.length==0?false:true
-                 // allNotifications:an
+                  notifications:newNotifications,
+                  allNotifications:an,
+                 hasNewNotifications:newNotifications.length==0?false:true
+                
 
                 })
-               
+              
               },100)
               }
 
             }}>
               <IonIcon name="close-outline" style={{color:"white"}} onClick={()=>{
-                setIsLoading(true)
+               setIsLoading(true)
               }}/>
             </button>
           </div>
@@ -92,7 +101,7 @@ function Notification({user,n}) {
      
     }else if(n.acknowledged==null){
         return(
-          <div class="flex-col m-1 p-1 bg-gray-400 rounded-sm gap-y-0">
+          <div class="flex-col m-1 p-1 bg-gray-600 rounded-sm gap-y-0">
             <div class="flex w-full justify-end p-1">
               <button class="bg-gray-600 p-1 rounded-sm" onClick={async()=>{
                 function findNote(arr,n){
@@ -119,27 +128,44 @@ function Notification({user,n}) {
                 an.map((d)=>{
                   d.acknowledged=true
                 })
-                console.log(aIndex,nIndex)
+                if(aIndex==-1){
+                  const updateNote=newNotifications[nIndex]
+                  an.push(updateNote)
+                }else{
+                 
+                    an[aIndex].acknowledged=true
+                    an[aIndex].timeAcknowledged=new Date()
+                   
+                  
+                }
+              
+                var newNotifications=nn
                 if(nIndex!=-1){
-                  var newNotifications=nn
+                 
                   newNotifications[nIndex].acknowledged=true
                   newNotifications[nIndex].timeAcknowledged=new Date()
                   console.log(newNotifications)
-                  if(aIndex==-1){
-                    const updateNote=newNotifications[nIndex]
-                    an.push(updateNote)
-                  }
+                  
                   newNotifications.splice(nIndex,1)
                 setTimeout(async()=>{
                   console.log("ALLNOTIFICATION NEW:",an)
                   const update=await updateDoc(refer,{
                     notifications:newNotifications,
+                    allNotifications:an,
                     hasNewNotifications:newNotifications.length==0?false:true
                    // allNotifications:an
 
                   })
                
                 },100)
+                }else if(aIndex==-1){
+                  const update=await updateDoc(refer,{
+                   
+                    allNotifications:an,
+                    hasNewNotifications:newNotifications.length==0?false:true
+                   // allNotifications:an
+
+                  })
                 }
 
               }}>
@@ -215,18 +241,18 @@ function Notification({user,n}) {
                   console.log("old Notifications",user.notifications)
                   newNotifications.splice(nIndex,1)
                   console.log("new Notifications",newNotifications)
-                  /*
+              
                 setTimeout(async()=>{
                   console.log("ALLNOTIFICATION NEW:",an)
                   const update=await updateDoc(refer,{
                     notifications:newNotifications,
                     hasNewNotifications:newNotifications.length==0?false:true
-                   // allNotifications:an
+                 
 
                   })
                
                 },100)
-                */
+             
                 }
 
               }}>

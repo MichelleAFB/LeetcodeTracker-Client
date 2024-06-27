@@ -3,7 +3,8 @@ import * as actionTypes from "./socket-types";
 import { io } from "socket.io-client";
 const initialState = {
  socket:socket,
- toggle:false
+ toggle:false,
+ groupChallenges:null
 };
 
 export const socketReducer = (state = initialState, action) => {
@@ -21,6 +22,11 @@ export const socketReducer = (state = initialState, action) => {
         ...state,
        toggle:action.payload.toggle
       };
+      case actionTypes.SET_GROUP_CHALLENGES:
+      return{
+        ...state,
+        groupChallenges:action.payload.challenges,
+      }
 
     
 

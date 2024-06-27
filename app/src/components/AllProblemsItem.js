@@ -23,7 +23,7 @@ function AllProblemsItem({problem}) {
         })
       }}>view</p></button>
       <div class="border-b border-gray-600 v=border-3">
-      <p class="text-center font-bold text-xl">{problem.title}</p>
+      <div class="flex"><p class="text-center font-bold text-xl">{problem.title} </p><p class={`m-2 font-bold ${ problem.level=="Easy"?"text-green-600":(problem.level=="Medium"?"text-orange-600":(problem.level=="Hard"?"text-red-600":"text-black"))}`}>{problem.level}</p></div>
       </div>
       <div class={`flex ${problem.tags.length<3? "w-[10vw]":"w-[15vw]"} `}>
         {

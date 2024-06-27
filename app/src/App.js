@@ -29,6 +29,7 @@ import { socket } from './socket';
 import { setSocket } from './redux/socket/socket-actions';
 import { useDispatch } from 'react-redux';
 import { io } from 'socket.io-client';
+import NewChallengesPage from './pages/NewChallengesPage';
 
 function App({user,visibility,socket}) {
 const dispatch=useDispatch()
@@ -110,6 +111,7 @@ if(!isLoading){
        
 
         <Route path="/" element={<Auth/>}/>
+        <Route path="/newChallenges" element={<NewChallengesPage/>}/>
         <Route path="/home" element={<Home/>}/>
         <Route path="/practice/:problemId/:timeIndex" element={<PracticePage/>}/>
         <Route path="/practice/:problemId/:timeIndex/:id" element={<PracticePageOtherUser/>}/>

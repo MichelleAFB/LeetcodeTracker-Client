@@ -23,7 +23,7 @@ import { classnames } from "../components/utils/general";
 import { languageOptions } from "../components/constants/languageOptions";
 
 import { ToastContainer, toast } from "react-toastify";
-
+import {connect,useDispatch} from "react-redux"
 import { defineTheme } from "../components/lib/defineTheme";
 import useKeyPress from "../components/hooks/useKeyPress";
 import Footer from "../components/components/Footer";
@@ -37,7 +37,7 @@ import IonIcon from '@reacticons/ionicons'
 
 const javascriptDefault = `// some comment`;
  
-function PracticePage() {
+function PracticePage({socket}) {
 
 const[sendingstreak,setSendingStreak]=useState(false)
 const [attempts,setAttempts]=useState()
@@ -482,7 +482,20 @@ console.log(params)
     })
   },360000)
   */
+ const dispatch=useDispatch()
+ socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+  console.log("\n\n\n FROM SOCKET",data)
+  if(data.groupChallenge!=null){
+dispatch(setGroupChallenge(data.groupChallenge))
+  }
+ })
   if(!isLoading && problem!=null){
+    socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+      console.log("\n\n\n FROM SOCKET",data)
+      if(data.groupChallenge!=null){
+        dispatch(setGroupChallenge(data.groupChallenge))
+      }
+     })
 
   console.log("code",code.replace(/\s/g,"").toUpperCase())
     
@@ -942,13 +955,14 @@ console.log(params)
                    console.log(user)
                     
                       axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges}).then((response)=>{
-                      
+                    
                       console.log(response)
                     var checkAllStreaks=JSON.parse(sessionStorage.getItem("groupChallengesData"))
                       var checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart")) 
                    
                       if(response.data.message!=null){
-                        if(checkAllStreaks!=null){
+                        socket.emit("UPDATE_GROUP_CHALLENGE",{user:user})
+                       /* if(checkAllStreaks!=null){
                           checkAllStreaks.needsRefresh=true;
   
                           sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
@@ -970,7 +984,7 @@ console.log(params)
                           })
                         checkMonthChart.needsRefresh=true;
                        // sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
-                        }
+                        }*/
                         alert(response.data.message)
                         setSendingStreak(false)
 
@@ -1168,5 +1182,11 @@ console.log(params)
   return(<div></div>)
 }
 }
+const mapStateToProps = (state, props) => {
+  var socket=state.socket.socket
 
-export default PracticePage
+  return {
+   socket:socket
+  };
+};
+export default connect(mapStateToProps)(PracticePage)
