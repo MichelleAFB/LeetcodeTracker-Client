@@ -96,7 +96,7 @@ function EditProblemModal({ourProblem,visibility}) {
     const data=await getDocs(problemsListCollectionRef)
       data.docs.map((doc)=>{
     
-      console.log(doc.id +" "+id )
+      
       if(doc.id==id){
         
      

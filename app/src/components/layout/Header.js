@@ -38,15 +38,26 @@ function Header({ourUser,visibility,socket,notificationReload}) {
       
       const querySnapshot = await getDocs(q);
     var us=[]
+   var  newNots=false
    querySnapshot.forEach((doc) => {
 
           us.push(doc.data())
+          const noti=doc.data().notifications
+          if(noti.length>0){
+            noti.map((n)=>{
+              console.log(n.acknowledge, n.message)
+              if(n.acknowledged==null || n.acknowledged==false){
+               //   newNots=true
+              }
+            })
+          }
        
        
         });
        
      setTimeout(()=>{
       setUser(us[0])
+     // setHasNotifications(newNots)
       setTimeout(()=>{
         resolve()
       },800)
@@ -94,7 +105,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
    
   return (
     <div class="w-full  ">
-    <div class="mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]">
+    <div class={` mt-0 mr-0 ml-0 flex justify-between align-center bg-[#B5B4A7]`}>
       <div class="flex-col w-full ">
         <div class="w-full flex p-4">
       <div class="flex w-full">
@@ -163,7 +174,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
                 <p class="text-white text-small">Show all notifications</p>
               </div>
               {!showAllNotifications?
-            <ul class={`h-[${user.notifications.length>3?60:30}vh] flex-col-reverse overflow-y-scroll overflow-hidden `}>
+            <ul class={`h-[${user.allNotifications.length>2?60:30}vh] flex-col-reverse overflow-y-scroll overflow-hidden `}>
               { user.notifications.map((n)=>{
                   if(n.acknowledged!=null && n.acknowledged==false ){
                     console.log("SHOULD NOT BE DISABLED")
@@ -183,7 +194,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
 
               <div class="flex-col">
               {user.allNotifications.length !=0?
-                <ul class={`h-[${user.allNotifications.length || user.notifications.length >3?60:30}vh] flex-col-reverse overflow-y-scroll overflow-hidden`}>
+                <ul class={`h-[${user.notifications.length || user.notifications.length >2?60:30}vh] flex-col-reverse overflow-y-scroll overflow-hidden`}>
 
               { user.allNotifications.map((n)=>{
                   

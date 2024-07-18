@@ -30,6 +30,7 @@ import { setSocket } from './redux/socket/socket-actions';
 import { useDispatch } from 'react-redux';
 import { io } from 'socket.io-client';
 import NewChallengesPage from './pages/NewChallengesPage';
+import {setGroupChallenges} from "./redux/socket/socket-actions"
 
 function App({user,visibility,socket}) {
 const dispatch=useDispatch()
@@ -91,6 +92,12 @@ if(!isLoading){
   socket.emit("NEW_USER_SESSION",{user:user,id:socket.id,source:"APP"},()=>{
     console.log("DONE")
   })
+  socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+    console.log("\n\n\n FROM SOCKET",data)
+    if(data.groupChallenge!=null){
+  dispatch(setGroupChallenges(data.groupChallenge))
+    }
+   })
 
   return (
     <div class="flex-col ">

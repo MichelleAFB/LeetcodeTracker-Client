@@ -151,7 +151,8 @@ function ChallengeRequestModal({challenge,visibility,disabled,socket}) {
           <div class={` ${groupChallenge.selectedContestants.length<8? "flex w-full":"overflow-x-scroll overflow-hidden"} bg-gray-200 p-2`}>
             {
               groupChallenge.selectedContestants.map((c)=>{
-                return(<button class="grid-col-1 bg-gray-400 rounded-sm p-1 m-2 gap-0" onClick={()=>{
+                console.log(c)
+                return(<button class={`${c.approved? "bg-green-400":"bg-gray-400"} grid-col-1  rounded-sm p-1 m-2 gap-0`} onClick={()=>{
                   navigate("/user/"+c.userId)
                   setTimeout(()=>{
                     dispatch(setChallengeRequestModalVisibility(false))

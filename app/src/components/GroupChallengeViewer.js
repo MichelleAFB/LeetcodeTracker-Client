@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, {useState, useEffect } from 'react'
+import GradingPriorityList from './GradingPriorityList'
 
 function GroupChallengeViewer({challenge }) {
     const[isLoading,setIsLoading]=useState(true)
@@ -8,6 +9,7 @@ function GroupChallengeViewer({challenge }) {
     const [winners,setWinners]=useState()
     const[mostProblems,setMostProblems]=useState()
     const[total,setTotal]=useState()
+    const[priorities,setPriorities]=useState({})
     const[ourProblemCounter,setOurProblemCounter]=useState()
     useEffect(()=>{
         const prom=new Promise((resolve,reject)=>{
@@ -18,11 +20,8 @@ function GroupChallengeViewer({challenge }) {
                 console.log(challenge.problemCounter)
                 var problemCounter=challenge.problemCounter
                 var top
-                var counter=Object.keys(problemCounter).map((c)=>{
-                    return{k:c,problems:problemCounter[c]}
-                })
-                console.log(counter)
-                setOurProblemCounter(counter)
+           
+                setOurProblemCounter(problemCounter)
                 var topProblem=Object.keys(problemCounter).reduce(function (previous, key) {
                     var curr= (problemCounter[previous]> challenge.problemCounter[key]? {id:previous,count:problemCounter[previous]}:{id:key,count:problemCounter[key]})
                     if(top==null){
@@ -85,7 +84,7 @@ function GroupChallengeViewer({challenge }) {
         console.log(challenge.startDate)
         console.log("winners",winners)
         console.log("challenge:",challenge)
-        console.log(mostProblems)
+        console.log('mostProblems',mostProblems)
 console.log(ourProblemCounter)
         if(new Date()>new Date(challenge.endDate)){
             console.log("here",challenge)
@@ -94,6 +93,10 @@ console.log(ourProblemCounter)
     <div class="flex m-2 ">
         {challenge!=null?
         <div class="flex-col border-l-2 border-gray-700 p-2">
+            <div class="flex w-full">
+                <GradingPriorityList setPriority={setPriorities} priorities={priorities}/>
+
+            </div>
            {
             challenge.success?
             <p class="font-bold text-lg">{challenge.title} 
@@ -118,7 +121,12 @@ console.log(ourProblemCounter)
                     challenge.userId==mostProblems.id?
                     <div>
                         {
-                           <p>{challenge.userStats.firstname} {challenge.userStats.lastname} -{mostProblems.count} problems</p>
+                           <p>{challenge.userStats.firstname} {challenge.userStats.lastname} -{mostProblems['count'].problems} problems</p>
+                        }
+                        {
+                            Object.keys(ourProblemCounter).forEach((c)=>{
+                                console.log(ourProblemCounter[c])
+                            })
                         }
                     </div>
                     :
@@ -153,9 +161,9 @@ console.log(ourProblemCounter)
                                  
                                
                                     if(winners.length>0){
-                                    return<div class="flex "><p class="text-sm">{l.userStats.firstname} {l.userStats.lastname} {l.rank}{getSuffix(l.rank)}</p></div>
+                                    return<div class="flex "><p class="text-sm">{l.userStats.firstname} {l.userStats.lastname} {l.rank}{getSuffix(l.rank)} - {l.totalProblems} problems</p></div>
                                     }else{
-                                        return<div class="flex "><p class="text-sm">{l.userStats.firstname} {l.userStats.lastname} {l.rank}{getSuffix(l.rank)}</p></div>
+                                        return<div class="flex "><p class="text-sm">{l.userStats.firstname} {l.userStats.lastname} {l.rank}{getSuffix(l.rank)} - {l.totalProblems} problems</p></div>
 
                                     }
                                 })
@@ -177,7 +185,7 @@ console.log(ourProblemCounter)
                                 winners.map((w)=>{
                                     console.log("winners:",w)
                                 
-                                    return(<div class="flex"><p><p>{w.userStats.firstname} {w.userStats.lastname}{ "("+w.userStats.username+")"}</p> </p></div>)
+                                    return(<div class="flex"><p><p>{w.userStats.firstname} {w.userStats.lastname}{ "("+w.userStats.username+")"} - {w.totalProblems} problems</p> </p></div>)
                                 })
                             }
                         </div>
@@ -199,11 +207,7 @@ console.log(ourProblemCounter)
     console.log(err)
 }
 }else{
-    {
-        Object.keys(challenge.problemCounter).forEach((k)=>{
-            console.log(k ,challenge.problemCounter[k] )
-        })
-    }
+   
     console.log(ourProblemCounter)
     return(  <div class="flex m-2 ">
   
@@ -212,12 +216,28 @@ console.log(ourProblemCounter)
     <div class="flex-col">
         <p>Problems</p>
         <ul class="bg-green-500 p-3">
-            {
+          
+          {ourProblemCounter!=null?
+            <div>
+              {
               ourProblemCounter.map((c)=>{
                 console.log(c)
-                return(<div>hi</div>)
+                console.log(challenge)
+                return(<div>{challenge.selectedContestants.map((d)=>{
+                    console.log(d,c)
+                    console.log(ourProblemCounter[c],c['k'])
+                    if(d.userId==c['k'] || challenge.userId==c['k']){
+                        if(c['k']==challenge.userId){
+                            return(<p>{challenge.userStats.firstname}- {c['problems']} problems</p>)
+                        }
+                    }
+                })}</div>)
               })
             }
+            </div>
+            :
+            <div></div>
+        }
         </ul>
     </div>
         </div>

@@ -101,6 +101,8 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
         const allChaAndAllDay=[]
         const colors=[]
         const allDays=[]
+        const streakTimes=[]
+        const streakUsers=[]
         const allUsers=[]
         const challengeButtons=[]
         const checkGroupChallenges=JSON.parse(sessionStorage.getItem("groupChallengeData"))
@@ -129,6 +131,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
               colors [g.challengeId]=color
             const allDays=[]
             const allUsers=[]
+            const streakTimes=[]
               challengeButtons.push({
                 text:g.title,
                 click:function(g,gg,setUseSelectedChallenge,setSelectedChallenge){
@@ -181,17 +184,20 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
           }
           if(gg.streaks!=null){
             if(gg.streaks.length>0){
-          if(allDays.includes(gg.streaks[0].streak.day ) && allChaAndAllDay.includes(gg.challengeId+gg.streaks[0].streak.day)){
+              
+          if(allUsers.includes(gg.streaks[0].streak.userId) && allDays.includes(gg.streaks[0].streak.day ) && allChaAndAllDay.includes(gg.challengeId+gg.streaks[0].streak.day)){
 
           }else{
             allChaAndAllDay.push(gg.challengeId+gg.streaks[0].streak.day)
+           // allUsers.push(gg.streaks[0].streak.userId)
             try{
             allDays.push(gg.streaks[0].streak.day)
             }catch(err){
               
             }
             gg.streaks.map((c)=>{
-           
+              console.log(c.streak)
+            allUsers.push(c.streak.userId)
               allDays.push(c.streak.day)
               allUsers.push(c.streak.userId)
             var start=new Date()
@@ -200,8 +206,9 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
               message=message+"<li><p class='font-bold'>"+p.title+"</p></li>"
             })
             message=message+"</ul>"
-          
-            
+          console.log(streakTimes)
+            if(!streakTimes.includes(c.streak.timeLastAdded)){
+              streakTimes.push(c.streak.timeLastAdded)
             groupCha.push({
               id: c.day,
               challengeId:g.challengeId,
@@ -225,7 +232,10 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
                 no_questions:g.no_questions,
                 challengeTitle:gg.challenge.title
               }
+              
             })
+          }
+          
             
          
              
@@ -321,6 +331,7 @@ function remove(e){
 if(!isLoading){
  // console.log(events)
 console.log("finalEvents",finalEvents,finalevents)
+if(events!=null){
  if(events.length>0){
 
     setAllGroupChallenges(allEvents)
@@ -330,7 +341,7 @@ console.log("finalEvents",finalEvents,finalevents)
     console.log("noChange",noChange)  
     noChange++
     return (
-      
+            
                   <FullCalendar
                plugins={[dayGridPlugin]}
                eventClick={(ev)=>showChallenge(ev)}
@@ -374,6 +385,7 @@ console.log("finalEvents",finalEvents,finalevents)
                    ><p class="text-white">x</p></Button>
                   </div>
                   <p class="font-bold">${cha.title} (${cha.no_questions} Questions)</p>
+                   <p class="font-bold">$ (${cha.passes} Passes)</p>
 
                   <p class="font-bold">${new Date(cha.startDate).toString().substring(0,15)}-${new Date(cha.endDate).toString().substring(0,15)}</p>
                
@@ -449,6 +461,9 @@ console.log("finalEvents",finalEvents,finalevents)
         <div>No GroupChallenges</div>
       )
  }
+}else{
+  return(<div></div>)
+}
 }else{
     return (
       <div class="loading-spinner"/>

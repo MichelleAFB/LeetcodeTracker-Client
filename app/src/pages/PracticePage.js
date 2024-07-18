@@ -35,6 +35,7 @@ import LanguagesDropdown from "../components/components/LanguagesDropdown";
 import DeleteBoilerTemplateComponents from '../components/components/DeleteBoilerTemplateComponents'
 import IonIcon from '@reacticons/ionicons'
 
+import { setGroupChallenges } from '../redux/socket/socket-actions'
 const javascriptDefault = `// some comment`;
  
 function PracticePage({socket}) {
@@ -486,14 +487,14 @@ console.log(params)
  socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
   console.log("\n\n\n FROM SOCKET",data)
   if(data.groupChallenge!=null){
-dispatch(setGroupChallenge(data.groupChallenge))
+dispatch(setGroupChallenges(data.groupChallenge))
   }
  })
   if(!isLoading && problem!=null){
     socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
       console.log("\n\n\n FROM SOCKET",data)
       if(data.groupChallenge!=null){
-        dispatch(setGroupChallenge(data.groupChallenge))
+        dispatch(setGroupChallenges(data.groupChallenge))
       }
      })
 
@@ -989,6 +990,9 @@ dispatch(setGroupChallenge(data.groupChallenge))
                         setSendingStreak(false)
 
                       }else if(response.data.success){
+                        const user =JSON.parse(sessionStorage.getItem("user"))
+                     
+                        /*
                         if(checkAllStreaks!=null){
                           checkAllStreaks.needsRefresh=true;
   
@@ -1011,8 +1015,8 @@ dispatch(setGroupChallenge(data.groupChallenge))
                           })
                         checkMonthChart.needsRefresh=true;
                        // sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
-                        }
-                        const user =JSON.parse(sessionStorage.getItem("user"))
+                        }*/
+                      
                         var day=new Date()
                         const date=day.toString().substring(0,15)
                        
@@ -1021,6 +1025,7 @@ dispatch(setGroupChallenge(data.groupChallenge))
                           console.log(response)
                           console.log(p)
                           alert("SUCCESS+++")
+                          socket.emit("UPDATE_GROUP_CHALLENGE",{user:user})
                            setSendingStreak(false)
                     
                           
