@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import ChallengesSelectedContestants from './ChallengesSelectedContestants';
 import GroupChallenges from './GroupChallenges';
 import GroupChallengeViewer from './GroupChallengeViewer';
+
 function Challenges({refresh,socket}) {
 
   const usersCollectionRef=collection(db,"users")
@@ -1228,6 +1229,7 @@ if(!isLoading && challenges!=null){
     //console.log("allgroupchallenges",allGroupChallenges)
     return(
       <div class="flex-col  rounded-md p-3 w-full  ">
+       
         <div class="flex-col w-full">
           <div class="flex-col w-full">
           

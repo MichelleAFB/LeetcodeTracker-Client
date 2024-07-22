@@ -5,7 +5,7 @@ function GradingPriorityList({priorities,setPriority}) {
         console.log(Object.values(priorities))
         console.log(priorities)
         if(Object.keys(priorities).length==0){
-            setPriority({1:e.target.value})
+            setPriority([e.target.value])
         }else{
             if(Object.values(priorities).includes(e.target.value)){
               var key=  Object.keys(priorities).find(key => priorities[key] === e.target.value)
@@ -21,7 +21,7 @@ function GradingPriorityList({priorities,setPriority}) {
                     }
                 })
                 console.log(index)
-                p[index]=e.target.value
+                p[Number(index+1)]=e.target.value
                 setPriority(p)
                 
             }
