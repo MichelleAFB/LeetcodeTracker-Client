@@ -1,7 +1,8 @@
 import axios from 'axios'
 import React, {useState, useEffect } from 'react'
 import GradingPriorityList from './GradingPriorityList'
-
+//import Board from './dnd/Board'
+import { Container } from './dnd2/Container'
 function GroupChallengeViewer({challenge }) {
     const[isLoading,setIsLoading]=useState(true)
     const[challenges,setChallenges]=useState()
@@ -93,10 +94,7 @@ console.log(ourProblemCounter)
     <div class="flex m-2 ">
         {challenge!=null?
         <div class="flex-col border-l-2 border-gray-700 p-2">
-            <div class="flex w-full">
-                <GradingPriorityList setPriority={setPriorities} priorities={priorities}/>
-
-            </div>
+            
            {
             challenge.success?
             <p class="font-bold text-lg">{challenge.title} 
@@ -196,10 +194,19 @@ console.log(ourProblemCounter)
                     }
                              
             </div>
+            <Container/>
+            <button class="bg-purple-700 p-2 flex rounded-md" onClick={()=>{
+                axios.post("http://localhost:3022/grade-by-priority",{challenge:challenge,priorities:JSON.parse(sessionStorage.getItem("priorities"))}).then((response)=>{
+
+                })
+            }}>
+                <p class="text-whtie font-bold">Grade</p>
+            </button>
         </div>
         :
         <div></div>
     }
+  
     </div>
   )
 }catch(err){
@@ -220,10 +227,10 @@ console.log(ourProblemCounter)
           {ourProblemCounter!=null?
             <div>
               {
-              ourProblemCounter.map((c)=>{
+              Object.keys(ourProblemCounter).forEach((c)=>{
                 console.log(c)
                 console.log(challenge)
-                return(<div>{challenge.selectedContestants.map((d)=>{
+                challenge.selectedContestants.map((d)=>{
                     console.log(d,c)
                     console.log(ourProblemCounter[c],c['k'])
                     if(d.userId==c['k'] || challenge.userId==c['k']){
@@ -231,7 +238,7 @@ console.log(ourProblemCounter)
                             return(<p>{challenge.userStats.firstname}- {c['problems']} problems</p>)
                         }
                     }
-                })}</div>)
+                })
               })
             }
             </div>

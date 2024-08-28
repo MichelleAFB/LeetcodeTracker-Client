@@ -33,7 +33,7 @@ export const data = {
   ],
 };
 */
-export function MonthChart() {
+export function MonthChart({userId,showTitle}) {
   
 
   const [isLoading,setIsLoading]=useState(true)
@@ -87,7 +87,7 @@ export function MonthChart() {
   
   
      
-      axios.get("http://localhost:3022/monthCharts/"+user.userId+"/"+selectedYear).then((response)=>{
+      axios.get("http://localhost:3022/monthCharts/"+userId+"/"+selectedYear).then((response)=>{
         if(response.data.success){
           console.log(response.data)
           const storeMonthChart=response.data
@@ -161,7 +161,7 @@ export function MonthChart() {
     var i=0
   return (
   <div class="flex w-full justify-center p-5 align-center">
-    <p class="text-5xl">Problems by Month</p>
+    {showTitle?<p class="text-5xl">Problems by Month</p>:<p></p>}
 
     <div class="flex-col w-full justify-center align-center">
 
@@ -170,7 +170,7 @@ export function MonthChart() {
        
          
             const user=JSON.parse(sessionStorage.getItem("user"))
-            axios.get("http://localhost:3022/monthCharts/"+user.userId+"/"+e.target.value).then((response)=>{
+            axios.get("http://localhost:3022/monthCharts/"+userId+"/"+e.target.value).then((response)=>{
               if(response.data.success){
                 setSelectedYear(e.target.value)
       

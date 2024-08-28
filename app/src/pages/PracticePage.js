@@ -491,19 +491,19 @@ dispatch(setGroupChallenges(data.groupChallenge))
   }
  })
   if(!isLoading && problem!=null){
+  
     socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
       console.log("\n\n\n FROM SOCKET",data)
       if(data.groupChallenge!=null){
-        dispatch(setGroupChallenges(data.groupChallenge))
+    dispatch(setGroupChallenges(data.groupChallenge))
       }
      })
-
-  console.log("code",code.replace(/\s/g,"").toUpperCase())
+ 
     
     const oldAttempts=problem.problem.attempts
     const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
-     
-    console.log(problem.problem)
+     console.log(problem)
+    
     
    
   return (
@@ -715,6 +715,14 @@ dispatch(setGroupChallenges(data.groupChallenge))
         <p class="text-white">
           Add New Boiler Template
         </p>
+      </button>
+      <button class="bg-cyan-500 p-2 rounded-md" onClick={()=>{
+          axios.post("http://localhost:3022/generate-use-cases",{problem:problem.problem}).then((response)=>{
+            console.log("\n\nresponse from use cases")
+            console.log(response)
+          })
+      }}  >
+        <p class="text-white">Generate Examples</p>
       </button>
       {user.boilerCodeTemplates!=null?
       <select class="bg-gray-300 p-2 rounded-md m-2" onClick={(e)=>{
@@ -960,62 +968,26 @@ dispatch(setGroupChallenges(data.groupChallenge))
                       console.log(response)
                     var checkAllStreaks=JSON.parse(sessionStorage.getItem("groupChallengesData"))
                       var checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart")) 
-                   
+                      socket.emit("UPDATE_GROUP_CHALLENGE",{user:user},(cb)=>{
+                        console.log("-----CALLBACK",cb)
+                        socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+                          console.log("\n\n\n FROM SOCKET",data)
+                          if(data.groupChallenge!=null){
+                        dispatch(setGroupChallenges(data.groupChallenge))
+                          }
+                         })   
+                      }) 
                       if(response.data.message!=null){
-                        socket.emit("UPDATE_GROUP_CHALLENGE",{user:user})
-                       /* if(checkAllStreaks!=null){
-                          checkAllStreaks.needsRefresh=true;
-  
-                          sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
-                       //sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
-                        }
-                        const checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart"))
-                        if(checkMonthChart!=null){
-               
-                          checkMonthChart.months.map((c)=>{
-                            console.log(month[new Date().getMonth()])
-                            const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-                            if(month[new Date().getMonth()]==c.month){
-                              c.problems++
-                             // checkMonthChart.needsRefresh=true;
-  
-                              sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
-  
-                            }
-                          })
-                        checkMonthChart.needsRefresh=true;
-                       // sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
-                        }*/
+                       
+                       
                         alert(response.data.message)
+                    
                         setSendingStreak(false)
 
                       }else if(response.data.success){
                         const user =JSON.parse(sessionStorage.getItem("user"))
                      
-                        /*
-                        if(checkAllStreaks!=null){
-                          checkAllStreaks.needsRefresh=true;
-  
-                          sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
-                       //sessionStorage.setItem("allStreaks",JSON.stringify(checkAllStreaks))
-                        }
-                        const checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart"))
-                        if(checkMonthChart!=null){
-                          checkMonthChart.months.map((c)=>{
-                            console.log(c)
-                            const month = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-                           console.log(("month"+month[new Date().getMonth()]))
-                            if(month[new Date().getMonth()]==c.month){
-                              c.problems++
-                              checkMonthChart.needsRefresh=true;
-  
-                              sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
-  
-                            }
-                          })
-                        checkMonthChart.needsRefresh=true;
-                       // sessionStorage.setItem("monthChart",JSON.stringify(checkMonthChart))
-                        }*/
+                     
                       
                         var day=new Date()
                         const date=day.toString().substring(0,15)
@@ -1023,31 +995,21 @@ dispatch(setGroupChallenges(data.groupChallenge))
                         setDocument().then((response)=>{
                           //resetEditorValue()
                           console.log(response)
-                          console.log(p)
-                          alert("SUCCESS+++")
-                          socket.emit("UPDATE_GROUP_CHALLENGE",{user:user})
-                           setSendingStreak(false)
-                    
+                          console.log(p) 
+                         alert("SUCCESS+++")
                           
-                        })
-                        
-                      
+                           setSendingStreak(false)
 
+                        })
                       }
                       
                      })
-                    
-               
-                    
-           
-            
+
           }}>
            <p class="font-bold text-white ">Submit</p> 
           </button>
           :<div></div>
           }
-       
-   
         </div>
       </div>
       <div className="flex flex-row space-x-4 items-start px-4 py-4">

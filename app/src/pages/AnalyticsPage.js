@@ -18,6 +18,7 @@ function AnalyticsPage() {
     const [months,setMonths]=useState()
     const [currentStreaks,setCurrentStreaks]=useState()
   const dispatch=useDispatch()
+  const[user,setUser]=useState(JSON.parse(sessionStorage.getItem("user")))
   useEffect(()=>{
     const dataArr=[]
     const problemsListCollectionRef=collection(db,"problems")
@@ -280,7 +281,7 @@ function AnalyticsPage() {
      <div class="flex-col  w-4/5">
 
         
-      <MonthChart/>
+      <MonthChart userId={user.userId} showTitle={true}/>
       <StreakChart allStreaks={allStreaks} streaks={currentStreaks} />
      </div>
       

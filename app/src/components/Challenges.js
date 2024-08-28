@@ -405,9 +405,7 @@ async function submitGroupChallenge(e){
       if(selectedContestants.length<1){
         alert("Please select contestants!")
       }
-      if(length>1){
-        alert("Please select a valid date range")
-      }
+     
       if(createGroupChallenge.name==null || Number(createGroupChallenge.no_questions)<=0 || Number(createGroupChallenge.no_passes)<=0 || length==0){
         alert("please fill out all fields")
       }

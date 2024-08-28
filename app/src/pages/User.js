@@ -12,6 +12,7 @@ import {Image, Video, Transformation} from 'cloudinary-react';
 
 import {Cloudinary} from "@cloudinary/url-gen";
 import StreakChart from "../components/StreakChart"
+import { MonthChart } from "../components/MonthChart"
 function User({socket}){
     const id=useParams().id
     const [user,setUser]=useState()
@@ -357,6 +358,9 @@ console.log(avi)
 
                         <div class="flex p-3 border-b-2 border-gray-400 m-3">
                             <div class="flex-col">
+                            <div class="flex">
+                                <MonthChart userId={id}/>
+                            </div>
                                 <p class="text-lg font-bold">Current Challenge</p>
                                 {
                                     currentChallenge!=null?
@@ -422,6 +426,9 @@ console.log(avi)
      
                              <div class="flex p-3 border-b-2 border-gray-400 m-3">
                                  <div class="flex-col">
+                                 <div class="flex">
+                                    <MonthChart userId={id} showTitle={false}/>
+                             </div>
                                      <p class="text-lg font-bold">Current Challenge</p>
                                      {
                                          currentChallenge!=null?
@@ -442,13 +449,16 @@ console.log(avi)
                                  
                                  </div>
                              </div>
-     
+                            <div class="flex">
+                                <MonthChart userId={id}/>
+                            </div>
                              <div class="flex w-full border-b-2 border-gray-400 p-3 m-3">
                                  <div class="flex-col">
                                      <p class="text-lg font-bold">Streaks</p>
                                      <p>Longest streak length: {longestStreak!=null?longestStreak.length:""}</p>
                                  </div>
                              </div>
+
      
                          </div>
                      </div>

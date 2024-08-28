@@ -380,7 +380,7 @@ console.log("\n\n\n\ncurrent streaks",streaks)
       </div>
       :
       <div class="flex-col w-full p-10">
-           <p class="text-4xl">Your Current Streak</p>
+          <div class="flex"> <p class="text-4xl">Your Current Streak</p> <p class="text-green-700 ml-4 font-bold text-xl">{streaks.length}</p></div>
       <Streak streaks={streaks} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>
       <button class="bg-green-700 p-3 rounded-md m-2" onClick={()=>{
         setSeeAllStreaks(!seeAllStreaks)

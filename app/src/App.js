@@ -41,39 +41,45 @@ const[connected,setConnected]=useState(false)
 const[ourRoom,setOurRoom]=useState()
 const [ourSocket,setOurSocket]=useState()
 
- 
+
   useEffect(()=>{
     const user=JSON.parse(sessionStorage.getItem("user"))
     const prom=new Promise((resolve,reject)=>{
       console.log("in app",socket)
       if(socket!=null){
       if(!socket.connected){
-      var socket=io.connect("http://localhost:3042")
+      var socket=io.connect("http://localhost:3042?token="+user.email+new Date().toString().substring(0,15))
       console.log(Object.keys(socket))
       if(user!==null){
       socket.emit("NEW_USER_SESSION",{user:user,message:"hi",room:socket.id})
       console.log("IN app",socket)
         setOurSocket(socket)
         dispatch(setSocket(socket))
-      setTimeout(()=>{
+      setTimeout(()=>{ 
         console.log("SOCKET SET")
         resolve()
       },200)
-    }else{
+    }else{ 
       resolve()
-    }
-    }else{
+    } 
+    }else{ 
       console.log("socket GOOD",socket)
       resolve()
     }
   }else{
     console.log("SOCKET GOOD",socket)
-    var s=io.connect("http://localhost:3042")
+    if(user!=null){
+    var s=io.connect("http://localhost:3042?token="+user.email+new Date().toString().substring(0,15))
     dispatch(setSocket(s))
     setOurSocket(s)
     setTimeout(()=>{
       resolve()
     },500)
+  }else{
+    setTimeout(()=>{
+      resolve()
+    },500)
+  }
   }
       
 
@@ -88,12 +94,21 @@ const [ourSocket,setOurSocket]=useState()
 
   },[visibility]) 
   
-if(!isLoading){
-  socket.emit("NEW_USER_SESSION",{user:user,id:socket.id,source:"APP"},()=>{
+if(!isLoading){ 
+  socket.emit("NEW_USER_SESSION",{user:user,id:socket.id,source:"APP"},(data)=>{
     console.log("DONE")
+    var socketId=JSON.parse(sessionStorage.getItem("socketId"))
+    if(socketId==null){
+      console.log("SOCKET NEW CONNNECTIION")
+    }
+    sessionStorage.setItem("socketId",data.room)
+    socket.emit("CONFIRM_SOCKET_ROOM",{socketId:data.room,user:user}).then((data)=>{
+      console.log("ROOM CONFIRMED",data) 
+    })
+ 
   })
   socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
-    console.log("\n\n\n FROM SOCKET",data)
+    console.log("\n\n\n FROM SOCKET--GROUP_CHALLENGE_UPDATED",data)
     if(data.groupChallenge!=null){
   dispatch(setGroupChallenges(data.groupChallenge))
     }
@@ -126,10 +141,7 @@ if(!isLoading){
         <Route path="/challenges" element={<ChallengesPage/>}/>
         <Route path="/settings" element={<SettingsPage/>}/>
         <Route path="/payment/success/:subscription" element={<UpdateUserSuccess/>}/>
-        <Route path="/user/:id" element={<User/>}/>
-
-      
-        
+        <Route path="/user/:id" element={<User/>}/>       
       </Routes>
     </Router>
     </div>

@@ -196,7 +196,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
               
             }
             gg.streaks.map((c)=>{
-              console.log(c.streak)
+             
             allUsers.push(c.streak.userId)
               allDays.push(c.streak.day)
               allUsers.push(c.streak.userId)
@@ -206,7 +206,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
               message=message+"<li><p class='font-bold'>"+p.title+"</p></li>"
             })
             message=message+"</ul>"
-          console.log(streakTimes)
+        
             if(!streakTimes.includes(c.streak.timeLastAdded)){
               streakTimes.push(c.streak.timeLastAdded)
             groupCha.push({
@@ -366,7 +366,7 @@ if(events!=null){
                  
                 
                
-                    
+                    console.log("popover element:",new bootstrap.Popover())
                 return new bootstrap.Popover(event.el,{
                   placement:"top",
                   trigger:"hover",

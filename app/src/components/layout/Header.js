@@ -33,6 +33,14 @@ function Header({ourUser,visibility,socket,notificationReload}) {
       socket.emit("NEW_USER_SESSION",{user:u,source:"HEADER"})
       socket.on("RECIEVED_NEW_USER",(data)=>{
         console.log("\n\nRECIEVED",data)
+        var socketId=JSON.parse(sessionStorage.getItem("socketId"))
+        if(socketId==null){
+          console.log("SOCKET NEW CONNNECTIION")
+        }
+        sessionStorage.setItem("socketId",data.room)
+        socket.emit("CONFIRM_SOCKET_ROOM",{socketId:data.room,user:user}).then((data)=>{
+          console.log("ROOM CONFIRMED",data) 
+        })
        })
       
       
@@ -95,6 +103,15 @@ function Header({ourUser,visibility,socket,notificationReload}) {
     i++
     }
   })
+  var socketId=JSON.parse(sessionStorage.getItem("socketId"))
+  if(socketId!=null){
+    console.log("SOCKET NEW CONNNECTIION")
+ 
+  
+  socket.emit("CONFIRM_SOCKET_ROOM",{socketId:socketId,user:user}).then((data)=>{
+    console.log("ROOM CONFIRMED",data) 
+  })
+}
 
   if(visibility && !isLoading){
    console.log("allNotifications:",user.allNotifications)
@@ -247,6 +264,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
         <Link class="text-white font-bold" to="/analytics">Your Stats</Link>
 
         <Link class="text-white font-bold" to="/challenges">Your Challenges</Link>
+        <Link class="text-white font-bold" to="/challenges">Live Sessions</Link>
 
       </div>
       </div>
