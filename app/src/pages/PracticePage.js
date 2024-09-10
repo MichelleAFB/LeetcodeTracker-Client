@@ -37,7 +37,7 @@ import IonIcon from '@reacticons/ionicons'
 
 import { setGroupChallenges } from '../redux/socket/socket-actions'
 const javascriptDefault = `// some comment`;
- 
+
 function PracticePage({socket}) {
 
 const[sendingstreak,setSendingStreak]=useState(false)
@@ -716,6 +716,7 @@ dispatch(setGroupChallenges(data.groupChallenge))
           Add New Boiler Template
         </p>
       </button>
+   
       <button class="bg-cyan-500 p-2 rounded-md" onClick={()=>{
           axios.post("http://localhost:3022/generate-use-cases",{problem:problem.problem}).then((response)=>{
             console.log("\n\nresponse from use cases")

@@ -2,6 +2,7 @@ import { getDocs,collection,doc } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 import { useEffect,useState } from "react";
 import AllUsersItem from "./AllUsersItem";
+import ProgressAnimation from "./ProgressAnimation";
 
 
 
@@ -43,14 +44,17 @@ function AllUsers() {
     if(!isLoading){
   
     return (
+      <div class="flex-col">
+        
       <div class="flex  p-2 justify-between border-b-2 border-gray-500 bg-gray-200">
+      <ProgressAnimation/>  
         {users.map((u)=>{
              
               const self=JSON.parse(sessionStorage.getItem("user"))
               try{
               if(u.data().userId!=self.userId){
                 return(
-                   
+                 
         <AllUsersItem u={u}/>
                 )
               }
@@ -64,6 +68,7 @@ function AllUsers() {
 
             }
         })}
+      </div>
       </div>
     )
     }else{

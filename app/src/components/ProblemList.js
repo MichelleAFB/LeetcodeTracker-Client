@@ -927,12 +927,12 @@ const user=JSON.parse(sessionStorage.getItem("user"))
            <p class="text-black text-center font-semibold">Reset</p>
          </button>
          <button class="bg-white p-2 rounded-md m-2 flex w-1/4 justify-center" onClick={()=>{
-          var position=Math.floor(randomNumber(0,problems.length-1))
+          var position=Math.floor(randomNumber(0,filtered.length>0?filtered.length-1:problems.length-1))
           console.log(problems[position])
           if(id==null){
-            navigate("/practice/"+problems[position].id+"/"+problems[position].problem.index)
+            navigate("/practice/"+problems[position].id+"/"+(filtered.length>0?filtered[position].problem.index:problems[position].problem.index))
           }else{
-            navigate("/practice/"+problems[id].id+"/"+problems[position].problem.index+"/"+id)
+            navigate("/practice/"+problems[id].id+"/"+(filtered.length>0?filtered[position].problem.index:problems[position].problem.index)+"/"+id)
           }
         }}>
            <p class="text-black text-center font-semibold">Generate Random Question</p>

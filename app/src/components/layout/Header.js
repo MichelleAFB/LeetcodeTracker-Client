@@ -14,6 +14,8 @@ import { io } from 'socket.io-client'
 import { useDispatch, connect} from 'react-redux'
 import { Manager } from "socket.io-client";
 import { setNotificationReload } from '../../redux/reload/reload-actions'
+
+
 function Header({ourUser,visibility,socket,notificationReload}) {
 
   const[isLoading,setIsLoading]=useState(true)
