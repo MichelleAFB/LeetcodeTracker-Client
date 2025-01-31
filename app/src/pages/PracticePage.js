@@ -36,9 +36,10 @@ import DeleteBoilerTemplateComponents from '../components/components/DeleteBoile
 import IonIcon from '@reacticons/ionicons'
 
 import { setGroupChallenges } from '../redux/socket/socket-actions'
+import { fireOff, setCompletedDays, setDays,setPercent,setStartingPoint } from '../redux/streakProgress/streak-actions'
 const javascriptDefault = `// some comment`;
 
-function PracticePage({socket}) {
+function PracticePage({socket,percent}) {
 
 const[sendingstreak,setSendingStreak]=useState(false)
 const [attempts,setAttempts]=useState()
@@ -106,7 +107,7 @@ const [attempts,setAttempts]=useState()
   const[boilerCodeTemplates,setBoilerCodeTemplates]=useState()
 
   
-  console.log("ID LENGHT",userId)
+  //console.log("ID LENGHT",userId)
 
 
   useEffect(()=>{
@@ -963,6 +964,7 @@ dispatch(setGroupChallenges(data.groupChallenge))
                    console.log(problem)
 
                    console.log(user)
+                   console.log({problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges})
                     
                       axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges}).then((response)=>{
                     
@@ -978,6 +980,7 @@ dispatch(setGroupChallenges(data.groupChallenge))
                           }
                          })   
                       }) 
+                      console.log(response.data)
                       if(response.data.message!=null){
                        
                        
@@ -998,6 +1001,21 @@ dispatch(setGroupChallenges(data.groupChallenge))
                           console.log(response)
                           console.log(p) 
                          alert("SUCCESS+++")
+                         
+                            axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+                              console.log("RESPONSE STREAK ANIMATION",response)
+                              if(response.data.streakExists){
+                                dispatch(setPercent(response.data.percent))
+                                dispatch(setDays(response.data.days))
+                                dispatch(setCompletedDays(response.data.completedDays))
+                                dispatch(setStartingPoint(response.data.start))
+                                setTimeout(()=>{
+                                  dispatch(fireOff())
+                                },500)
+                              }else{
+                                
+                              }
+                            })
                           
                            setSendingStreak(false)
 
@@ -1007,12 +1025,26 @@ dispatch(setGroupChallenges(data.groupChallenge))
                      })
 
           }}>
-           <p class="font-bold text-white ">Submit</p> 
+           <p class="font-bold text-white ">Submit </p> 
           </button>
           :<div></div>
           }
         </div>
       </div>
+      {problem.problem.testCases!=null?
+      <div class="flex-col">
+        {
+          Object.keys(problem.problem.testCases).forEach((k)=>{
+            return(<p>k</p>)
+          })
+        }
+
+      </div>
+      :
+      <div>
+
+      </div>
+     }
       <div className="flex flex-row space-x-4 items-start px-4 py-4">
         <div className="flex flex-col w-3/4 h-full justify-start items-end">
           <CodeEditorWindow
@@ -1098,7 +1130,7 @@ dispatch(setGroupChallenges(data.groupChallenge))
 
 
         }}>
-          <p class="text-white  font -bold text-center">Submit</p>
+          <p class="text-white  font -bold text-center">Submit Solution</p>
         </button>
         </div>
         :
@@ -1152,9 +1184,11 @@ dispatch(setGroupChallenges(data.groupChallenge))
 }
 const mapStateToProps = (state, props) => {
   var socket=state.socket.socket
+  var percent=state.streaks.percent
 
   return {
-   socket:socket
+   socket:socket,
+   percent:percent
   };
 };
 export default connect(mapStateToProps)(PracticePage)

@@ -2,6 +2,7 @@ import React from 'react'
 import { useState,useEffect } from 'react'
 //firebase
 import { db } from '../firebase/firebase'
+
 import {getDocs,collection,doc,updateDoc} from 'firebase/firestore'
 import {
   List,
@@ -20,11 +21,12 @@ import IonIcon from '@reacticons/ionicons'
 import { connect } from 'react-redux'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+
 function ProblemList({id,reload}) {
 
   const[problems,setProblems]=useState()
   const[isLoading,setIsLoading]=useState(true)
-  
+  const[prArr,setProbArr]=useState()
   //search options
   const [ourUser,setOurUser]=useState()
   const[dataStructure,setDataStructure]=useState()
@@ -32,6 +34,7 @@ function ProblemList({id,reload}) {
   const[searchByDataStructure,setSearchByDataStructure]=useState(false)
   const[searchByCategory,setSearchByCategory]=useState(false)
   const[searchByDate,setSearchByDate]=useState(false)
+  const[byAddDate,setOrderByAddDate]=useState(false)
   const[problemBad,setProblemBad]=useState()
   const problemsListCollectionRef=collection(db,"problems")
   const[oldest,setOldest]=useState()
@@ -47,12 +50,14 @@ function ProblemList({id,reload}) {
   const[full,setFull]=useState()
   const fuller=[]
   const[userDefinedIndex,setUserDefiniedIndex]=useState(false)
+  const[orderedByAddProblems,setOrderedByAddProblems]=useState()
   const navigate=useNavigate()
   useEffect(()=>{
     sessionStorage.setItem("green",0)
     sessionStorage.setItem("red",0)
     sessionStorage.setItem("orange",0)
     const dataArr=[]
+    const pbs=[]
     const prom=new Promise(async(resolve,reject)=>{
     var RED=0
     var ORANGE=0
@@ -64,7 +69,7 @@ function ProblemList({id,reload}) {
 
     setOurUser(use)
 
-      const getProblemsList=async()=>{
+      const getProblemsList=async(pbs,i)=>{
 
         //READ DATA
         try{
@@ -73,15 +78,28 @@ function ProblemList({id,reload}) {
           const userType=JSON.parse(sessionStorage.getItem("userType"))
 
         const data=await getDocs(problemsListCollectionRef)
-     
+     console.log(data)
         data.docs.map((doc)=>{
           var thing=doc.data()
+        
+          console.log(thing)
           const thinger=thing
-          thinger.id=doc.id     
+          thinger.id=doc.id   
+          
               
         
           if(id==null? doc.data().userId==user.userId:doc.data().userId==id){
+        
             titles.push(thing.title) 
+            try{
+            if(i<data.docs.length){
+              pbs.push({id:doc.id,title:thing.title,time:thing.createdAt})  
+              i++
+            }
+            }catch(e){
+              console.log(e)
+            }
+              
 
             setTimeout(()=>{
              console.log(titles.includes(doc.data().title))
@@ -164,8 +182,8 @@ function ProblemList({id,reload}) {
           console.log(err)
         }
       }
-  
-      getProblemsList().then(()=>{
+      var i=0
+      getProblemsList(pbs,i).then(()=>{
        
        // resolve()
         setTimeout(()=>{
@@ -177,6 +195,7 @@ function ProblemList({id,reload}) {
 
     prom.then(()=>{
       setFull(fuller)
+   
       const r=JSON.parse(sessionStorage.getItem("red"))
       const g=JSON.parse(sessionStorage.getItem("green"))
       const o=JSON.parse(sessionStorage.getItem("orange"))
@@ -190,6 +209,7 @@ setTimeout(()=>{
      const prom1=new Promise((resolve1,reject1)=>{
   
       sessionStorage.setItem("problems",JSON.stringify(dataArr))
+      setProbArr(pbs)
       setFiltered(dataArr)
       setProblems(dataArr)
       resolve1()
@@ -318,6 +338,7 @@ setTimeout(()=>{
     const prom = new Promise((resolve,reject) => {
       
     setFiltered([])
+    
     problems.map((ev) => {
      
     
@@ -500,6 +521,80 @@ const handleSearchByDataStructure = (e) => {
     setFiltered(fil)
     console.log("filtered should be")
     console.log(filtered)
+}).catch(
+  console.log("filter not working")
+)   
+}
+function indexOfItem(arr,a){
+  console.log(a)
+  var i=0
+  while(i<arr.length){
+    var val=Object.keys(a)
+    var j=0
+    while(j<val.length){
+      if(val[j]==arr[i])
+      console.log(val[j]+":")
+      console.log(a[`${val[j]}`])
+      console.log(`${arr[i]}.${val[j]}`)
+      j++
+    }
+    i++
+  }
+}
+
+const orderByAddDate = () => {
+
+   // const fil=problems
+   // setFiltered(problems)
+  
+
+  const fil=[]
+ const newProbs=[]
+  const prom = new Promise((resolve,reject) => {
+    
+ // setFiltered([])
+ var i=0
+ while(i<problems.length){
+   var u=problems.reduce((a,b) => {
+    try{
+      if(a.problem!=null && b.problem!=null){
+    console.log("a: "+a.problem.createdAt.toDate())
+    console.log( "b: "+b.problem.createdAt.toDate())
+    indexOfItem(problems,a.problem)
+    indexOfItem(problems,b.problem)
+   if(a.problem.createdAt.toDate()<b.problem.createdAt.toDate()){
+   
+    indexOfItem(problems,a.problem)
+    return a.toDate()
+   }else {
+    indexOfItem(problems,b.problem)
+
+    return b.toDate()
+   }
+  }else{
+    return a
+  }
+  }catch(e){
+    console.log(a,b)
+    return b
+  }
+   
+  })
+ //newProbs.append(u)
+   
+  i++
+  if(i>=problems.length){
+    resolve()
+   }
+}
+  console.log(newProbs)
+   // resolve(fil)
+  })
+
+  prom.then(() => {
+   // setFiltered(fil)
+    console.log("filtered should be")
+    console.log(newProbs)
 }).catch(
   console.log("filter not working")
 )   
@@ -755,6 +850,189 @@ const user=JSON.parse(sessionStorage.getItem("user"))
   function randomNumber(min, max) {
     return Math.random() * (max - min) + min;
   }
+  function indexOfProblem(problems,a,ids){
+    var i=0
+    var found=false
+    while(i<problems.length && found==false){
+      
+      try{
+      var check=problems[i]
+      
+      if(check.id==a.id && !ids.includes(a.id)){
+        console.log(check.id," a"+a.problem.createdAt.toDate())
+        found=true
+        i++
+        return i
+      }else{
+        i++
+      }
+    }catch(e){
+    //  console.log(e)
+      i++
+    }
+      
+      if(i>=problems.length){
+        return null
+      }
+
+      
+
+    }
+  }
+  const ids=[]
+  async function doit(problems,ids){
+    const probs=await orderByAdded(problems,ids)
+  }
+  function orderByAdded(problems,ids){
+    const probs=[]
+   
+    const oldProbs=problems
+    var j=0
+    var oLength=problems.length
+    const badOnes=[]
+    while( j<problems.length){
+      if(j>=oLength-2){
+        return probs
+      }
+ var u=oldProbs.reduce((a,b)=>{
+  try{
+   
+    if(a!=null && b!=null){
+  if(a.problem.createdAt!=null && b.problem.createdAt!=null){
+    console.log("GOOD")
+    if(a.problem.createdAt.toDate()<b.problem.createdAt.toDate()){
+      console.log("a less")
+         probs.push({title:a.problem.title,time:a.problem.createdAt.toDate().toString()})
+      var index=indexOfProblem(oldProbs,a.ids)
+      index=index==null?j:index
+      ids.push(oldProbs[index])
+      oldProbs.splice(index,1)
+      j++
+      return a
+    }else{
+      console.log("b less")
+         probs.push({title:b.problem.title,time:b.problem.createdAt.toDate().toString()})
+      var index=indexOfProblem(oldProbs,b,ids)
+    index=index==null?j:index
+    ids.push(oldProbs[index])
+     oldProbs.splice(index,1)
+     
+    
+      j++
+      return b
+    }
+    
+
+  }else if(a.problem.createdAt==null && b.problem.createdAt!=null){
+       probs.push({title:b.problem.title,time:b.problem.createdAt.toDate().toString()})
+    var index=indexOfProblem(oldProbs,b,ids)
+    index=index==null?j:index
+    ids.push(oldProbs[index])
+   oldProbs.splice(index,1)
+  
+    j++
+    return b
+
+
+  }else if(a.problem.createdAt!=null && b.problem.createdAt==null){
+       probs.push({title:a.problem.title,time:a.problem.createdAt.toDate().toString()})
+    var index=indexOfProblem(oldProbs,a,ids)
+    index=index==null?j:index
+    ids.push(oldProbs[index])
+   oldProbs.splice(index,1)
+    j++
+    return a
+    
+    
+  }else{
+       probs.push({title:a.problem.title,time:a.problem.createdAt.toDate().toString()})
+    var index=indexOfProblem(oldProbs,a,ids)
+    index=index==null?j:index
+    ids.push(oldProbs[index])
+oldProbs.splice(index,1)
+    j++
+    return a
+    
+
+  }
+}else if(a==null && b!=null){
+  console.log("ANULL")
+  badOnes.push(a)
+  var index=indexOfProblem(oldProbs,b,ids)
+  index=index==null?j:index
+  ids.push(oldProbs[index])
+  oldProbs.splice(index,1)
+  j++
+  return b
+}else if(a!=null && b==null){
+  console.log("BNULL")
+  badOnes.push(b)
+  var index=indexOfProblem(oldProbs,a,ids)
+  index=index==null?j:index
+  ids.push(oldProbs[index])
+  oldProbs.splice(index,1)
+  j++
+}else{
+  console.log("A and B NULL")
+  badOnes.push(a)
+  badOnes.push(b)
+  j++
+}
+}catch(e){
+ // console.log("\n\n",e)
+  try{
+  console.log("a",Object.keys(a)," ",a.problem.createdAt,"\n\n")
+  console.log("b",Object.keys(b)," ",b.problem.createdAt,"\n\n")
+  
+  }catch(e){
+    try{
+    console.log("bad",a.problem)
+    console.log("BAD b",b.problem)
+    if(a==null){
+      const index = oldProbs.findIndex((p) => p.id === a.id);
+      console.log("SPLICE",a)
+
+    }
+    
+  }catch(e){
+    if(probs.length>=oLength-10){
+      console.log("POPO",probs)
+      setOrderedByAddProblems(probs)
+      j=problems.length
+    }
+
+  }
+
+  }
+ // j++
+ 
+}
+console.log(j)
+console.log("plength",probs.length)
+if(probs.length>=oLength-10){ 
+  console.log("\n\n\n\nFINISHED",probs)
+ // j++
+}
+ })
+  probs.push(u.problem.createdAt)
+  console.log("oldprobs length",oldProbs.length)
+  console.log(oldProbs)
+  console.log("probs length",probs.length)
+  console.log(probs)
+  console.log(j)
+  while(probs.length<oLength){
+  setTimeout(async()=>{
+    if(probs.length>=oLength-10){
+      console.log("POO",probs)
+      setOrderedByAddProblems(probs)
+      j=problems.length
+    }
+
+  },2500)
+}
+ 
+    }
+  }
   
   if(isLoading){
     
@@ -777,6 +1055,9 @@ const user=JSON.parse(sessionStorage.getItem("user"))
 
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
+   if(orderedByAddProblems==null){
+  //  orderByAdded(problems)
+   }
    
    /*
 <button class="p-3 w-1/2 bg-green-400" onClick={()=>{
@@ -786,6 +1067,9 @@ const user=JSON.parse(sessionStorage.getItem("user"))
     </button>
 
    */
+    var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+      "Aug","Sep","Oct","Nov","Dec"];
+      var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
   return (
     <div class="bg-gray-400   p-3 z-10">
       <div class="flex w-1/2 justify-end">
@@ -798,7 +1082,93 @@ const user=JSON.parse(sessionStorage.getItem("user"))
       <p class="text-xl text-center font-bold">
         Your Questions ({problems.length})
       </p>
-    
+    <button class="bg-green-600 p-3 " onClick={async()=>{
+         const data=await getDocs(problemsListCollectionRef)
+     
+    console.log(data)
+
+         data.docs.map((dod)=>{
+           //var thing=doc
+          var thing=dod.data()
+          const  ref=doc(db,"problems",dod.id)
+          //console.log(ref)
+          
+           var attempts=thing.attempts
+           if(thing.createdAt==null || !(thing.createdAt.toDate() instanceof Date)){
+           var date=null
+           var i=0
+           console.log("\n\nFIrst",attempts[0].date+"\n")
+           attempts.map(async(a)=>{
+            var d=a.date
+            console.log(d)
+            if(d.length>2){
+              d=d.split(" ")
+             // console.log(d)
+              var ndate=new Date(d[3],monthnum[months.indexOf(d[1])-1],d[2])
+             // console.log(ndate)
+              date= (date==null? ndate:(ndate<date?ndate:date))
+              if (date==null){
+                if(! ndate instanceof Date){
+
+                }else{
+                  date=ndate
+                }
+              }else{
+                if(! ndate instanceof Date){
+
+                }else{
+                  if(ndate<date){
+                  date=ndate
+                  }
+                }
+
+              }
+              i++
+              if(i>=attempts.length){
+                console.log("FINAL DATE:",date.toString()+" for problem "+thing.title)
+                try{
+                  await updateDoc(ref,{
+                    createdAt:date
+                  })
+                 
+                }catch(err){
+                  console.log(err)
+                }
+                
+              }
+            }else{
+              i++
+              if(i>=attempts.length){
+                console.log("FINAL DATE:",date.toString()+" for problem "+thing.title)
+                try{
+                 await updateDoc(ref,{
+                    createdAt:date
+                  })
+                 
+                }catch(err){
+                  console.log(err)
+                }
+              }
+            }
+
+           })
+          }else {
+            console.log(thing.title,thing.createdAt.toDate())
+          }
+         })
+
+    }}>
+      <p class="text-white">Generate CreatedAt</p>
+    </button>
+    <button class="bg-pink-400 p-2" onClick={()=>{
+      const ids=[]
+      console.log(prArr)
+      axios.post("http://localhost:3022/sorted-by-added",{problems:prArr}).then((response)=>{
+        console.log(response)
+      })
+    }}>
+      <p>fire FInd</p>
+    </button>
       <p class="text-center font-bold text-md mt-2"> last practiced:</p>
       <div class="flex  justify-around">
 
@@ -1037,6 +1407,27 @@ const user=JSON.parse(sessionStorage.getItem("user"))
       }}/>
       <div class="flex flex-col mt-2  p-3">
         <div class="flex justify-around">
+        {
+            byAddDate?<button class="bg-green-600 border-gray-400 p-2 rounded" onClick={()=>{
+             setOrderByAddDate(!byAddDate)
+             orderByAddDate()
+              console.log(search)
+              console.log(searchByDataStructure)
+            }}>
+            <p class="text-white font-bold">Add Date</p>
+          </button>:
+          <button  class="bg-gray-200 border-gray-400 p-2 rounded"
+          onClick={()=>{
+            orderByAddDate()
+           /* setOrderByAddDate(!byAddDate)
+            setSearchByDataStructure(false)
+            setSearchByCategory(false)
+            setSearchByDate(false)*/
+
+          }}>
+           Add Date
+          </button>
+          }
           {
             searchByDataStructure?<button class="bg-green-600 border-gray-400 p-2 rounded" onClick={()=>{
               setSearchByDataStructure(!searchByDataStructure)
@@ -1162,9 +1553,15 @@ const user=JSON.parse(sessionStorage.getItem("user"))
           console.log(p)
           const cDate=new Date()
           const currDate=cDate.toString().substring(0,15)
+          try{
           if(p.problem.lastPracticed.substring(0,15)==currDate){
            return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
           }
+        }catch(e){
+          if(p.problem.lastPracticed==currDate){
+          return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
+          }
+        }
            })
          }
       </div>:<div></div>

@@ -130,7 +130,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
       <div class="flex w-full">
         <div class="flex w-5/6">
           <p class="text-purple-800 text-4xl">LeetcodeTracker</p>
-        
+        <p> CHECK STORAGE COSTS</p>
         </div>
         <div class="flex-col w-1/5 mr-0 justify-end">
          <div class="flex-col justify-end">

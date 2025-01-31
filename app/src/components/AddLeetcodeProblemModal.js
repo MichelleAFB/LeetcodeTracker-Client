@@ -9,6 +9,7 @@ import { addLeetcodeProblemReload, setLeetcodeProblem, setLeetcodeProblemVisibil
 //firbase
 import { db } from '../firebase/firebase'
 import {getDocs,collection,setDoc,doc,updateDoc,addDoc, onSnapshot, getDoc} from 'firebase/firestore'
+import AddQuestionTags from './smallerComponents/Modals/AddQuestionTags';
 function AddLeetcodeProblemModal({visibility,ourProblem}) {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -21,8 +22,10 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
   const[alreadyExists,setAlreadyExists]=useState()
   const[updateFirebaseId,setUpdateFireBaseId]=useState(false)
   const[acRate,setAcRate]=useState()
+  const[testCases,setTestCases]=useState()
   const[tags,setTags]=useState()
   const dispatch=useDispatch()
+  const[ourTags,setOurTags]=useState()
 
   const problemsListCollectionRef=collection(db,"problems")
   const getProblemsList=async(p)=>{
@@ -79,17 +82,23 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
             userData.myTopicTags.map((t)=>{
               topictags.push(t)
             })
+            console.log(topictags)
             setTags(topictags)
           }else{
             setTags(topictags)
           }
-         
+         console.log("FROM LEET",ourProblem.tags)
            
          
           setPrompt(ourProblem.prompt)
           setDataStructure(problemData.problem.dataStructure)
           setCategory(problemData.problem.category)
           setAcRate(problemData.problem.acRate!=null? problemData.problem.acRate:0)
+          setTestCases(problemData.problem.testCases!=null?problemData.problem.testCases:ourProblem.testCases)
+          setOurTags(ourProblem.tags!=null && ourProblem.tags.length>0?ourProblem.tags:problemData.problems.tags)
+          if(ourProblem.tags==null || ourProblem.tags.length==0){
+            //setOurTags()
+          }
         }else{
           
           var topictags=response.data.tags
@@ -125,12 +134,15 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
   },[visibility])
   const p=JSON.parse(sessionStorage.getItem("currentProblem"))
   
+function updateTopicTags(updatedTags){
+  setOurTags(updatedTags)
 
+}
 
   if(visibility && !isLoading){ 
     const problemsListCollectionRef=collection(db,"problems")
 
-    
+    console.log(ourTags)
     var problemData=JSON.parse(sessionStorage.getItem('currentProblem'))
 
     /*if(problemData!=null){
@@ -224,36 +236,19 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
              </div>:
              <p></p>
              }
-             <div class="flex-w-full">
-              {
-                ourProblem.topicTags.length>0?
-                <div class="flex w-fuLl">
-                  {
-                    ourProblem.topicTags.map((t)=>{
-                      return(<p class="text-gray-400 font-bold m-2">{t}</p>)
-                    })
-                  }
-                </div>:
-                <div>
-                </div>
-              }
-             </div>
+            
+           
             
               <div class="flex flex-col">
-              <input type="text" list="categories" class="m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1" />
-                    <datalist id="categories"
+              <div class="flex-w-full">
+              {tags.length>0?
+                <div>
+                  <AddQuestionTags allTags={tags} updateTopicTags={updateTopicTags} defaultTags={ourProblem.tags}/>
+                </div>:
+                <div></div>
+              }
+             </div>
                 
-                   class=' m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1'
-                         onChange={(e)=>{
-                           console.log(e.target.value)
-                           setCategory(e.target.value)
-                         }} >   
-                       {
-                        tags.map((t)=>{
-                          return(<option value={t.toString()}>{t.toString()}</option>)
-                        })
-                       }
-                </datalist>
                 <select
                   id='category'
                    class=' m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1'
@@ -277,6 +272,13 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                      <option value ="etc">etc</option>
                      
                   </select>
+                  {
+                    ourProblem.testCases!=null?
+                    <div>
+                    </div>:
+                    <div>
+                    </div>
+                  }
             <button class="bg-green-700 rounded-md p-3 justify-center" onClick={()=>{
               //console.log("prompt:"+ ourProblem.prompt)
               console.log("title:"+ourProblem.title)
@@ -315,11 +317,11 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       hints:problemData.problem.hints,
                       no_attempts:problemData.problem.no_attempts,
                       level:ourProblem.difficulty,
-                      tags:ourProblem.topicTags,
-                    
+                      tags:ourTags!=null && ourTags.length>0?ourTags:[],
+                      createdAt:problemData.createdAt!=null? problemData.createdAt:new Date(),
                       titleSlug:problemData.problem.titleSlug!=null? problemData.problem.titleSlug:null,
                       page:ourProblem.page!=null? ourProblem.page:1,
-                      topicTags:ourProblem.topicTags,
+                      topicTags:ourTags!=null && ourTags.length>0?ourTags:[],
                       acRate:ourProblem.acRate!=null? ourProblem.acRate:0.0,
                       attempts:problemData.problem.attempts,
                       solution:problemData.problem.solution,
@@ -380,14 +382,15 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
                       lastPracticed:currDate,
                       hints:"none",
                       no_attempts:0,
-                      tags:ourProblem.topicTags,
-                      topicTags:ourProblem.topicTags,
+                      tags:ourTags!=null && ourTags.length>0?ourTags:[],
+                      topicTags:ourTags!=null && ourTags.length>0?ourTags:[],
                       acRate:ourProblem.acRate!=null ? ourProblem.acRate:0.0,
                       level:ourProblem.difficulty,
                       page:ourProblem.page!=null? ourProblem.page:1,
                       titleSlug:ourProblem.titleSlug!=null?ourProblem.titleSlug:null,
                       attempts:[{attempt:"N/A",date:currDate}],
                       solution:"N/A",
+                      createdAt:new Date(),
                       userId:user.userId,
                       leetcodeId:(ourProblem.problemID!=null? ourProblem.questionId:-1),
                       examples:{0:"N/A",date:currDate},

@@ -2,7 +2,7 @@ import React from "react";
 import { classnames } from "../utils/general";
 
 const CustomInput = ({ customInput, setCustomInput }) => {
-  console.log("CUSTOM INPUT:"+customInput)
+ // console.log("CUSTOM INPUT:"+customInput)
   return (
     <>
       {" "}

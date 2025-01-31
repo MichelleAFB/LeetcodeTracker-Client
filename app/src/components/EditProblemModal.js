@@ -8,6 +8,7 @@ import { setEditProblemVisibility } from '../redux/editProblem/editProblem-actio
 //outside
 import { db } from '../firebase/firebase'
 import {getDocs,collection,setDoc,doc,updateDoc} from 'firebase/firestore'
+import axios from 'axios'
 
 function EditProblemModal({ourProblem,visibility}) {
   
@@ -32,27 +33,56 @@ function EditProblemModal({ourProblem,visibility}) {
   const[currentExample,setCurrentExample]=useState()
  // const[solution,setSolution]=useState()
   const[isLoading,setIsLoading]=useState(true)
+  const[allLinks,setAllLinks]=useState()
   
   useEffect(()=>{
     if(ourProblem!=null){
     const prom=new Promise((resolve,reject)=>{
-      setTitle(ourProblem.problem.title)
-      setDataStructure(ourProblem.problem.dataStructure)
-      setLink(ourProblem.problem.link)
-      setLevel(ourProblem.problem.level!=null? ourProblem.problem.level:null)
-      setCategory(ourProblem.problem.category)
-      setHints(ourProblem.problem.hints)
-      setSolution(ourProblem.problem.solution)
-      setPrompt(ourProblem.problem.prompt)
-      setExamples(ourProblem.problem.examples)
-      setProblem(ourProblem.problem)
-      getProblemsList(ourProblem.id).then((response)=>{
+      const links=JSON.parse(sessionStorage.getItem("allLinks"))
+      if(links==null){
+        axios.get("http://localhost:3022/get-all-links").then((response)=>{
+          console.log(response)
+          sessionStorage.setItem("allLinks",JSON.stringify(response.data.links))
+          setAllLinks(response.data.links)
+          setTitle(ourProblem.problem.title)
+          setDataStructure(ourProblem.problem.dataStructure)
+          setLink(ourProblem.problem.link)
+          setLevel(ourProblem.problem.level!=null? ourProblem.problem.level:null)
+          setCategory(ourProblem.problem.category)
+          setHints(ourProblem.problem.hints)
+          setSolution(ourProblem.problem.solution)
+          setPrompt(ourProblem.problem.prompt)
+          setExamples(ourProblem.problem.examples)
+          setProblem(ourProblem.problem)
+          getProblemsList(ourProblem.id).then((response)=>{
+         
+           
+           
+              resolve()
+          
+          })
+        })
+      }else{
+        setAllLinks(links)
+        setTitle(ourProblem.problem.title)
+        setDataStructure(ourProblem.problem.dataStructure)
+        setLink(ourProblem.problem.link)
+        setLevel(ourProblem.problem.level!=null? ourProblem.problem.level:null)
+        setCategory(ourProblem.problem.category)
+        setHints(ourProblem.problem.hints)
+        setSolution(ourProblem.problem.solution)
+        setPrompt(ourProblem.problem.prompt)
+        setExamples(ourProblem.problem.examples)
+        setProblem(ourProblem.problem)
+        getProblemsList(ourProblem.id).then((response)=>{
+       
+         
+         
+            resolve()
+        
+        })
+      }
      
-       
-       
-          resolve()
-      
-      })
     })
 
     prom.then(()=>{
@@ -157,6 +187,15 @@ function EditProblemModal({ourProblem,visibility}) {
                     setLink(e.target.value)
 
                   }}/>
+                  <input type="text" list="links"/>
+                    <datalist id="links">
+                    {
+                        allLinks.map((l)=>{
+                            return(<option value={l}>{l}</option>)
+                          })
+                      }
+                    </datalist>
+                
                   
                   
                 </div>

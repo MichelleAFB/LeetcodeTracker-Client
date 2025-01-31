@@ -268,6 +268,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
                     attempts:[{attempt:"N/A",date:currDate}],
                     solution:ourProblem.solution!=null? ourProblem.solution:"",
                     userId:user.userId,
+                    createdAt:new Date(),
                     boilerCode:ourProblem.boilerCode!=null? ourProblem.boilerCode:`import java.util.*;
                     public class Main{ 
                     
@@ -296,6 +297,7 @@ function AddOtherUsersProblemModal({problemId,visibility,ourProblem,user,otherUs
                     topicTags:ourProblem.topicTags!=null?ourProblem.topicTags:[],
                     acRate:ourProblem.acRate!=null? ourProblem.acRate:0.0,
                     attempts:[{attempt:"N/A",date:currDate}],
+                    createdAt:new Date(),
                     solution:ourProblem.solution!=null? ourProblem.solution:"",
                     userId:user.userId,
                     boilerCode:ourProblem.boilerCode!=null? ourProblem.boilerCode:`import java.util.*;

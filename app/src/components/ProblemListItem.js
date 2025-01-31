@@ -38,9 +38,11 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
   const[useDaysSince,setUseDaysSince,Since]=useState()
   const[edit,setEdit]=useState(false)
   const[halt,setHalt]=useState(true)
-  
+  const[hasTestCases,setHasTestCases]=useState(false)
+  const[testCases,setTestCases]=useState()
   const dispatch=useDispatch(false)
   const[reload,setReload]=useState()
+
 
   useEffect(()=>{
     
@@ -51,13 +53,20 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
       const date=d[0]+ " "+d[1]+" "+d[2]+" "+d[3]
       const u=await getDoc(us)
       setUser(u.data())
-     if(problem.problem.link==null || problem.problem.acRate==null || problem.problem.difficulty==null || problem.problem.level==null){
+      
+     if(problem.problem.link==null || problem.problem.acRate==null || problem.problem.difficulty==null || problem.problem.level==null || problem.problem.testCases==null ){
+      console.log("EMPTY TEXTCASE",problem.problem.title)
       axios.post("http://localhost:3022/getProblemByTitle",{title:problem.problem.title}).then(async(response)=>{
       if(response.data.success){
+        console.log(response.data)
         const problemRef=doc(db,"problems",problem.id)
+        if(response.data.problem.testCases!=null){
+          setHasTestCases(true)
+          setTestCases(response.data.problem.testCases)
         await updateDoc(problemRef,{
           acRate:response.data.problem.acRate,
           difficulty:response.data.problem.difficulty,
+          testCases:response.data.problem.testCases,
           level:response.data.problem.level,
           link:response.data.problem.link
         }).then(()=>{
@@ -67,6 +76,21 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
             resolve()
           },200)
         })
+      }else{
+        await updateDoc(problemRef,{
+          acRate:response.data.problem.acRate,
+          difficulty:response.data.problem.difficulty,
+         
+          level:response.data.problem.level,
+          link:response.data.problem.link
+        }).then(()=>{
+          last=date
+          setDateLast(date)
+          setTimeout(()=>{
+            resolve()
+          },200)
+        })
+      }
     
 
       }else{
@@ -79,6 +103,8 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
       })
     }else{
       last=date
+      setHasTestCases(true)
+      setTestCases(problem.problem.testCases)
       setDateLast(date)
       setTimeout(()=>{
         resolve()
@@ -277,10 +303,12 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
     updateIndex(problemRef,index)
     }
     
+    if(testCases!=null){
     
-
+    }
 
     if(   user.healthyIndex!=null? (index<=user.healthyIndex.end ):(index<=7 )){
+      
       return (
         <div className='p-5 bg-white rounded shadow m-3'>
           <div class="flex w-full justify-end">
@@ -298,7 +326,15 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
             className="m-2 flex justify-center items-center bg-blue-lighter rounded-full w-8 h-8"
             role="img"
           >
-           
+             {
+          testCases!=null?
+          <div>
+            <p class="font-bold">HAS TEST CASES</p>
+          </div>
+          :
+          <div>
+          </div>
+        }
           </div>
           <div class="flex justify-end w-full">
           {id==null?<button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
@@ -432,6 +468,15 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
         className="m-2 flex justify-center items-center bg-blue-lighter rounded-full w-8 h-8"
         role="img"
       >
+          {
+          testCases!=null?
+          <div>
+            <p class="font-bold">HAS TEST CASES</p>
+          </div>
+          :
+          <div>
+          </div>
+        }
         
       </div>
       <div class="flex justify-end w-full">
@@ -565,7 +610,15 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
         className="m-2 flex justify-center items-center bg-blue-lighter rounded-full w-8 h-8"
         role="img"
       >
-        
+        {
+          testCases!=null?
+          <div>
+            <p class="font-bold">HAS TEST CASES</p>
+          </div>
+          :
+          <div>
+          </div>
+        }
       </div>
       <div class="flex justify-end w-full">
       {id==null?<button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{

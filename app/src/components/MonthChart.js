@@ -97,8 +97,8 @@ export function MonthChart({userId,showTitle}) {
           console.log(response.data)
             setMonths(response.data.months)
             setComplete(true)
-           const y=years.reverse()
-            setAllYears(y)
+           //const y=years.reverse()
+            setAllYears(years)
             setTimeout(()=>{
               resolve()
             })
@@ -166,7 +166,7 @@ export function MonthChart({userId,showTitle}) {
     <div class="flex-col w-full justify-center align-center">
 
       <p class="mb-4 font-bold text-xl text-center">Total Problems per Month</p>
-      <select class="p-2 ml-12 bg-gray-800 rounded-sm text-white justify-center" default={selectedYear.toString()} placeholder={"2024"} onChange={(e)=>{
+      <select class="p-2 ml-12 bg-gray-800 rounded-sm text-white justify-center" default={selectedYear.toString()} placeholder={new Date().getUTCFullYear()} onChange={(e)=>{
        
          
             const user=JSON.parse(sessionStorage.getItem("user"))

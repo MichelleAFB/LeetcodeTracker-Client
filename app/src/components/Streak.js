@@ -150,12 +150,20 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
               margin:"3px",
               labels:["hi","hi"],
               title:streaks.map((d)=>{
-           
-                var date= d.day instanceof Date? d.day:d.day.split(" ")
+                //console.log(d.day instanceof Date)
+                var day=d.day.toString()
+               // console.log(day)
+                day=day.split(" ")
+                var num=parseInt(monthnum[months.indexOf(day[1])])
+                var newday=new Date(day[3],num-1,day[2])
+                
+                console.log(new Date(d.day.toString()))
+                var date=new Date(d.day.toString())
+                console.log(date instanceof Date)
                 if((date instanceof Date)==false){
                  date=new Date(date[3],monthnum[months.indexOf(date[1])-1],date[2])
                 }
-                return typeof(d.day)=="Object"? date.toString().substring(0,15):d.day.toString().substring(0,15)
+                return date //typeof(d.day)=="Object"? date.toString().substring(0,15):d.day.toString().substring(0,15)
               })
       
               
@@ -262,10 +270,10 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
   
   return (
     <div class="flex h-[550px]  w-full border-l-2 border-gray-500 p-3 z-1  m-5">
-      <div class={streaks.length>4?"w-[50vw] overflow-x-scroll overflow-hidden ":"w-[50vw] overflow-x-scroll overflow-hidden "}>
+      <div class={streaks.length>3?"w-[50vw] overflow-x-scroll overflow-hidden ":"w-[50vw] overflow-x-scroll overflow-hidden "}>
       { 
       streaks!=null ?
-      <div class=" flex-col z-1 ">
+      <div class=" flex-col z-1 w-[50vw] overflow-x-scroll overflow-hidden">
         <div class="h-1/3"> 
             <Bar class="z-l"options={ourOptions} data={data} height={null} width={null} />
             </div>

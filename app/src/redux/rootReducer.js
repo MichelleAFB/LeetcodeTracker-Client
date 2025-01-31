@@ -9,6 +9,7 @@ import { addOtherUsersProblemReducer } from './addOtherUsersProblem/addOtherUser
 import { groupChallengeReducer } from './groupChallangeRequest/groupChallenge-reducer'
 import { socketReducer } from './socket/socket-reducer'
 import { reloadReducer } from './reload/reload-reducer'
+import { streakReducer } from './streakProgress/streak-reducer'
 export const rootReducer=combineReducers({
   reload:reloadReducer,
   socket:socketReducer,
@@ -19,5 +20,6 @@ export const rootReducer=combineReducers({
   editChallenge:editChallengeReducer,
   editFollowersAndFollowing:editFollowersAndFollowingReducer,
   addOtherUsersProblem:addOtherUsersProblemReducer,
-  groupChallenge:groupChallengeReducer
+  groupChallenge:groupChallengeReducer,
+  streaks:streakReducer
 })

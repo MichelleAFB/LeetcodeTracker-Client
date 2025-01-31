@@ -10,12 +10,14 @@ import { db } from '../firebase/firebase'
 import {getDocs,collection,setDoc,addDoc, getDoc, updateDoc} from 'firebase/firestore'
 import {signInWithEmailAndPassword,getAuth} from 'firebase/auth'
 import { doc } from 'firebase/firestore'
+import { setCompletedDays, setStartingPoint } from '../redux/streakProgress/streak-actions'
 
 //routing
 import { useNavigate } from 'react-router-dom'
 import Cookies from 'js-cookie'
 import {useDispatch,connect} from 'react-redux'
 import { setUser,setHeaderVisibility } from '../redux/user/editUser-actions'
+import { setDays, setPercent, uponLogin } from '../redux/streakProgress/streak-actions'
 function Auth() {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -122,17 +124,24 @@ function Auth() {
 
            
              const user=JSON.parse(sessionStorage.getItem("user"))
-             navigate("/home")
-             axios.get("http://localhost:3022/get-current-group-challenge/"+user.userId).then((response)=>{
+             //navigate("/home")
+             axios.get("http://localhost:3022/retrieve-streak-on-login/"+user.userId).then((response)=>{
               console.log(response)
              if(response.data.success){
-                if(response.data.groupChallenges.length>0){
-                  sessionStorage.setItem("currentGroupChallenges",JSON.stringify(response.data.groupChallenges))
+              console.log("STREAKOBJECT",response.data.group)
+                if(response.data.hasStreak){
+                  console.log("EXIST")
+                  dispatch(uponLogin(response.data))
+                  dispatch(setPercent(response.data.animation.percent))
+                  dispatch(setDays(response.data.animation.days))
+                  dispatch(setCompletedDays(response.data.animation.completedDays))
+                  dispatch(setStartingPoint(response.data.animation.start))
+                 // dispatch(setPercent({percent:response.data.animation.percent,streaksObject:response.data.group,lastChecked:response.data.animation.lastCheckeds}))
                   setTimeout(()=>{
                     navigate("/home")
-                  },300)
+                  },700)
                 }else{
-                  //navigate("/home")
+                  navigate("/home")
                 }
               }
              })

@@ -1,0 +1,1921 @@
+ {userId==null || userId.length==0?
+      <button class="bg-cyan-600 rounded-md p-3 w-1/3 m-2" onClick={(e)=>{
+            e.preventDefault()
+            
+            var p
+            const arr=problem.problem.attempts;
+            console.log(solution)
+            const setDocument=async()=>{
+              setSendingStreak(true)
+
+              const  docRefer=doc(db,"problems",problem.id)
+              //READ DATA
+              try{
+                const user=JSON.parse(sessionStorage.getItem("user"))
+                const userType=JSON.parse(sessionStorage.getItem("userType"))
+      
+              const data=await getDocs(problemsListCollectionRef)
+              data.docs.map((d)=>{
+               
+                const date=new Date()
+                const oldAttempts=problem.problem.attempts
+                //const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
+               // console.log(newAttemptID)
+                
+                
+                const addDocument=async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15)
+                 
+                  console.log(d.id==problemId)
+                  
+                
+                 
+                
+                  if(d.id==problemId && (solution!=null && solution!="solution")&& (code!=null && code!=initialBoilerCode)){
+                    console.log("FOUND")
+                    console.log(d)
+                    
+                    setSendingStreak(true)
+                  // problem.problem.attempts[newAttemptID]=getEditorValue()
+                 // problem.problem.attempts.push({attempt:code,date:currDate})
+           
+                  var id=0
+                  var index=0
+                  const bigAttempts={attempts:{}}
+                  const attempts={}
+                  var at=0
+
+                  
+
+
+
+           
+
+                 const prev=examples
+             
+                 const prom1=new Promise((resolve,reject)=>{
+                  
+                  
+                  var today=new Date()
+                  problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                  setTimeout(()=>{
+                      resolve()
+                  },300)
+                 })
+
+                 prom1.then(async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15);
+                 // bigAttempts.attempts[index]={attempt:code,date:currDate}
+                  console.log("SETTING DOC")
+                  console.log(bigAttempts)
+                 
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                   title:problem.problem.title,
+                   dataStructure:problem.problem.dataStructure,
+                   category:problem.problem.category,
+                   lastPracticed:currDate,
+                   hints:problem.problem.hints,
+                   no_attempts:problem.problem.no_attempts+1,
+                   attempts:problem.problem.attempts,
+                   solution:solution,
+                   userId:problem.problem.userId,
+                   boilerCode:boilerCode,
+                   prompt:prompt,
+                   examples:examples,
+                   level:level,
+                   index:timeIndex
+                  
+                 }).then((response)=>{
+                  console.log(response)
+                   
+                   
+                   
+                   setReload(!reload)
+ 
+                 });
+                  
+                 })
+              } 
+                  if(d.id==problemId && (solution!=null && solution!="solution")  && (code==null || code==initialBoilerCode)){
+                   // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("CODE  NULL |SOLUTION NOT NULL")
+                   setSendingStreak(true)
+                    console.log("here")
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                      console.log("\n\n\ncode is null.solutuion not nukll")
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:problem.problem.lastPracticed,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+                  
+               
+                  } 
+                  
+                  if(d.id==problemId && (solution=="solution" || solution==null) && (code!=null  || code!=initialBoilerCode)){
+                   // console.log("SOLUTION NULL| CODE NOT NULL")
+                   // problem.problem.attempts[newAttemptID]=code
+                    console.log("HERE\n\n\n\n")
+                    var id=0
+                    var index=0
+                    var bigAttempts={attempts:{}}
+                    const attempts={}
+                    var at=0
+                    var today=new Date()
+                    problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                   
+                 
+
+                   setTimeout(async()=>{
+                              // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("SETTING DOCUMENT")
+                   console.log("SOLUTION NULL| CODE NOT NULL\n")
+                    
+                    console.log(bigAttempts)
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                     await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:currDate,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:problem.problem.solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+
+                   },400)
+                  } 
+
+                }
+               addDocument()
+
+              })
+              }catch(err){
+                console.log(err)
+              }
+            }
+        
+              setSendingStreak(true)
+                   var curr=new Date()
+                   curr=curr.toString().substring(0,15)
+                   console.log(problem.userId)
+                   
+                   const user=JSON.parse(sessionStorage.getItem("user"))
+                   console.log(problem)
+                    axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
+                     
+                      console.log(response)
+                    var checkAllStreaks=JSON.parse(sessionStorage.getItem("groupChallengesData"))
+                      var checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart")) 
+                      socket.emit("UPDATE_GROUP_CHALLENGE",{user:user},(cb)=>{
+                        console.log("-----CALLBACK",cb)
+                        socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+                          console.log("\n\n\n FROM SOCKET",data)
+                          if(data.groupChallenge!=null){
+                        dispatch(setGroupChallenges(data.groupChallenge))
+                          }
+                         })   
+                      }) 
+                      console.log(response.data)
+                      if(response.data.message!=null){
+                       
+                       
+                        alert(response.data.message)
+                    
+                        setSendingStreak(false)
+
+                      }else if(response.data.success){
+                        const user =JSON.parse(sessionStorage.getItem("user"))
+                     
+                     
+                      
+                        var day=new Date()
+                        const date=day.toString().substring(0,15)
+                       
+                        setDocument().then((response)=>{
+                          //resetEditorValue()
+                          console.log(response)
+                          console.log(p) 
+                         alert("SUCCESS+++")
+                         
+                            axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+                              console.log("RESPONSE STREAK ANIMATION",response)
+                              if(response.data.streakExists){
+                                dispatch(setPercent(response.data.percent))
+                                dispatch(setDays(response.data.days))
+                                dispatch(setCompletedDays(response.data.completedDays))
+                                dispatch(setStartingPoint(response.data.start))
+                                setTimeout(()=>{
+                                  dispatch(fireOff())
+                                },500)
+                              }else{
+                                
+                              }
+                            })
+                          
+                           setSendingStreak(false)
+
+                        })
+                      }
+                      
+                     })
+           
+            
+          }}>
+           <p class="font-bold text-white ">Submit</p> 
+          </button>
+          : <button class="bg-cyan-600 rounded-md p-3 w-1/2 m-2" onClick={async(e)=>{
+            e.preventDefault()
+            setSendingStreak(true)
+            var p
+            const arr=problem.problem.attempts;
+            
+            const otherUser=collection(db,"users")
+            const userData=await getDocs(otherUser)
+            const us=JSON.parse(sessionStorage.getItem("user"))
+           userData.docs.map(async(d)=>{
+        
+            if(d.data().userId==us.userId){
+              console.log(d.data().userId,us.userId)
+              console.log(d.data())
+             // console.log(problem)
+              const prob=problem.problem
+              const problemsRef=query(collection(db,"problems"),where("userId","==",us.userId))
+              const problems=await getDocs(problemsRef)
+              console.log(prob)
+              var found=false
+              problems.docs.map((p)=>{
+                
+                if(p.data().title==prob.title){
+                  found=true
+                }
+              })
+              if(found){
+                console.log("FOUND")
+              }else{
+                const cDate=new Date()
+                const currDate=cDate.toString().substring(0,15)
+                const newProblem={
+                 
+                  title:prob.title,
+                  dataStructure:prob.dataStructure,
+                  category:prob.category,
+                  lastPracticed:new Date(),
+                  hints:prob.hints,
+                  link:prob.link!=null? prob.link:null,
+                  acRate:prob.acRate!=null?prob.acRate:0,
+                  no_attempts:1,
+                  page:prob.page!=null?prob.page:1,
+                  attempts:[{attempt:code,date:currDate}],
+                  solution:prob.solution,
+                  titleSlug:prob.titleSlug!=null? prob.titleSlug:"",
+                  userId:us.userId,
+                  tags:prob.tags!=null? prob.tags:[], 
+                  topicTags:prob.tags!=null? prob.tags:[], 
+                  boilerCode:prob.boilerCode,
+                  prompt:prob.prompt,
+                  examples:prob.examples,
+                  level:prob.level,
+                  difficulty:prob.level,
+                  index:0
+                }
+                
+                const added=await addDoc(collection(db,"problems"),newProblem).then(()=>{
+                  axios.post("http://localhost:3022/add-to-streak",{problem:newProblem,problem_id:newProblem.id,userId:us.userId,day:currDate}).then((response)=>{
+                    if(response.data.message!=null){
+                      alert(response.data.message)
+                      setSendingStreak(false)
+                      alert("SUCCESS+++")
+                    }
+                    if(response.data.streak){
+                      setSendingStreak(false)
+                      alert("SUCCESS+++")
+                    }
+                  })
+                })
+                console.log("\n\nNEW PROBLEM",newProblem)
+              }
+              
+            }
+           })
+           /* const setDocument=async()=>{
+              setSendingStreak(true)
+
+              const  docRefer=doc(db,"problems",problem.id)
+              //READ DATA
+              try{
+                const user=JSON.parse(sessionStorage.getItem("user"))
+                const userType=JSON.parse(sessionStorage.getItem("userType"))
+      
+              const data=await getDocs(problemsListCollectionRef)
+              data.docs.map((d)=>{
+               
+                const date=new Date()
+                const oldAttempts=problem.problem.attempts
+                //const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
+               // console.log(newAttemptID)
+                
+                
+                const addDocument=async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15)
+                 
+                  console.log(d.id==problemId)
+                  
+                
+                 
+                
+                  if(d.id==problemId && (solution!=null && solution!="solution")&& (code!=null && code!=initialBoilerCode)){
+                    console.log("FOUND")
+                    console.log(d)
+                    
+                    setSendingStreak(true)
+                  // problem.problem.attempts[newAttemptID]=getEditorValue()
+                 // problem.problem.attempts.push({attempt:code,date:currDate})
+           
+                  var id=0
+                  var index=0
+                  const bigAttempts={attempts:{}}
+                  const attempts={}
+                  var at=0
+
+                  
+
+
+
+           
+
+                 const prev=examples
+             
+                 const prom1=new Promise((resolve,reject)=>{
+                  
+                  
+                  var today=new Date()
+                  problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                  setTimeout(()=>{
+                      resolve()
+                  },300)
+                 })
+
+                 prom1.then(async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15);
+                 // bigAttempts.attempts[index]={attempt:code,date:currDate}
+                  console.log("SETTING DOC")
+                  console.log(bigAttempts)
+                 
+                  await updateDoc(docRefer, {
+                    id:problem.id,
+                   title:problem.problem.title,
+                   dataStructure:problem.problem.dataStructure,
+                   category:problem.problem.category,
+                   lastPracticed:currDate,
+                   hints:problem.problem.hints,
+                   no_attempts:problem.problem.no_attempts+1,
+                   attempts:problem.problem.attempts,
+                   solution:solution,
+                   userId:problem.problem.userId,
+                   boilerCode:boilerCode,
+                   prompt:prompt,
+                   examples:examples,
+                   level:level,
+                   index:timeIndex
+                  
+                 }).then((response)=>{
+                  console.log(response)
+                   
+                   
+                   
+                   setReload(!reload)
+ 
+                 });
+                  
+                 })
+              } 
+                  if(d.id==problemId && (solution!=null && solution!="solution")  && (code==null || code==initialBoilerCode)){
+                   // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("CODE  NULL |SOLUTION NOT NULL")
+                   setSendingStreak(true)
+                    console.log("here")
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                      console.log("\n\n\ncode is null.solutuion not nukll")
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:problem.problem.lastPracticed,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+                  
+               
+                  } 
+                  
+                  if(d.id==problemId && (solution=="solution" || solution==null) && (code!=null  || code!=initialBoilerCode)){
+                   // console.log("SOLUTION NULL| CODE NOT NULL")
+                   // problem.problem.attempts[newAttemptID]=code
+                    console.log("HERE\n\n\n\n")
+                    var id=0
+                    var index=0
+                    var bigAttempts={attempts:{}}
+                    const attempts={}
+                    var at=0
+                    var today=new Date()
+                    problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                   
+                 
+
+                   setTimeout(async()=>{
+                              // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("SETTING DOCUMENT")
+                   console.log("SOLUTION NULL| CODE NOT NULL\n")
+                    
+                    console.log(bigAttempts)
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                     await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:currDate,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:problem.problem.solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+
+                   },400)
+                  } 
+
+                }
+               addDocument()
+
+              })
+              }catch(err){
+                console.log(err)
+              }
+            }
+        
+              setSendingStreak(true)
+                   var curr=new Date()
+                   curr=curr.toString().substring(0,15)
+                   console.log(problem.userId)
+                   
+                   const user=JSON.parse(sessionStorage.getItem("user"))
+                   console.log(problem)
+                   if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    });
+                  } else {
+                    console.log("Geolocation is not supported by this browser.");
+                  }
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                      axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges,latitude:latitude,longitude:longitude}).then((response)=>{
+                      
+                      console.log(response)
+                      if(response.data.message!=null){
+                        alert(response.data.message)
+                        setSendingStreak(false)
+
+                      }else if(response.data.success){
+                        const user =JSON.parse(sessionStorage.getItem("user"))
+                        var day=new Date()
+                        const date=day.toString().substring(0,15)
+                       
+                        setDocument().then((response)=>{
+                          //resetEditorValue()
+                          console.log(response)
+                          console.log(p)
+                          alert("SUCCESS+++")
+                           setSendingStreak(false)
+                    
+                          
+                        })
+                        
+                      
+
+                      }
+                      
+                     })
+                    });
+                  } else {
+                    alert("Geolocation is not supported by this browser.");
+                  }
+                    */
+           
+            
+          }}>
+           <p class="font-bold text-white ">Submit</p> 
+          </button>
+          }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+             {userId==null || userId.length==0?
+      <button class="bg-cyan-600 rounded-md p-3 w-1/3 m-2" onClick={(e)=>{
+            e.preventDefault()
+            
+            var p
+            const arr=problem.problem.attempts;
+            console.log(solution)
+            const setDocument=async()=>{
+              setSendingStreak(true)
+
+              const  docRefer=doc(db,"problems",problem.id)
+              //READ DATA
+              try{
+                const user=JSON.parse(sessionStorage.getItem("user"))
+                const userType=JSON.parse(sessionStorage.getItem("userType"))
+      
+              const data=await getDocs(problemsListCollectionRef)
+              data.docs.map((d)=>{
+               
+                const date=new Date()
+                const oldAttempts=problem.problem.attempts
+                //const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
+               // console.log(newAttemptID)
+                
+                
+                const addDocument=async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15)
+                 
+                  console.log(d.id==problemId)
+                  
+                
+                 
+                
+                  if(d.id==problemId && (solution!=null && solution!="solution")&& (code!=null && code!=initialBoilerCode)){
+                    console.log("FOUND")
+                    console.log(d)
+                    
+                    setSendingStreak(true)
+                  // problem.problem.attempts[newAttemptID]=getEditorValue()
+                 // problem.problem.attempts.push({attempt:code,date:currDate})
+           
+                  var id=0
+                  var index=0
+                  const bigAttempts={attempts:{}}
+                  const attempts={}
+                  var at=0
+
+                  
+
+
+
+           
+
+                 const prev=examples
+             
+                 const prom1=new Promise((resolve,reject)=>{
+                  
+                  
+                  var today=new Date()
+                  problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                  setTimeout(()=>{
+                      resolve()
+                  },300)
+                 })
+
+                 prom1.then(async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15);
+                 // bigAttempts.attempts[index]={attempt:code,date:currDate}
+                  console.log("SETTING DOC")
+                  console.log(bigAttempts)
+                 
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                   title:problem.problem.title,
+                   dataStructure:problem.problem.dataStructure,
+                   category:problem.problem.category,
+                   lastPracticed:currDate,
+                   hints:problem.problem.hints,
+                   no_attempts:problem.problem.no_attempts+1,
+                   attempts:problem.problem.attempts,
+                   solution:solution,
+                   userId:problem.problem.userId,
+                   boilerCode:boilerCode,
+                   prompt:prompt,
+                   examples:examples,
+                   level:level,
+                   index:timeIndex
+                  
+                 }).then((response)=>{
+                  console.log(response)
+                   
+                   
+                   
+                   setReload(!reload)
+ 
+                 });
+                  
+                 })
+              } 
+                  if(d.id==problemId && (solution!=null && solution!="solution")  && (code==null || code==initialBoilerCode)){
+                   // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("CODE  NULL |SOLUTION NOT NULL")
+                   setSendingStreak(true)
+                    console.log("here")
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                      console.log("\n\n\ncode is null.solutuion not nukll")
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:problem.problem.lastPracticed,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+                  
+               
+                  } 
+                  
+                  if(d.id==problemId && (solution=="solution" || solution==null) && (code!=null  || code!=initialBoilerCode)){
+                   // console.log("SOLUTION NULL| CODE NOT NULL")
+                   // problem.problem.attempts[newAttemptID]=code
+                    console.log("HERE\n\n\n\n")
+                    var id=0
+                    var index=0
+                    var bigAttempts={attempts:{}}
+                    const attempts={}
+                    var at=0
+                    var today=new Date()
+                    problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                   
+                 
+
+                   setTimeout(async()=>{
+                              // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("SETTING DOCUMENT")
+                   console.log("SOLUTION NULL| CODE NOT NULL\n")
+                    
+                    console.log(bigAttempts)
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                     await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:currDate,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:problem.problem.solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+
+                   },400)
+                  } 
+
+                }
+               addDocument()
+
+              })
+              }catch(err){
+                console.log(err)
+              }
+            }
+        
+              setSendingStreak(true)
+                   var curr=new Date()
+                   curr=curr.toString().substring(0,15)
+                   console.log(problem.userId)
+                   
+                   const user=JSON.parse(sessionStorage.getItem("user"))
+                   console.log(problem)
+                    axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
+                     
+                      console.log(response)
+                    var checkAllStreaks=JSON.parse(sessionStorage.getItem("groupChallengesData"))
+                      var checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart")) 
+                      socket.emit("UPDATE_GROUP_CHALLENGE",{user:user},(cb)=>{
+                        console.log("-----CALLBACK",cb)
+                        socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+                          console.log("\n\n\n FROM SOCKET",data)
+                          if(data.groupChallenge!=null){
+                        dispatch(setGroupChallenges(data.groupChallenge))
+                          }
+                         })   
+                      }) 
+                      console.log(response.data)
+                      if(response.data.message!=null){
+                       
+                       
+                        alert(response.data.message)
+                    
+                        setSendingStreak(false)
+
+                      }else if(response.data.success){
+                        const user =JSON.parse(sessionStorage.getItem("user"))
+                     
+                     
+                      
+                        var day=new Date()
+                        const date=day.toString().substring(0,15)
+                       
+                        setDocument().then((response)=>{
+                          //resetEditorValue()
+                          console.log(response)
+                          console.log(p) 
+                         alert("SUCCESS+++")
+                         
+                            axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+                              console.log("RESPONSE STREAK ANIMATION",response)
+                              if(response.data.streakExists){
+                                dispatch(setPercent(response.data.percent))
+                                dispatch(setDays(response.data.days))
+                                dispatch(setCompletedDays(response.data.completedDays))
+                                dispatch(setStartingPoint(response.data.start))
+                                setTimeout(()=>{
+                                  dispatch(fireOff())
+                                },500)
+                              }else{
+                                
+                              }
+                            })
+                          
+                           setSendingStreak(false)
+
+                        })
+                      }
+                      
+                     })
+           
+            
+          }}>
+           <p class="font-bold text-white ">Submit</p> 
+          </button>
+          : <button class="bg-cyan-600 rounded-md p-3 w-1/2 m-2" onClick={async(e)=>{
+            e.preventDefault()
+            setSendingStreak(true)
+            var p
+            const arr=problem.problem.attempts;
+            
+            const otherUser=collection(db,"users")
+            const userData=await getDocs(otherUser)
+            const us=JSON.parse(sessionStorage.getItem("user"))
+           userData.docs.map(async(d)=>{
+        
+            if(d.data().userId==us.userId){
+              console.log(d.data().userId,us.userId)
+              console.log(d.data())
+             // console.log(problem)
+              const prob=problem.problem
+              const problemsRef=query(collection(db,"problems"),where("userId","==",us.userId))
+              const problems=await getDocs(problemsRef)
+              console.log(prob)
+              var found=false
+              problems.docs.map((p)=>{
+                
+                if(p.data().title==prob.title){
+                  found=true
+                }
+              })
+              if(found){
+                console.log("FOUND")
+              }else{
+                const cDate=new Date()
+                const currDate=cDate.toString().substring(0,15)
+                const newProblem={
+                 
+                  title:prob.title,
+                  dataStructure:prob.dataStructure,
+                  category:prob.category,
+                  lastPracticed:new Date(),
+                  hints:prob.hints,
+                  link:prob.link!=null? prob.link:null,
+                  acRate:prob.acRate!=null?prob.acRate:0,
+                  no_attempts:1,
+                  page:prob.page!=null?prob.page:1,
+                  attempts:[{attempt:code,date:currDate}],
+                  solution:prob.solution,
+                  titleSlug:prob.titleSlug!=null? prob.titleSlug:"",
+                  userId:us.userId,
+                  tags:prob.tags!=null? prob.tags:[], 
+                  topicTags:prob.tags!=null? prob.tags:[], 
+                  boilerCode:prob.boilerCode,
+                  prompt:prob.prompt,
+                  examples:prob.examples,
+                  level:prob.level,
+                  difficulty:prob.level,
+                  index:0
+                }
+                
+                const added=await addDoc(collection(db,"problems"),newProblem).then(()=>{
+                  axios.post("http://localhost:3022/add-to-streak",{problem:newProblem,problem_id:newProblem.id,userId:us.userId,day:currDate}).then((response)=>{
+                    if(response.data.message!=null){
+                      alert(response.data.message)
+                      setSendingStreak(false)
+                      alert("SUCCESS+++")
+                    }
+                    if(response.data.streak){
+                      setSendingStreak(false)
+                      alert("SUCCESS+++")
+                    }
+                  })
+                })
+                console.log("\n\nNEW PROBLEM",newProblem)
+              }
+              
+            }
+           })
+           /* const setDocument=async()=>{
+              setSendingStreak(true)
+
+              const  docRefer=doc(db,"problems",problem.id)
+              //READ DATA
+              try{
+                const user=JSON.parse(sessionStorage.getItem("user"))
+                const userType=JSON.parse(sessionStorage.getItem("userType"))
+      
+              const data=await getDocs(problemsListCollectionRef)
+              data.docs.map((d)=>{
+               
+                const date=new Date()
+                const oldAttempts=problem.problem.attempts
+                //const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
+               // console.log(newAttemptID)
+                
+                
+                const addDocument=async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15)
+                 
+                  console.log(d.id==problemId)
+                  
+                
+                 
+                
+                  if(d.id==problemId && (solution!=null && solution!="solution")&& (code!=null && code!=initialBoilerCode)){
+                    console.log("FOUND")
+                    console.log(d)
+                    
+                    setSendingStreak(true)
+                  // problem.problem.attempts[newAttemptID]=getEditorValue()
+                 // problem.problem.attempts.push({attempt:code,date:currDate})
+           
+                  var id=0
+                  var index=0
+                  const bigAttempts={attempts:{}}
+                  const attempts={}
+                  var at=0
+
+                  
+
+
+
+           
+
+                 const prev=examples
+             
+                 const prom1=new Promise((resolve,reject)=>{
+                  
+                  
+                  var today=new Date()
+                  problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                  setTimeout(()=>{
+                      resolve()
+                  },300)
+                 })
+
+                 prom1.then(async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15);
+                 // bigAttempts.attempts[index]={attempt:code,date:currDate}
+                  console.log("SETTING DOC")
+                  console.log(bigAttempts)
+                 
+                  await updateDoc(docRefer, {
+                    id:problem.id,
+                   title:problem.problem.title,
+                   dataStructure:problem.problem.dataStructure,
+                   category:problem.problem.category,
+                   lastPracticed:currDate,
+                   hints:problem.problem.hints,
+                   no_attempts:problem.problem.no_attempts+1,
+                   attempts:problem.problem.attempts,
+                   solution:solution,
+                   userId:problem.problem.userId,
+                   boilerCode:boilerCode,
+                   prompt:prompt,
+                   examples:examples,
+                   level:level,
+                   index:timeIndex
+                  
+                 }).then((response)=>{
+                  console.log(response)
+                   
+                   
+                   
+                   setReload(!reload)
+ 
+                 });
+                  
+                 })
+              } 
+                  if(d.id==problemId && (solution!=null && solution!="solution")  && (code==null || code==initialBoilerCode)){
+                   // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("CODE  NULL |SOLUTION NOT NULL")
+                   setSendingStreak(true)
+                    console.log("here")
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                      console.log("\n\n\ncode is null.solutuion not nukll")
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:problem.problem.lastPracticed,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+                  
+               
+                  } 
+                  
+                  if(d.id==problemId && (solution=="solution" || solution==null) && (code!=null  || code!=initialBoilerCode)){
+                   // console.log("SOLUTION NULL| CODE NOT NULL")
+                   // problem.problem.attempts[newAttemptID]=code
+                    console.log("HERE\n\n\n\n")
+                    var id=0
+                    var index=0
+                    var bigAttempts={attempts:{}}
+                    const attempts={}
+                    var at=0
+                    var today=new Date()
+                    problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                   
+                 
+
+                   setTimeout(async()=>{
+                              // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("SETTING DOCUMENT")
+                   console.log("SOLUTION NULL| CODE NOT NULL\n")
+                    
+                    console.log(bigAttempts)
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                     await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:currDate,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:problem.problem.solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+
+                   },400)
+                  } 
+
+                }
+               addDocument()
+
+              })
+              }catch(err){
+                console.log(err)
+              }
+            }
+        
+              setSendingStreak(true)
+                   var curr=new Date()
+                   curr=curr.toString().substring(0,15)
+                   console.log(problem.userId)
+                   
+                   const user=JSON.parse(sessionStorage.getItem("user"))
+                   console.log(problem)
+                   if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    });
+                  } else {
+                    console.log("Geolocation is not supported by this browser.");
+                  }
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                      axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges,latitude:latitude,longitude:longitude}).then((response)=>{
+                      
+                      console.log(response)
+                      if(response.data.message!=null){
+                        alert(response.data.message)
+                        setSendingStreak(false)
+
+                      }else if(response.data.success){
+                        const user =JSON.parse(sessionStorage.getItem("user"))
+                        var day=new Date()
+                        const date=day.toString().substring(0,15)
+                       
+                        setDocument().then((response)=>{
+                          //resetEditorValue()
+                          console.log(response)
+                          console.log(p)
+                          alert("SUCCESS+++")
+                           setSendingStreak(false)
+                    
+                          
+                        })
+                        
+                      
+
+                      }
+                      
+                     })
+                    });
+                  } else {
+                    alert("Geolocation is not supported by this browser.");
+                  }
+                    */
+           
+            
+          }}>
+           <p class="font-bold text-white ">Submit</p> 
+          </button>
+          }
+
+
+
+
+
+
+          /////ACTUALLLL OLD BETTER THAN^
+             {userId==null || userId.length==0?
+      <button class="bg-cyan-600 rounded-md p-3 w-1/3 m-2" onClick={(e)=>{
+            e.preventDefault()
+            
+            var p
+            const arr=problem.problem.attempts;
+            console.log(solution)
+            const setDocument=async()=>{
+              setSendingStreak(true)
+
+              const  docRefer=doc(db,"problems",problem.id)
+              //READ DATA
+              try{
+                const user=JSON.parse(sessionStorage.getItem("user"))
+                const userType=JSON.parse(sessionStorage.getItem("userType"))
+      
+              const data=await getDocs(problemsListCollectionRef)
+              data.docs.map((d)=>{
+               
+                const date=new Date()
+                const oldAttempts=problem.problem.attempts
+                //const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
+               // console.log(newAttemptID)
+                
+                
+                const addDocument=async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15)
+                 
+                  console.log(d.id==problemId)
+                  
+                
+                 
+                
+                  if(d.id==problemId && (solution!=null && solution!="solution")&& (code!=null && code!=initialBoilerCode)){
+                    console.log("FOUND")
+                    console.log(d)
+                    
+                    setSendingStreak(true)
+                  // problem.problem.attempts[newAttemptID]=getEditorValue()
+                 // problem.problem.attempts.push({attempt:code,date:currDate})
+           
+                  var id=0
+                  var index=0
+                  const bigAttempts={attempts:{}}
+                  const attempts={}
+                  var at=0
+
+                  
+
+
+
+           
+
+                 const prev=examples
+             
+                 const prom1=new Promise((resolve,reject)=>{
+                  
+                  
+                  var today=new Date()
+                  problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                  setTimeout(()=>{
+                      resolve()
+                  },300)
+                 })
+
+                 prom1.then(async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15);
+                 // bigAttempts.attempts[index]={attempt:code,date:currDate}
+                  console.log("SETTING DOC")
+                  console.log(bigAttempts)
+                 
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                   title:problem.problem.title,
+                   dataStructure:problem.problem.dataStructure,
+                   category:problem.problem.category,
+                   lastPracticed:currDate,
+                   hints:problem.problem.hints,
+                   no_attempts:problem.problem.no_attempts+1,
+                   attempts:problem.problem.attempts,
+                   solution:solution,
+                   userId:problem.problem.userId,
+                   boilerCode:boilerCode,
+                   prompt:prompt,
+                   examples:examples,
+                   level:level,
+                   index:timeIndex
+                  
+                 }).then((response)=>{
+                  console.log(response)
+                   
+                   
+                   
+                   setReload(!reload)
+ 
+                 });
+                  
+                 })
+                 
+              } 
+                  if(d.id==problemId && (solution!=null && solution!="solution")  && (code==null || code==initialBoilerCode)){
+                   // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("CODE  NULL |SOLUTION NOT NULL")
+                   setSendingStreak(true)
+                    console.log("here")
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                      console.log("\n\n\ncode is null.solutuion not nukll")
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:problem.problem.lastPracticed,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+                  
+               
+                  } 
+                  
+                  if(d.id==problemId && (solution=="solution" || solution==null) && (code!=null  || code!=initialBoilerCode)){
+                   // console.log("SOLUTION NULL| CODE NOT NULL")
+                   // problem.problem.attempts[newAttemptID]=code
+                    console.log("HERE\n\n\n\n")
+                    var id=0
+                    var index=0
+                    var bigAttempts={attempts:{}}
+                    const attempts={}
+                    var at=0
+                    var today=new Date()
+                    problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                   
+                 
+
+                   setTimeout(async()=>{
+                              // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("SETTING DOCUMENT")
+                   console.log("SOLUTION NULL| CODE NOT NULL\n")
+                    
+                    console.log(bigAttempts)
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                     await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:currDate,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:problem.problem.solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+
+                   },400)
+                  } 
+
+                }
+               addDocument()
+
+              })
+              }catch(err){
+                console.log(err)
+              }
+            }
+        
+              setSendingStreak(true)
+                   var curr=new Date()
+                   curr=curr.toString().substring(0,15)
+                   console.log(problem.userId)
+                   
+                   const user=JSON.parse(sessionStorage.getItem("user"))
+                   console.log(problem)
+
+                   axios.post("http://localhost:3022/add-to-streak",{dont:true,problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
+                    
+                    console.log(response)
+                  var checkAllStreaks=JSON.parse(sessionStorage.getItem("groupChallengesData"))
+                    var checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart")) 
+                    socket.emit("UPDATE_GROUP_CHALLENGE",{user:user},(cb)=>{
+                      console.log("-----CALLBACK",cb)
+                      socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+                        console.log("\n\n\n FROM SOCKET",data)
+                        if(data.groupChallenge!=null){
+                      dispatch(setGroupChallenges(data.groupChallenge))
+                        }
+                       })   
+                    }) 
+                    console.log(response.data)
+                    if(response.data.message!=null){
+                     
+                     
+                      alert(response.data.message)
+                  
+                      setSendingStreak(false)
+
+                    }else if(response.data.success){
+                      const user =JSON.parse(sessionStorage.getItem("user"))
+                   
+                   
+                    
+                      var day=new Date()
+                      const date=day.toString().substring(0,15)
+                      axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+                        console.log("RESPONSE STREAK ANIMATION",response)
+                        if(response.data.streakExists){
+                          dispatch(setPercent(response.data.percent))
+                          dispatch(setDays(response.data.days))
+                          dispatch(setCompletedDays(response.data.completedDays))
+                          dispatch(setStartingPoint(response.data.start))
+                          setTimeout(()=>{
+                            dispatch(fireOff())
+                          },500)
+                        }else{
+                          
+                        }
+                      })
+                     /*
+                      setDocument().then((response)=>{
+                        //resetEditorValue()
+                        console.log(response)
+                        console.log(p) 
+                       alert("SUCCESS+++")
+                       
+                          axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+                            console.log("RESPONSE STREAK ANIMATION",response)
+                            if(response.data.streakExists){
+                              dispatch(setPercent(response.data.percent))
+                              dispatch(setDays(response.data.days))
+                              dispatch(setCompletedDays(response.data.completedDays))
+                              dispatch(setStartingPoint(response.data.start))
+                              setTimeout(()=>{
+                                dispatch(fireOff())
+                              },500)
+                            }else{
+                              
+                            }
+                          })
+                        
+                         setSendingStreak(false)
+
+                      })*/
+                    }
+                    
+                   })
+                    /*axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr}).then((response)=>{
+                     
+                      console.log(response)
+                    var checkAllStreaks=JSON.parse(sessionStorage.getItem("groupChallengesData"))
+                      var checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart")) 
+                      socket.emit("UPDATE_GROUP_CHALLENGE",{user:user},(cb)=>{
+                        console.log("-----CALLBACK",cb)
+                        socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+                          console.log("\n\n\n FROM SOCKET",data)
+                          if(data.groupChallenge!=null){
+                        dispatch(setGroupChallenges(data.groupChallenge))
+                          }
+                         })   
+                      }) 
+                      console.log(response.data)
+                      if(response.data.message!=null){
+                       
+                       
+                        alert(response.data.message)
+                    
+                        setSendingStreak(false)
+
+                      }else if(response.data.success){
+                        const user =JSON.parse(sessionStorage.getItem("user"))
+                     
+                     
+                      
+                        var day=new Date()
+                        const date=day.toString().substring(0,15)
+                       
+                        setDocument().then((response)=>{
+                          //resetEditorValue()
+                          console.log(response)
+                          console.log(p) 
+                         alert("SUCCESS+++")
+                         
+                            axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+                              console.log("RESPONSE STREAK ANIMATION",response)
+                              if(response.data.streakExists){
+                                dispatch(setPercent(response.data.percent))
+                                dispatch(setDays(response.data.days))
+                                dispatch(setCompletedDays(response.data.completedDays))
+                                dispatch(setStartingPoint(response.data.start))
+                                setTimeout(()=>{
+                                  dispatch(fireOff())
+                                },500)
+                              }else{
+                                
+                              }
+                            })
+                          
+                           setSendingStreak(false)
+
+                        })
+                      }
+                      
+                     })*/
+           
+            
+          }}>
+           <p class="font-bold text-white ">Submit</p> 
+          </button>
+          : <button class="bg-cyan-600 rounded-md p-3 w-1/2 m-2" onClick={async(e)=>{
+            e.preventDefault()
+            setSendingStreak(true)
+            var p
+            const arr=problem.problem.attempts;
+            
+            const otherUser=collection(db,"users")
+            const userData=await getDocs(otherUser)
+            const us=JSON.parse(sessionStorage.getItem("user"))
+           userData.docs.map(async(d)=>{
+        
+            if(d.data().userId==us.userId){
+              console.log(d.data().userId,us.userId)
+              console.log(d.data())
+             // console.log(problem)
+              const prob=problem.problem
+              const problemsRef=query(collection(db,"problems"),where("userId","==",us.userId))
+              const problems=await getDocs(problemsRef)
+              console.log(prob)
+              var found=false
+              problems.docs.map((p)=>{
+                
+                if(p.data().title==prob.title){
+                  found=true
+                }
+              })
+              if(found){
+                console.log("FOUND")
+              }else{
+                const cDate=new Date()
+                const currDate=cDate.toString().substring(0,15)
+                const newProblem={
+                 
+                  title:prob.title,
+                  dataStructure:prob.dataStructure,
+                  category:prob.category,
+                  lastPracticed:new Date(),
+                  hints:prob.hints,
+                  link:prob.link!=null? prob.link:null,
+                  acRate:prob.acRate!=null?prob.acRate:0,
+                  no_attempts:1,
+                  page:prob.page!=null?prob.page:1,
+                  attempts:[{attempt:code,date:currDate}],
+                  solution:prob.solution,
+                  titleSlug:prob.titleSlug!=null? prob.titleSlug:"",
+                  userId:us.userId,
+                  tags:prob.tags!=null? prob.tags:[], 
+                  topicTags:prob.tags!=null? prob.tags:[], 
+                  boilerCode:prob.boilerCode,
+                  prompt:prob.prompt,
+                  examples:prob.examples,
+                  level:prob.level,
+                  difficulty:prob.level,
+                  index:0
+                }
+                
+                const added=await addDoc(collection(db,"problems"),newProblem).then(()=>{
+                  axios.post("http://localhost:3022/add-to-streak",{problem:newProblem,problem_id:newProblem.id,userId:us.userId,day:currDate}).then((response)=>{
+                    if(response.data.message!=null){
+                      alert(response.data.message)
+                      setSendingStreak(false)
+                      alert("SUCCESS+++")
+                    }
+                    if(response.data.streak){
+                      setSendingStreak(false)
+                      alert("SUCCESS+++")
+                    }
+                  })
+                })
+                console.log("\n\nNEW PROBLEM",newProblem)
+              }
+              
+            }
+           })
+            const setDocument=async()=>{
+              setSendingStreak(true)
+
+              const  docRefer=doc(db,"problems",problem.id)
+              //READ DATA
+              try{
+                const user=JSON.parse(sessionStorage.getItem("user"))
+                const userType=JSON.parse(sessionStorage.getItem("userType"))
+      
+              const data=await getDocs(problemsListCollectionRef)
+              data.docs.map((d)=>{
+               
+                const date=new Date()
+                const oldAttempts=problem.problem.attempts
+                //const newAttemptID=parseInt(Object.keys(problem.problem.attempts))+1
+               // console.log(newAttemptID)
+                
+                
+                const addDocument=async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15)
+                 
+                  console.log(d.id==problemId)
+                  
+                
+                 if(alreadyHave){
+                
+                  if(d.id==problemId && (solution!=null && solution!="solution")&& (code!=null && code!=initialBoilerCode)){
+                    console.log("FOUND")
+                    console.log(d)
+                    
+                    setSendingStreak(true)
+                  // problem.problem.attempts[newAttemptID]=getEditorValue()
+                 // problem.problem.attempts.push({attempt:code,date:currDate})
+           
+                  var id=0
+                  var index=0
+                  const bigAttempts={attempts:{}}
+                  const attempts={}
+                  var at=0
+
+                  
+
+
+
+           
+
+                 const prev=examples
+             
+                 const prom1=new Promise((resolve,reject)=>{
+                  
+                  
+                  var today=new Date()
+                  problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                  setTimeout(()=>{
+                      resolve()
+                  },300)
+                 })
+
+                 prom1.then(async()=>{
+                  const cDate=new Date()
+                  const currDate=cDate.toString().substring(0,15);
+                 // bigAttempts.attempts[index]={attempt:code,date:currDate}
+                  console.log("SETTING DOC")
+                  console.log(bigAttempts)
+                 
+                  await updateDoc(docRefer, {
+                    id:problem.id,
+                   title:problem.problem.title,
+                   dataStructure:problem.problem.dataStructure,
+                   category:problem.problem.category,
+                   lastPracticed:currDate,
+                   hints:problem.problem.hints,
+                   no_attempts:problem.problem.no_attempts+1,
+                   attempts:problem.problem.attempts,
+                   solution:solution,
+                   userId:problem.problem.userId,
+                   boilerCode:boilerCode,
+                   prompt:prompt,
+                   examples:examples,
+                   level:level,
+                   index:timeIndex
+                  
+                 }).then((response)=>{
+                  console.log(response)
+                   
+                   
+                   
+                   setReload(!reload)
+ 
+                 });
+                  
+                 })
+              } 
+                  if(d.id==problemId && (solution!=null && solution!="solution")  && (code==null || code==initialBoilerCode)){
+                   // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("CODE  NULL |SOLUTION NOT NULL")
+                   setSendingStreak(true)
+                    console.log("here")
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                      console.log("\n\n\ncode is null.solutuion not nukll")
+                  await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:problem.problem.lastPracticed,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+                  
+               
+                  } 
+                  
+                  if(d.id==problemId && (solution=="solution" || solution==null) && (code!=null  || code!=initialBoilerCode)){
+                   // console.log("SOLUTION NULL| CODE NOT NULL")
+                   // problem.problem.attempts[newAttemptID]=code
+                    console.log("HERE\n\n\n\n")
+                    var id=0
+                    var index=0
+                    var bigAttempts={attempts:{}}
+                    const attempts={}
+                    var at=0
+                    var today=new Date()
+                    problem.problem.attempts.push({date:today.toString().substring(0,15),attempt:code})
+                   
+                 
+
+                   setTimeout(async()=>{
+                              // console.log(d.problem.hasOwnProperty(boilerCode))
+                   console.log("SETTING DOCUMENT")
+                   console.log("SOLUTION NULL| CODE NOT NULL\n")
+                    
+                    console.log(bigAttempts)
+                      const cDate=new Date()
+                      const currDate=cDate.toString().substring(0,15)
+                     await setDoc(docRefer, {
+                    id:problem.id,
+                    title:problem.problem.title,
+                    dataStructure:problem.problem.dataStructure,
+                    category:problem.problem.category,
+                    lastPracticed:currDate,
+                    hints:problem.problem.hints,
+                    no_attempts:problem.problem.no_attempts,
+                    attempts:problem.problem.attempts,
+                    solution:problem.problem.solution,
+                    userId:problem.problem.userId, 
+                    boilerCode:boilerCode,
+                    prompt:prompt,
+                    examples:examples,
+                    level:level,
+                    index:timeIndex
+                   
+                  }).then((response)=>{
+                    console.log(response)
+                    setReload(!reload)
+
+                  });
+
+                   },400)
+                  } 
+                }
+
+                }
+               addDocument()
+
+              })
+              }catch(err){
+                console.log(err)
+              }
+            }
+        
+              setSendingStreak(true)
+                   var curr=new Date()
+                   curr=curr.toString().substring(0,15)
+                   console.log(problem.userId)
+                   
+                   const user=JSON.parse(sessionStorage.getItem("user"))
+                   console.log(problem)
+                   axios.post("http://localhost:3022/add-to-streak",{dont:true,problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr/*,currentGroupChallenges:groupChallenges*/}).then((response)=>{
+                    
+                    console.log(response)
+                  var checkAllStreaks=JSON.parse(sessionStorage.getItem("groupChallengesData"))
+                    var checkMonthChart=JSON.parse(sessionStorage.getItem("monthChart")) 
+                    socket.emit("UPDATE_GROUP_CHALLENGE",{user:user},(cb)=>{
+                      console.log("-----CALLBACK",cb)
+                      socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
+                        console.log("\n\n\n FROM SOCKET",data)
+                        if(data.groupChallenge!=null){
+                      dispatch(setGroupChallenges(data.groupChallenge))
+                        }
+                       })   
+                    }) 
+                    console.log(response.data)
+                    if(response.data.message!=null){
+                     
+                     
+                      alert(response.data.message)
+                  
+                      setSendingStreak(false)
+
+                    }else if(response.data.success){
+                      const user =JSON.parse(sessionStorage.getItem("user"))
+                   
+                   
+                    
+                      var day=new Date()
+                      const date=day.toString().substring(0,15)
+                      axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+                        console.log("RESPONSE STREAK ANIMATION",response)
+                        if(response.data.streakExists){
+                          dispatch(setPercent(response.data.percent))
+                          dispatch(setDays(response.data.days))
+                          dispatch(setCompletedDays(response.data.completedDays))
+                          dispatch(setStartingPoint(response.data.start))
+                          setTimeout(()=>{
+                            dispatch(fireOff())
+                            if(alreadyHave){
+                            setDocument().then((response)=>{
+                              //resetEditorValue()
+                              console.log(response)
+                              console.log(p) 
+                             alert("SUCCESS+++")
+                             
+                              
+                              
+                               setSendingStreak(false)
+      
+                            })
+                          }else{
+                            alert("SUCCESS+++")
+                          }
+                          
+                          },500)
+                        }else{
+                          if(alreadyHave){
+                          setDocument().then((response)=>{
+                            //resetEditorValue()
+                            console.log(response)
+                            console.log(p) 
+                           alert("SUCCESS+++")
+                           
+                            
+                            
+                             setSendingStreak(false)
+    
+                          })
+                        }else{
+                          alert("SUCCESS+++")
+                        }
+                          
+                        }
+                      })
+                     
+                    
+                    }
+                    
+                   })
+                   /*
+                   if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                    });
+                  } else {
+                    console.log("Geolocation is not supported by this browser.");
+                  }
+                  if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                      const latitude = position.coords.latitude;
+                      const longitude = position.coords.longitude;
+                      console.log(`Latitude: ${latitude}, Longitude: ${longitude}`);
+                      axios.post("http://localhost:3022/add-to-streak",{problem:problem.problem,problem,problem_id:problem.id,userId:user.userId,day:curr,currentGroupChallenges:groupChallenges,latitude:latitude,longitude:longitude}).then((response)=>{
+                      
+                      console.log(response)
+                      if(response.data.message!=null){
+                        alert(response.data.message)
+                        setSendingStreak(false)
+
+                      }else if(response.data.success){
+                        const user =JSON.parse(sessionStorage.getItem("user"))
+                        var day=new Date()
+                        const date=day.toString().substring(0,15)
+                       
+                        setDocument().then((response)=>{
+                          //resetEditorValue()
+                          console.log(response)
+                          console.log(p)
+                          alert("SUCCESS+++")
+                           setSendingStreak(false)
+                    
+                          
+                        })
+                        
+                      
+
+                      }
+                      
+                     })
+                    });
+                  } else {
+                    alert("Geolocation is not supported by this browser.");
+                  }*/
+                    
+           
+            
+          }}>
+           <p class="font-bold text-white ">Submit</p> 
+          </button>
+          }

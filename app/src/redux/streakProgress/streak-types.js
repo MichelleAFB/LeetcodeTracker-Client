@@ -1,0 +1,7 @@
+export const LAST_CHECKED="LAST_CHECKED"
+export const FIRE_OFF="FIRE OFF"
+export const SET_PERCENT="SET_PERCENT"
+export const UPON_LOGIN="UPON_LOGIN"
+export const SET_DAYS="SET_DAYS"
+export const SET_COMPLETED_DAYS="SET_COMPLETED_DAYS"
+export const SET_STARTING_POINT="SET_STARTING_POINT"

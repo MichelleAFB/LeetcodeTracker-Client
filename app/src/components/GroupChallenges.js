@@ -23,8 +23,14 @@ import ChallengePopOver from './ChallengePopOver';
 import GroupChallengeStreakPopOver from './GroupChallengeSteakPopOver';
 import { useDispatch, useSelector } from 'react-redux';
 import { setGroupChallenges } from '../redux/socket/socket-actions';
+import GroupChallengeList from './GroupChallengeList';
 function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges,setAllGroupChallenges}) {
+/*
+http://localhost:3022/update-group-challenge-data/17462:
+  repairs group challenge data object
 
+
+*/
     const[isLoading,setIsLoading]=useState(true)
     const[challenges,setChallenges]=useState()
     const[events,setEvents]=useState()
@@ -35,6 +41,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
   const[challengesSelectors,setChallengeSelecters]=useState()
   const[showModal,setShowModal]=useState(false)
   const[finalevents,setFinalEvents]=useState()
+  const[challengeList,setChallengeList]=useState()
   const dispatch=useDispatch()
   const finalEvents=useMemo((allEvents)=>{
     console.log("in memo:",allEvents)
@@ -87,7 +94,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
     const reduxGc=useSelector((state)=>
       state.socket.groupChallenges
     )
-    console.log("REDUX GC",reduxGc)
+    
     useEffect(()=>{
       if(reduxGc==null){
       if(allChallenges==null){
@@ -108,7 +115,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
         const checkGroupChallenges=JSON.parse(sessionStorage.getItem("groupChallengeData"))
         const prom=new Promise((resolve,reject)=>{
          
-          axios.get("http://localhost:3022/group-challenges-2-2/"+ourUser.userId).then(async(response1)=>{
+          axios.get("http://localhost:3022/get-group-challenge-data/"+ourUser.userId).then(async(response1)=>{
           var i=0
           console.log(response1)
           const data=response1.data
@@ -117,8 +124,11 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
           function getString(g){
             return g.challenge.challengeId
           }
-          response1.data.challenges.map((gg)=>{
-            
+          setChallengeList(response1.data.challenges)
+          var chaId=0
+          var i=0
+          while(i<response1.data.challenges.length){
+            const gg=response1.data.challenges[i]
             const g=gg.challenge
             g.problemCounter=gg.problemCounter
             var color=allCha.includes(g.challengeId)? colors[g.challengeId]:renderChallengeColor()
@@ -147,7 +157,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
                 }
               })
               function showChallenge(cha){
-                console.log("SETTING SELECTION CHALLENGE")
+                //console.log("SETTING SELECTION CHALLENGE")
                 if(useSelectedChallenge){
                   setUseSelectedChallenge(false)
                 }else{
@@ -159,6 +169,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
               }
               var lastDay=new Date(g.endDate)
               lastDay.setDate(new Date(g.endDate).getDate()+1)
+              console.log(g)
             groupCha.push({
               id: g._id,
               challengeId:g.challengeId,
@@ -184,6 +195,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
           }
           if(gg.streaks!=null){
             if(gg.streaks.length>0){
+              var ii=0
               
           if(allUsers.includes(gg.streaks[0].streak.userId) && allDays.includes(gg.streaks[0].streak.day ) && allChaAndAllDay.includes(gg.challengeId+gg.streaks[0].streak.day)){
 
@@ -195,8 +207,8 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
             }catch(err){
               
             }
-            gg.streaks.map((c)=>{
-             
+            while(ii<gg.streaks.length){
+             var c=gg.streaks[ii]
             allUsers.push(c.streak.userId)
               allDays.push(c.streak.day)
               allUsers.push(c.streak.userId)
@@ -234,6 +246,34 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
               }
               
             })
+            ii++
+            if(ii>=gg.streaks.length){
+              console.log(g.title, " i",i +" ii"+gg.streaks.length)
+              i++
+              
+                if(i>=response1.data.challenges.length){
+              setTimeout(()=>{
+                resolve()
+              },200)
+              
+            }             
+            }
+          }else{
+            ii++
+            if(ii>=gg.streaks.length){
+              console.log(g.title, " i",i +" ii"+gg.streaks.length)
+              i++
+             
+             
+            
+                if(i>=response1.data.challenges.length){
+              setTimeout(()=>{
+                resolve()
+              },200)
+              
+            }
+            
+            }
           }
           
             
@@ -242,17 +282,14 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
             
             
   
-            })
+            }
           }
         }
         }
-            i++
-            if(i>=response1.data.challenges.length){
-     
-              resolve()
-            }
+           // i++
           
-          })
+          
+          }
         })
         })
 
@@ -272,7 +309,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
             }
             setTimeout(()=>{
               resolve()
-            },300)
+            },200)
 
             })
 
@@ -281,7 +318,7 @@ function GroupChallenges({groupChallengeView,setGroupChallengeView,allChallenges
                 
                     setTimeout(()=>{
                         resolve()
-                    },100)
+                    },400)
                 })
              
                 prom.then(()=>{
@@ -329,8 +366,7 @@ function remove(e){
  }
  var noChange=0
 if(!isLoading){
- // console.log(events)
-console.log("finalEvents",finalEvents,finalevents)
+
 if(events!=null){
  if(events.length>0){
 
@@ -341,7 +377,15 @@ if(events!=null){
     console.log("noChange",noChange)  
     noChange++
     return (
-            
+      <div class="w-full flex-col">
+            <button class="bg-purple-600" onClick={()=>{
+              
+                setUseSelectedChallenge(!useSelectedChallenge)
+              
+            }}>
+              <p class="text-white">
+              Reset
+              </p></button>
                   <FullCalendar
                plugins={[dayGridPlugin]}
                eventClick={(ev)=>showChallenge(ev)}
@@ -370,8 +414,8 @@ if(events!=null){
                 return new bootstrap.Popover(event.el,{
                   placement:"top",
                   trigger:"hover",
-                  hover:setShowModal(!showModal),
-                  mouseleave:remove(event),
+                  //hover:setShowModal(!showModal),
+               
                   show:false,
                   customClass:"popoverStyle",
                   title:cha.title+" ("+cha.challengeId+")",
@@ -433,7 +477,7 @@ if(events!=null){
                     </body>
                     <div class="text-white">
                     ${message}</div>
-                      <div><p class="text-white">${"last Added: "+(streak.streak.timeLastAdded!=null?  Number(new Date(streak.streak.timeLastAdded).toString().substring(16,18))>12? Number(new Date(streak.streak.timeLastAdded).toString().substring(16,18))-12 +new Date(streak.streak.timeLastAdded).toString().substring(18,24)+"PM":new Date(streak.streak.timeLastAdded).toString().substring(16,24)+" AM":"")}</div>
+                      <div><p class="text-white">${"last Added: "+(streak.streak.timeLastAdded!=null?  Number(new Date(streak.streak.timeLastAdded).toString().substring(16,18))>12? Number(new Date(streak.streak.timeLastAdded).toString().substring(16,18))-12 +new Date(streak.streak.timeLastAdded).toString().substring(18,24)+"PM":new Date(streak.streak.timeLastAdded).toString().substring(16,24)+" AM":"")+ streak.streak.day}</div>
                       </p>
                       </div>
                     </div>`,
@@ -454,6 +498,8 @@ if(events!=null){
                aspectRatio={2}
 
 />
+
+</div>
      
       )
  }else{
