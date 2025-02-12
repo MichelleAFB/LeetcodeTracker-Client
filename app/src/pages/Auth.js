@@ -125,17 +125,23 @@ function Auth() {
            
              const user=JSON.parse(sessionStorage.getItem("user"))
              //navigate("/home")
-             axios.get("http://localhost:3022/retrieve-streak-on-login/"+user.userId).then((response)=>{
+             axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
               console.log(response)
              if(response.data.success){
               console.log("STREAKOBJECT",response.data.group)
-                if(response.data.hasStreak){
+                if(response.data.streakExists){
                   console.log("EXIST")
-                  dispatch(uponLogin(response.data))
-                  dispatch(setPercent(response.data.animation.percent))
-                  dispatch(setDays(response.data.animation.days))
-                  dispatch(setCompletedDays(response.data.animation.completedDays))
-                  dispatch(setStartingPoint(response.data.animation.start))
+                 var streakAnimation={
+                  percent:response.data.percent,
+                  start:response.data.start,
+                  completedDays:response.data.completedDays,
+                  days:response.data.days
+                 }
+                 sessionStorage.setItem("streakAnimation",JSON.stringify(streakAnimation))
+                  dispatch(setPercent(response.data.percent))
+                  dispatch(setDays(response.data.days))
+                  dispatch(setCompletedDays(response.data.completedDays))
+                  dispatch(setStartingPoint(response.data.start))
                  // dispatch(setPercent({percent:response.data.animation.percent,streaksObject:response.data.group,lastChecked:response.data.animation.lastCheckeds}))
                   setTimeout(()=>{
                     navigate("/home")

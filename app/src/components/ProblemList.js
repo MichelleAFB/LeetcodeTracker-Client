@@ -78,11 +78,10 @@ function ProblemList({id,reload}) {
           const userType=JSON.parse(sessionStorage.getItem("userType"))
 
         const data=await getDocs(problemsListCollectionRef)
-     console.log(data)
+    
         data.docs.map((doc)=>{
           var thing=doc.data()
         
-          console.log(thing)
           const thinger=thing
           thinger.id=doc.id   
           
@@ -421,6 +420,7 @@ setTimeout(()=>{
 
 const handleSearchByCategory = (e) => {
   if(e.target.value==null || e.target.value==""){
+    console.log(problems.length)
     const fil=problems
     setFiltered(problems)
   }
@@ -533,15 +533,17 @@ function indexOfItem(arr,a){
     var j=0
     while(j<val.length){
       if(val[j]==arr[i])
-      console.log(val[j]+":")
-      console.log(a[`${val[j]}`])
-      console.log(`${arr[i]}.${val[j]}`)
+     
       j++
     }
     i++
   }
 }
-
+function daysBetween(date1, date2) {
+  const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+  const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+  return daysDiff;
+}
 const orderByAddDate = () => {
 
    // const fil=problems
@@ -601,21 +603,27 @@ const orderByAddDate = () => {
 }
 
 const handleSearchByRed= () => {
- console.log("\n\nserach red")
+ console.log("\n\nsearch red")
 
   const fil=[]
-
+var i=0
   const prom = new Promise((resolve,reject) => {
     
   setFiltered([])
-  problems.map((ev) => {
-   
-  
-    var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+  var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
     "Aug","Sep","Oct","Nov","Dec"];
     var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
     var cDate=new Date()
+    while(i<problems.length){
+  
+   
+ var  ev=problems[i]
+ if(ev.problem.lastPracticed!=null){
+  
     var index=1
+    if(typeof ev.problem.lastPracticed == 'string'){
+     
+      
     var st=ev.problem.lastPracticed.split(" ")
   
    
@@ -623,22 +631,14 @@ const handleSearchByRed= () => {
 
     const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
    
-    var nextDate=new Date(startDate);
- 
-    var nextnext=nextDate.setDate(nextDate.getDate()+1)
   
    
-    nextDate=new Date(nextnext)
-    var index=1;
-   
-    while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
-      var nextnext=nextDate.setDate(nextDate.getDate()+1)
-      nextDate=new Date(nextnext)
-   
-      
-      index++
-   }
+    var index=daysBetween(startDate,new Date())
+    console.log("NUMDAYS",index)
+    
    setTimeout(()=>{
+    console.log(ev.problem.title + "RED",ev.problem.lastPracticed)
+
       if(index>=14){
         if(searchByCategory){
           if(ev.category==category){
@@ -660,62 +660,17 @@ const handleSearchByRed= () => {
         }
       }
    },100)
-  })
-  console.log("FILL",fil)
-    resolve(fil)
-  })
-
-  prom.then(() => {
-    setFiltered(fil)
-    console.log("filtered should be")
-    console.log(filtered)
-}).catch(
-  console.log("filter not working")
-)   
-}
-
-
-
-
-const handleSearchByOrange= () => {
-
-  const fil=[]
-  const prom = new Promise((resolve,reject) => {
-    
-  setFiltered([])
-  console.log(problems)
-  problems.map((ev) => {
-   
-  
-    var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
-    "Aug","Sep","Oct","Nov","Dec"];
-    var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
-    var cDate=new Date()
-    var index=1
-    var st=ev.problem.lastPracticed.split(" ")
-  
-   
-  const currDate=cDate.toString().substring(0,15)
+ 
+  }else{
+    const currDate=cDate.toString().substring(0,15)
 
     const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
-   
-    var nextDate=new Date(startDate);
- 
-    var nextnext=nextDate.setDate(nextDate.getDate()+1)
-  
-   
-    nextDate=new Date(nextnext)
-    var index=1;
-   
-    while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
-      var nextnext=nextDate.setDate(nextDate.getDate()+1)
-      nextDate=new Date(nextnext)
-   
-      
-      index++
-   }
+    
+    var index=daysBetween(startDate,new Date())
+   console.log("NUMDAYS",index)
    setTimeout(()=>{
-      if(index<14 && index>=7){
+    console.log(ev.problem.title + "RED",ev.problem.lastPracticed)
+      if(index>=14){
         if(searchByCategory){
           if(ev.category==category){
         fil.push(ev) 
@@ -736,9 +691,18 @@ const handleSearchByOrange= () => {
         }
       }
    },100)
-  })
-  console.log(fil)
+
+  } 
+  }
+  i++
+  if(i>=problems.length){
+    console.log("FILL",fil)
     resolve(fil)
+  }
+
+    }
+  
+   // resolve(fil)
   })
 
   prom.then(() => {
@@ -751,22 +715,155 @@ const handleSearchByOrange= () => {
 }
 
 
-const handleSearchByGreen= () => {
- 
+
+
+const handleSearchByOrange= () => {
+
+  console.log("\n\nserach red")
 
   const fil=[]
-
+var i=0
   const prom = new Promise((resolve,reject) => {
     
   setFiltered([])
-  problems.map((ev) => {
-   
-  
-    var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+  var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
     "Aug","Sep","Oct","Nov","Dec"];
     var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
     var cDate=new Date()
+    while(i<problems.length){
+  
+   
+ var  ev=problems[i]
+ if(ev.problem.lastPracticed!=null){
+ 
     var index=1
+    if(typeof ev.problem.lastPracticed == 'string'){
+  if(ev.problem.lastPracticed.length>2){
+    var st=ev.problem.lastPracticed.split(" ")
+  
+   
+  const currDate=cDate.toString().substring(0,15)
+ var mm=months.indexOf(st[1])
+ console.log("\n month",mm," st"+st,"  ",monthnum[months.indexOf(st[1])-1])
+ const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
+    
+   
+  
+    if(!startDate instanceof Date){
+      console.log(startDate)
+      console.log("problem",st,ev.problem.lastPracticed)
+    }
+    
+    var index=daysBetween(startDate,new Date());
+    console.log("\nnumDays",index)
+    console.log("ORANGESTART",startDate.toString().substring(0,15)," "+cDate.toString().substring(0,15)," ")
+    
+   setTimeout(()=>{
+      if(index<14 && index>=7){
+        console.log(ev.problem.title + "ORANGE",ev.problem.lastPracticed)
+        if(searchByCategory){
+          if(ev.category==category){
+        fil.push(ev) 
+          }
+        }else if(searchByDataStructure){
+          if(ev.dataStructure==dataStructure){
+            fil.push(ev) 
+              }
+
+        }else if(searchByDate){
+          var curr=new Date()
+          if(ev.category==curr.toString().substring(0,15)){
+            fil.push(ev) 
+              }
+
+        }else{
+          fil.push(ev)
+        }
+      }
+   },100)
+ 
+  
+ }
+ }else{
+    console.log("OBJECT DATE",ev.problem.lastPracticed)
+    var currDate=new Date(ev.problem.lastPracticed.seconds/1000)
+    const startDate=new Date(parseInt(st[3]),monthnum[months.indexOf(parseInt(st[1]))-1],st[2])
+    if(startDate instanceof Date){
+      console.log("problem",st,ev.problem.lastPracticed)
+    }
+  
+    var index=daysBetween(startDate,new Date());
+    console.log("\nnumDays",index)
+  
+   setTimeout(()=>{
+      if(index<14 && index>=7){
+        console.log(ev.problem.title + "ORANGE",ev.problem.lastPracticed)
+        if(searchByCategory){
+          if(ev.category==category){
+        fil.push(ev) 
+          }
+        }else if(searchByDataStructure){
+          if(ev.dataStructure==dataStructure){
+            fil.push(ev) 
+              }
+
+        }else if(searchByDate){
+          var curr=new Date()
+          if(ev.category==curr.toString().substring(0,15)){
+            fil.push(ev) 
+              }
+
+        }else{
+          fil.push(ev)
+        }
+      }
+   },100)
+
+  } 
+  }
+  i++
+  if(i>=problems.length){
+    console.log("FILL",fil)
+    resolve(fil)
+  }
+
+    }
+  
+   // resolve(fil)
+  })
+
+  prom.then(() => {
+    setFiltered(fil)
+    console.log("filtered should be")
+    console.log(filtered)
+}).catch(
+  console.log("filter not working")
+)     
+}
+
+
+const handleSearchByGreen= () => {
+ 
+  console.log("\n\nserach GREEN")
+
+  const fil=[]
+var i=0
+  const prom = new Promise((resolve,reject) => {
+    
+  setFiltered([])
+  var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+    "Aug","Sep","Oct","Nov","Dec"];
+    var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
+    var cDate=new Date()
+    while(i<problems.length){
+  
+   
+ var  ev=problems[i]
+ if(ev.problem.lastPracticed!=null){
+  
+    var index=1
+    if(typeof ev.problem.lastPracticed == 'string'){
+      
     var st=ev.problem.lastPracticed.split(" ")
   
    
@@ -791,6 +888,7 @@ const handleSearchByGreen= () => {
    }
    setTimeout(()=>{
       if(index<7){
+        console.log(ev.problem.title + "GREEN",ev.problem.lastPracticed)
         if(searchByCategory){
           if(ev.category==category){
         fil.push(ev) 
@@ -811,20 +909,60 @@ const handleSearchByGreen= () => {
         }
       }
    },100)
-  })
-  console.log(fil)
+ 
+  }else{
+    console.log("OBJECT DATE",ev.problem.lastPracticed)
+    var currDate=new Date(ev.problem.lastPracticed.seconds/1000)
+    var nextnext=nextDate.setDate(nextDate.getDate()+1)
+  
+   
+    nextDate=new Date(nextnext)
+    var index=1;
+   
+   setTimeout(()=>{
+      if(index<7){
+        console.log(ev.problem.title + "GREEN",ev.problem.lastPracticed)
+        if(searchByCategory){
+          if(ev.category==category){
+        fil.push(ev) 
+          }
+        }else if(searchByDataStructure){
+          if(ev.dataStructure==dataStructure){
+            fil.push(ev) 
+              }
+
+        }else if(searchByDate){
+          var curr=new Date()
+          if(ev.category==curr.toString().substring(0,15)){
+            fil.push(ev) 
+              }
+
+        }else{
+          fil.push(ev)
+        }
+      }
+   },100)
+
+  } 
+  }
+  i++
+  if(i>=problems.length){
+    console.log("FILL",fil)
     resolve(fil)
+  }
+
+    }
+  
+   // resolve(fil)
   })
 
   prom.then(() => {
     setFiltered(fil)
     console.log("filtered should be")
     console.log(filtered)
-}).catch((err)=>{
-  console.log("filter not working",err)
-
-}
-)   
+}).catch(
+  console.log("filter not working")
+)    
 }
 
   

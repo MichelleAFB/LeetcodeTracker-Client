@@ -31,6 +31,7 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
           apiSecret:'NBk67NDZKIxpnGE06FUDFLSisp8'
         }
       })
+      console.log(u)
     useEffect(()=>{
         if(checkUser!=null){
             if(checkUser.userId==u.userId){

@@ -9,7 +9,7 @@ import axios from 'axios'
 import {useDispatch} from "react-redux"
 import { setHeaderVisibility } from '../redux/user/editUser-actions'
 function AnalyticsPage() {
-
+//<MonthChart userId={user.userId} showTitle={true}/>
   const [isLoading,setIsLoading]=useState(true)
   const[streaks,setStreaks]=useState()
   const[allStreaks,setAllStreaks]=useState()
@@ -281,7 +281,7 @@ function AnalyticsPage() {
      <div class="flex-col  w-4/5">
 
         
-      <MonthChart userId={user.userId} showTitle={true}/>
+      
       <StreakChart allStreaks={allStreaks} streaks={currentStreaks} />
      </div>
       

@@ -12,29 +12,40 @@ function AllUsers() {
     const [isLoading,setIsLoading]=useState(true)
 
     useEffect(()=>{
+      const us=[]
   const prom=new Promise(async(resolve,reject)=>{
     try{
     var allUsers=collection(db,"users")
     allUsers=await getDocs(allUsers)
- 
-    const us=allUsers.docs.filter(async(d)=>{
-    
-      const u=doc(d)
-    
+      var i=0
       
-      return u
-    })
+      console.log(allUsers.docs)
+      while(i<allUsers.docs.length){
+        var id=allUsers.docs[i].id
+        var u=allUsers.docs[i].data()
+        console.log(u)
+        console.log(doc(id))
+        us.push(u)
+        i++
+        if(i>=allUsers.docs.length){
+         resolve()
+        
+         // resolve()
+        }
+      }
+    
    
-    setUsers(us)
-   setTimeout(()=>{
-    resolve()
-   },300)
+    
         }catch(err){ 
 }
   })
 
   prom.then(()=>{
-    setIsLoading(false)
+    setUsers(us)
+    setTimeout(()=>{
+      setIsLoading(false)
+    },500)
+    
   })
 
     },[])

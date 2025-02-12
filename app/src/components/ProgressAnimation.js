@@ -12,8 +12,11 @@ const Progress = ({done,completedDays,labels,startingPoint}) => {
     
     
     console.log("style",style)
+
     useEffect(()=>{
+        console.log("here")
         const prom=new Promise((resolve,reject)=>{
+            
             var streakAnimation=JSON.parse(sessionStorage.getItem("streakAnimation"))
             if(startingPoint!=null){
             if(streakAnimation!=null){

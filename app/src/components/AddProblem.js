@@ -245,5 +245,5 @@ if(!isLoading){
       return(<div></div>)
     }
 }
-console.log()
+
 export default AddProblem

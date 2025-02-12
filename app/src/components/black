@@ -1,19 +1,98 @@
-  {{"8","3",".",".","7",".",".",".","."}
-,{"6",".",".","1","9","5",".",".","."}
-,{".","9","8",".",".",".",".","6","."}
-,{"8",".",".",".","6",".",".",".","3"}
-,{"4",".",".","8",".","3",".",".","1"}
-,{"7",".",".",".","2",".",".",".","6"}
-,{".","6",".",".",".",".","2","8","."}
-,{".",".",".","4","1","9",".",".","5"}
-,{".",".",".",".","8",".",".","7","9"}}
+!search && !searchByCategory && !useDifficulty?
+<div class=" h-full overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
+  {focus.map((p)=>{
+    if(p.prompt!=null){
+    return(<AllProblemsItem problem={p}/>)
+    }
+  })}
+</div>
+:
+<div>
+{search || searchByCategory || useDifficulty?
+<div>
+  {
+    search?
+    <div class=" h-full overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
+     {
+      !useDifficulty && !searchByCategory?
+      <div>
+      NO USE DIFF + NO USE CATEGORY  && SEARCH
+      </div>
+      :
+      <div>
+      {
+        useDifficulty && !searchByCategory?
+        <div>
+           USE DIFF + NO USE CATEGORY  && SEARCH
+        </div>:
+        <div>
+          {
+            !useDifficulty && searchByCategory?
+            <div>
+               NO USE DIFF +  USE CATEGORY  && SEARCH
+            </div>:
+            <div>
+               USE DIFF +  USE CATEGORY  && SEARCH
+            </div>
+          }
+        </div>
+      }
+      </div>
+     }
+  </div>:
+    <div>
+      {
+        useDifficulty && searchByCategory?
+        <div>
+          USE DIFF + USE CATEGORY  && NO SEARCH
+          {
+            focus.map((p)=>{
+              console.log("cat count"+categoryCount)
+              if(already.includes(p.title) && p.tags.includes(category) && p.level.toUpperCase()==difficulty){
+                console.log(p.title)
+                already.push(p.title)
+                fil.push(p)
+                return(<AllProblemsItem problem={p}/>)
+              }
+            })
 
-{{"5","3",".",".","7",".",".",".","."}
-,{"6",".",".","1","9","5",".",".","."}
-,{".","9","8",".",".",".",".","6","."}
-,{"8",".",".",".","6",".",".",".","3"}
-,{"4",".",".","8",".","3",".",".","1"}
-,{"7",".",".",".","2",".",".",".","6"}
-,{".","6",".",".",".",".","2","8","."}
-,{".",".",".","4","1","9",".",".","5"}
-,{".",".",".",".","8",".",".","7","9"}}
+          }
+          
+        </div>
+        :
+        <div>
+          {
+            useDifficulty && !searchByCategory?
+            <div>
+              useDifficulty && NO searchByCategory  && NO SEARCH
+            </div>
+            :
+            <div>
+               {
+            !useDifficulty && searchByCategory?
+            <div>
+              NO useDifficulty && searchByCategory  && NO SEARCH
+            </div>
+            :
+            <div>
+                NO useDifficulty && NO searchByCategory && NO SEARCH
+               {focus.map((p)=>{
+                if(p.prompt!=null){
+                return(<AllProblemsItem problem={p}/>)
+                }
+              })}
+
+            </div>
+          }
+              </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+:
+<div>
+</div>
+}
+</div>

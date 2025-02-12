@@ -2,7 +2,7 @@ import axios from 'axios'
 import React, {useState, useEffect } from 'react'
 import GradingPriorityList from './GradingPriorityList'
 //import Board from './dnd/Board'
-import { Container } from './dnd2/Container'
+//import { Container } from './dnd2/Container'
 function GroupChallengeViewer({challenge }) {
     const[isLoading,setIsLoading]=useState(true)
     const[challenges,setChallenges]=useState()
@@ -194,7 +194,7 @@ console.log(ourProblemCounter)
                     }
                              
             </div>
-            <Container/>
+         
             <button class="bg-purple-700 p-2 flex rounded-md" onClick={()=>{
                 axios.post("http://localhost:3022/grade-by-priority",{challenge:challenge,priorities:JSON.parse(sessionStorage.getItem("priorities"))}).then((response)=>{
 

@@ -41,21 +41,40 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
   const[hasTestCases,setHasTestCases]=useState(false)
   const[testCases,setTestCases]=useState()
   const dispatch=useDispatch(false)
+  const[index,setIndex]=useState(0)
   const[reload,setReload]=useState()
-
+  var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+    "Aug","Sep","Oct","Nov","Dec"];
+    var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
 
   useEffect(()=>{
     
   var last
+  var d
     const prom=new Promise(async(resolve,reject)=>{
-      const dd = problem.problem.lastPracticed.seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString():problem.problem.lastPracticed.toString()
-      const d=dd.split(" ")
-      const date=d[0]+ " "+d[1]+" "+d[2]+" "+d[3]
+    // console.log("\n\n",problem.problem.lastPracticed.seconds)
+      const dd = typeof problem.problem.lastPracticed =='string'? problem.problem.lastPracticed:new Date(problem.problem.lastPracticed.seconds*1000)
+     
+      if(typeof dd=='string'){
+        d=dd.split(" ")
+       // console.log("STRING",d)
+        d=new Date(d[3],monthnum[months.indexOf(d[1])-1],d[2])
+       console.log(d)
+    
+       
+      }else if(dd instanceof Date){
+       // console.log(problem.problem.lastPracticed.seconds)
+       // console.log("VALID DATE",problem.problem.title, dd)
+      }
+
+      //console.log(d) 
+      //setDaysSince
+     
       const u=await getDoc(us)
       setUser(u.data())
-      
+      console.log("DATELAST",dateLast)
      if(problem.problem.link==null || problem.problem.acRate==null || problem.problem.difficulty==null || problem.problem.level==null || problem.problem.testCases==null ){
-      console.log("EMPTY TEXTCASE",problem.problem.title)
+      
       axios.post("http://localhost:3022/getProblemByTitle",{title:problem.problem.title}).then(async(response)=>{
       if(response.data.success){
         console.log(response.data)
@@ -63,6 +82,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
         if(response.data.problem.testCases!=null){
           setHasTestCases(true)
           setTestCases(response.data.problem.testCases)
+          /*
         await updateDoc(problemRef,{
           acRate:response.data.problem.acRate,
           difficulty:response.data.problem.difficulty,
@@ -70,14 +90,14 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
           level:response.data.problem.level,
           link:response.data.problem.link
         }).then(()=>{
-          last=date
-          setDateLast(date)
+          last=d
+          setDateLast(d)
           setTimeout(()=>{
             resolve()
           },200)
-        })
+        })*/
       }else{
-        await updateDoc(problemRef,{
+       /* await updateDoc(problemRef,{
           acRate:response.data.problem.acRate,
           difficulty:response.data.problem.difficulty,
          
@@ -89,23 +109,25 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
           setTimeout(()=>{
             resolve()
           },200)
-        })
+        })*/
       }
     
 
       }else{
-      last=date
-      setDateLast(date)
+      last=d
+      //setDateLast(d)
       setTimeout(()=>{
         resolve()
       },400)
     }
       })
     }else{
-      last=date
+      last=d
+      setDateLast(d)
       setHasTestCases(true)
+      setIndex(daysBetween(d,new Date()))
       setTestCases(problem.problem.testCases)
-      setDateLast(date)
+      
       setTimeout(()=>{
         resolve()
       },400)
@@ -128,7 +150,13 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
 
   },[])
 
-
+  function daysBetween(date1, date2) {
+    console.log("\n\n",date1.toString().substring(0,15))
+    console.log(date2.toString().substring(0,15))
+    const timeDiff = Math.abs(date2.getTime() - date1.getTime());
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24));
+    return daysDiff;
+  }
   const navigate=useNavigate() 
 
   function getPeriod(dateNew){
@@ -209,7 +237,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
 
 
 
-   const updateIndex=async(problemRef,timeIndex)=>{
+   const updateIndex=async(problemRef,timeIndex,p)=>{
     
     console.log(timeIndex)
     if(user.healthyIndex==null){
@@ -218,6 +246,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
       handleGreen()
         
       }else if(timeIndex>=7 && timeIndex<14){
+        console.log(p.title+ " ORANGE "+ timeIndex)
         handleOrange()
       }else if(timeIndex>=14){
         handleRed()
@@ -263,11 +292,11 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
 
     
 
-    var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
-    "Aug","Sep","Oct","Nov","Dec"];
-    var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
+   
     var cDate=new Date()
-    var index=1
+    
+    
+    
    // console.log(problem.problem.lastPracticed,typeof(problem.problem.lastPracticed))
     var st=problem.problem.lastPracticed.seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString():problem.problem.lastPracticed.split(" ")
   
@@ -282,14 +311,9 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
   
     nextDate=new Date(nextnext)
     
-    var index=1;
+    
    
-    while(nextDate.toString().substring(0,15)!=currDate && (nextDate<=cDate)){
-      
-      var nextnext=nextDate.setDate(nextDate.getDate()+1)
-      nextDate=new Date(nextnext)
-      index++
-   }
+   
   
     
     
@@ -298,15 +322,19 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
       problem.problem.index=index
 
     const problemRef=doc(db,"problems",problem.id)
-    if(problem.problem.index==null || problem.problem.index!=index){
+   /* if(problem.problem.index==null || problem.problem.index!=index){
 
-    updateIndex(problemRef,index)
-    }
+    updateIndex(problemRef,index,problem.problem)
+    }*/
     
     if(testCases!=null){
     
     }
-
+    
+  if(!(index>-1)){
+    console.log("DATELAST",dateLast,problem.problem.title,"  LAST", problem.problem.lastPracticed," ",dateLast)
+   // console.log("INDEX",index)
+  }
     if(   user.healthyIndex!=null? (index<=user.healthyIndex.end ):(index<=7 )){
       
       return (
@@ -407,7 +435,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
         <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
         <div class="flex">
           <p className="text-green font-bold mr-1">Last Practiced:</p>
-          <p>{Object.keys(dateLast).seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
+          <p>{typeof dateLast=='string'? dateLast.toString().substring():new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15)}</p>
             
           
              
@@ -448,7 +476,7 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
 
   const problemRef=doc(db,"problems",problem.id)
     if(problem.problem.index==null || problem.problem.index!=index){
-    updateIndex(problemRef,index)
+    updateIndex(problemRef,index,problem.problem)
     }
 
  
@@ -551,7 +579,7 @@ if(   user.decliningIndex!=null? (index>=user.decliningIndex.start && index<user
     <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
     <div class="flex">
       <p className="text-green font-bold mr-1 text-sm">Last Practiced:</p>
-      <p>{Object.keys(dateLast).seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
+      <p>{Object.keys(dateLast).seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast.toString().substring(0,15)}</p>
         
       
          
@@ -591,7 +619,7 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
   problem.problem.index=index
   const problemRef=doc(db,"problems",problem.id)
     if(problem.problem.index==null || problem.problem.index!=index){
-    updateIndex(problemRef,index)
+    updateIndex(problemRef,index,problem.problem)
     }
 
   return (
@@ -692,7 +720,7 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
     <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
     <div class="flex">
       <p className="text-green font-bold mr-1 text-sm">Last Practiced:</p>
-      <p>{Object.keys(dateLast).seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast}</p>
+      <p>{Object.keys(dateLast).seconds!=null? new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15):dateLast.toString().substring(0,15)}</p>
         
       
          
@@ -730,7 +758,7 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
   console.log(err)
     return(
       <div class="flex w-full p-3 bg-purple-400">
-        problem
+        problem {problem.problem.title} {problem.problem.lastPracticed.toString()}
       </div>
     )
   }finally{

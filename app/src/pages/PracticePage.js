@@ -919,21 +919,19 @@ dispatch(setGroupChallenges(data.groupChallenge))
                     console.log(bigAttempts)
                       const cDate=new Date()
                       const currDate=cDate.toString().substring(0,15)
-                     await setDoc(docRefer, {
+                     await updateDoc(docRefer, {
                     id:problem.id,
                     title:problem.problem.title,
                     dataStructure:problem.problem.dataStructure,
                     category:problem.problem.category,
                     lastPracticed:currDate,
                     hints:problem.problem.hints,
-                    no_attempts:problem.problem.no_attempts,
+                    no_attempts:problem.problem.no_attempts+1,
                     attempts:problem.problem.attempts,
                     solution:problem.problem.solution,
-                    userId:problem.problem.userId, 
+                    
                     boilerCode:boilerCode,
-                    prompt:prompt,
-                    examples:examples,
-                    level:level,
+                   
                     index:timeIndex,
                    
                    
@@ -1000,7 +998,7 @@ dispatch(setGroupChallenges(data.groupChallenge))
                           //resetEditorValue()
                           console.log(response)
                           console.log(p) 
-                         alert("SUCCESS+++")
+                       
                          
                             axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
                               console.log("RESPONSE STREAK ANIMATION",response)
@@ -1011,8 +1009,10 @@ dispatch(setGroupChallenges(data.groupChallenge))
                                 dispatch(setStartingPoint(response.data.start))
                                 setTimeout(()=>{
                                   dispatch(fireOff())
+                                  alert("SUCCESS+++")
                                 },500)
                               }else{
+                                alert("SUCCESS+++")
                                 
                               }
                             })

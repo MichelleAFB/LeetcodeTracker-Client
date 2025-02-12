@@ -14,6 +14,7 @@ import { io } from 'socket.io-client'
 import { useDispatch, connect} from 'react-redux'
 import { Manager } from "socket.io-client";
 import { setNotificationReload } from '../../redux/reload/reload-actions'
+import { Progress } from '@chakra-ui/react'
 
 
 function Header({ourUser,visibility,socket,notificationReload}) {
@@ -55,7 +56,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
           const noti=doc.data().notifications
           if(noti.length>0){
             noti.map((n)=>{
-              console.log(n.acknowledge, n.message)
+              
               if(n.acknowledged==null || n.acknowledged==false){
                //   newNots=true
               }
@@ -193,14 +194,11 @@ function Header({ourUser,visibility,socket,notificationReload}) {
                 <p class="text-white text-small">Show all notifications</p>
               </div>
               {!showAllNotifications?
-            <ul class={`h-[${user.allNotifications.length>2?60:30}vh] flex-col-reverse overflow-y-scroll overflow-hidden `}>
+            <ul class={` p-3 bg-gray-900 h-[${user.allNotifications.length>0?60:60}vh]  overflow-y-scroll overflow-hidden `}>
               { user.notifications.map((n)=>{
-                  if(n.acknowledged!=null && n.acknowledged==false ){
-                    console.log("SHOULD NOT BE DISABLED")
-                  return(<Notification user={user} n={n} notifications={user.notifications}  allNotifications={user.allNotifications} /> )
-                }else if(n.acknowledged==null){
+              
                   return(<Notification user={user} n={n} notifications={user.notifications}  allNotifications={user.allNotifications}/> )
-                }
+               
                 })
               }
                
@@ -211,9 +209,9 @@ function Header({ourUser,visibility,socket,notificationReload}) {
 
 
 
-              <div class="flex-col">
+              <div class="flex-col p-3 bg-pink-500">
               {user.allNotifications.length !=0?
-                <ul class={`h-[${user.notifications.length || user.notifications.length >2?60:30}vh] flex-col-reverse overflow-y-scroll overflow-hidden`}>
+                <ul class={`h-[${user.notifications.length || user.notifications.length >0?60:60}vh]  overflow-y-scroll overflow-hidden`}>
 
               { user.allNotifications.map((n)=>{
                   
@@ -223,7 +221,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
               }
               </ul>
               :
-              <ul class={`h-[${user.allNotifications.length || user.notifications.length >3?60:30}vh] overflow-y-scroll overflow-hidden`}>
+              <ul class={`h-[${user.allNotifications.length || user.notifications.length >0?60:60}vh] overflow-y-scroll overflow-hidden`}>
 
               { user.notifications.map((n)=>{
                   
@@ -259,6 +257,12 @@ function Header({ourUser,visibility,socket,notificationReload}) {
          
         </div>
       </div>
+
+      </div>
+      <div class="flex w-full">
+        <div class="flex w-1/2">
+        <Progress/>
+        </div>
       </div>
       <div class="bg-cyan-600 flex w-full p-2 mb-0 justify-around ">
         <Link class="text-white font-bold" to="/home">Your Problems</Link>
