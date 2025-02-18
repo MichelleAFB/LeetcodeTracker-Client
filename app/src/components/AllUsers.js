@@ -18,13 +18,10 @@ function AllUsers() {
     var allUsers=collection(db,"users")
     allUsers=await getDocs(allUsers)
       var i=0
-      
-      console.log(allUsers.docs)
       while(i<allUsers.docs.length){
         var id=allUsers.docs[i].id
         var u=allUsers.docs[i].data()
-        console.log(u)
-        console.log(doc(id))
+        
         us.push(u)
         i++
         if(i>=allUsers.docs.length){

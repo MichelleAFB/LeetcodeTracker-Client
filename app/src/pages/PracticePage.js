@@ -74,7 +74,7 @@ const [attempts,setAttempts]=useState()
   const ctrlPress = useKeyPress("Control");
 
   const {timeIndex}=useParams()
-  console.log("tineIndex:",timeIndex)
+  
 
   const onSelectChange = (sl) => {
     
@@ -189,7 +189,7 @@ const [attempts,setAttempts]=useState()
             const newp=doc.data()
             newp.xid=doc.id
             const theProb=newp
-            console.log(doc.data())
+            
             //console.log(solution)
             var prob=doc.data()
             
@@ -241,7 +241,7 @@ const [attempts,setAttempts]=useState()
                 }
               }`)
             }
-            console.log(doc.data().attempts)
+           
             setAttempts(doc.data().attempts.attempts)
             if(doc.data().examples!=null){
               setExamples(doc.data().examples)
@@ -464,7 +464,7 @@ function handleSelectedLanguage(l){
 }
 
 
-console.log(params)
+
 
   function handleEditorDidMount(editor,manaco){
     editorRef.current=editor
@@ -486,7 +486,7 @@ console.log(params)
   */
  const dispatch=useDispatch()
  socket.on("GROUP_CHALLENGE_UPDATED",(data)=>{
-  console.log("\n\n\n FROM SOCKET",data)
+  
   if(data.groupChallenge!=null){
 dispatch(setGroupChallenges(data.groupChallenge))
   }
@@ -839,7 +839,7 @@ dispatch(setGroupChallenges(data.groupChallenge))
                    title:problem.problem.title,
                    dataStructure:problem.problem.dataStructure,
                    category:problem.problem.category,
-                   lastPracticed:currDate,
+                   lastPracticed:new Date(),
                    hints:problem.problem.hints,
                    no_attempts:problem.problem.no_attempts+1,
                    attempts:problem.problem.attempts,
@@ -924,7 +924,7 @@ dispatch(setGroupChallenges(data.groupChallenge))
                     title:problem.problem.title,
                     dataStructure:problem.problem.dataStructure,
                     category:problem.problem.category,
-                    lastPracticed:currDate,
+                    lastPracticed:new Date(),
                     hints:problem.problem.hints,
                     no_attempts:problem.problem.no_attempts+1,
                     attempts:problem.problem.attempts,
@@ -1147,7 +1147,7 @@ dispatch(setGroupChallenges(data.groupChallenge))
               
             {
             problem.problem.attempts.map((a)=>{
-              console.log(a)
+          
               return(
                 <div class="flex-col w-full p-3 m-3 bg-gray-600">
                   <p class="font-bold text-center text-white">{a.date}</p>

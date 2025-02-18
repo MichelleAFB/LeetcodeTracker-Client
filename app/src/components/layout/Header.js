@@ -15,6 +15,7 @@ import { useDispatch, connect} from 'react-redux'
 import { Manager } from "socket.io-client";
 import { setNotificationReload } from '../../redux/reload/reload-actions'
 import { Progress } from '@chakra-ui/react'
+import ProgressAnimation from '../ProgressAnimation'
 
 
 function Header({ourUser,visibility,socket,notificationReload}) {
@@ -131,6 +132,7 @@ function Header({ourUser,visibility,socket,notificationReload}) {
       <div class="flex w-full">
         <div class="flex w-5/6">
           <p class="text-purple-800 text-4xl">LeetcodeTracker</p>
+       
         <p> CHECK STORAGE COSTS</p>
         </div>
         <div class="flex-col w-1/5 mr-0 justify-end">
@@ -256,12 +258,13 @@ function Header({ourUser,visibility,socket,notificationReload}) {
          </div>
          
         </div>
+        
       </div>
 
       </div>
       <div class="flex w-full">
         <div class="flex w-1/2">
-        <Progress/>
+        
         </div>
       </div>
       <div class="bg-cyan-600 flex w-full p-2 mb-0 justify-around ">
@@ -288,7 +291,7 @@ const mapStateToProps = (state, props) => {
   var visibility= state.user.visibility
    var notificationReload=state.reload.notificationReload
   var socket=state.socket.socket;
-  console.log("in header",socket)
+  
 
   return {
    visibility:visibility,

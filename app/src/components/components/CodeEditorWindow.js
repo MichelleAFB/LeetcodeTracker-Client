@@ -5,8 +5,7 @@ import { useEffect } from "react";
 const CodeEditorWindow = ({ onChange, language, code, theme,setTemplate }) => {
   const [value, setValue] = useState(code || "");
   useEffect(()=>{
-    console.log("\n\nCODE:"+code)
-    console.log(setTemplate)
+  
   },[setTemplate])
   const handleEditorChange = (value) => {
     setValue(value);

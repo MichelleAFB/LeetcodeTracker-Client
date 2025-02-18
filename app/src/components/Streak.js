@@ -10,9 +10,9 @@ import { getDocs } from 'firebase/firestore';
 import { collection } from 'firebase/firestore';
 import RemoveProblemFromStreak from './RemoveProblemFromStreak';
 
-function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelectedYear}) {
+function Streak({streaks,ourYears,ourMonths,selectedMonth,useSelectedMonth,selectedYear,useSelectedYear}) {
   Chart.register(CategoryScale);
- 
+ console.log("ourmonth",ourMonths,ourYears)
 
   const[isLoading,setIsLoading]=useState(true)
   const [data,setData]=useState()
@@ -85,9 +85,11 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
               if(!dayData.includes(d.day)){
                 dayData.push(d.day)
                 if(useSelectedYear){
-                if(d.day.toString().substring(0,15).includes(selectedYear.toString())){
+                  
+                if(ourYears.includes(selectedYear)){
                   if(useSelectedMonth){
-                    if(d.day.toString().substring(0,15).includes(selectedMonth)){
+                    console.log(ourMonths,selectedMonth)
+                    if(ourMonths.includes(selectedMonth)){
                       return d.problems.length
                     }
                   }else{
@@ -95,11 +97,13 @@ function Streak({streaks,selectedMonth,useSelectedMonth,selectedYear,useSelected
                   }
                 }
               }else{
-                if(useSelectedMonth){
-                  if(useSelectedYear){
-                  if(d.day.toString().substring(0,15).includes(selectedMonth) && d.day.toString().substring(0,15).includes(selectedYear.toString())){
+                if(useSelectedMonth && ourMonths.includes(selectedMonth)){
+                  console.log(ourMonths,selectedMonth)
+                  if(useSelectedYear && ourYears.includes(selectedYear)){
+                    console.log(ourYears,selectedYear)
+                    
                     return d.problems.length
-                  }
+                  
                 }else{
                   return d.problems.length
                 }

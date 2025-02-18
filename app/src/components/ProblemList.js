@@ -52,6 +52,20 @@ function ProblemList({id,reload}) {
   const[userDefinedIndex,setUserDefiniedIndex]=useState(false)
   const[orderedByAddProblems,setOrderedByAddProblems]=useState()
   const navigate=useNavigate()
+  var dateObje={
+    "Jan":"01",
+    "Feb":"02",
+    "Mar":"03",
+    "Apr":"04",
+    "May":"05",
+    "Jun":"06",
+    "Jul":"07",
+    "Aug":"08",
+    "Sep":"09",
+    "Oct":"10",
+    "Nov":"11",
+    "Dec":"12"
+  }
   useEffect(()=>{
     sessionStorage.setItem("green",0)
     sessionStorage.setItem("red",0)
@@ -79,20 +93,41 @@ function ProblemList({id,reload}) {
 
         const data=await getDocs(problemsListCollectionRef)
     
-        data.docs.map((doc)=>{
-          var thing=doc.data()
+        data.docs.map(async(d)=>{
+          var thing=d.data()
+          if(typeof thing.lastPracticed=="string"){
+            console.log("\n\n",thing.title," ",thing.lastPracticed)
+            var date=thing.lastPracticed.split(" ")
+            var month=parseInt(dateObje[date[1]],10)-1
+            var day=parseInt(date[2])
+            var year=parseInt(date[3])
+            date=new Date(year,month,day)
+            console.log(date)
+            console.log(date.getTime())
+           /* const problemRef=doc(db,"problems",d.id)
+            await updateDoc(problemRef,{
+             lastPracticed:date
+            }).then(()=>{
+              console.log(doc(db,"problems",d.id))
+            })*/
+
+
+            console.log("STRING DATE")
+          }else{
+            //console.log("TIMES",new Date(d.data().lastPracticed.seconds*1000))
+          }
         
           const thinger=thing
           thinger.id=doc.id   
           
               
         
-          if(id==null? doc.data().userId==user.userId:doc.data().userId==id){
+          if(id==null? d.data().userId==user.userId:d.data().userId==id){
         
             titles.push(thing.title) 
             try{
             if(i<data.docs.length){
-              pbs.push({id:doc.id,title:thing.title,time:thing.createdAt})  
+              pbs.push({id:d.id,title:thing.title,time:thing.createdAt})  
               i++
             }
             }catch(e){
@@ -101,9 +136,8 @@ function ProblemList({id,reload}) {
               
 
             setTimeout(()=>{
-             console.log(titles.includes(doc.data().title))
-              if(!titles.includes(doc.data().title)){
-         
+             console.log(titles.includes(d.data().title))
+              if(!titles.includes(d.data().title)){
               fuller.push(thinger) 
               }
 
@@ -116,7 +150,7 @@ function ProblemList({id,reload}) {
             var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
             var cDate=new Date()
             var index=1
-            var st=doc.data().lastPracticed.seconds !=null?new Date(doc.data().lastPracticed.seconds*1000).toString():doc.data().lastPracticed.split(" ")
+            var st=d.data().lastPracticed.seconds !=null?new Date(d.data().lastPracticed.seconds*1000).toString():d.data().lastPracticed.split(" ")
           
            
           const currDate=cDate.toString().substring(0,15)
@@ -131,7 +165,7 @@ function ProblemList({id,reload}) {
               nextDate=new Date(nextnext)
               index++
            }
-           setTimeout(()=>{
+           /*setTimeout(()=>{
         
             if(use.healthyIndex==null){
             if(index<7){
@@ -170,11 +204,11 @@ function ProblemList({id,reload}) {
               }
 
             }
-           },120)
+           },120)*/
          
          
           
-            dataArr.push({problem:doc.data(),id:doc.id})
+            dataArr.push({problem:d.data(),id:d.id})
           } 
         })
         }catch(err){
@@ -301,9 +335,7 @@ setTimeout(()=>{
         console.log(err)
       }
       setTimeout(()=>{
-        console.log(ful)
-        console.log("DIR")
-        console.log(ful.slice(0,ful.length/2))
+  
         const p=ful.slice(0,ful.length/3)
         console.log(p[0])
         axios.post("https://leetcodetracker.onrender.com/set-ids",{problems:ful}).then((response)=>{
@@ -314,8 +346,7 @@ setTimeout(()=>{
     }
 
     getProblemsList().then((res)=>{
-     console.log(res)
-     console.log("DONE")
+   
 
      // resolve()
       setTimeout(()=>{
@@ -636,10 +667,11 @@ var i=0
     var index=daysBetween(startDate,new Date())
     console.log("NUMDAYS",index)
     
-   setTimeout(()=>{
-    console.log(ev.problem.title + "RED",ev.problem.lastPracticed)
+  
+    
 
       if(index>=14){
+        console.log(ev.problem.title + "RED",ev.problem.lastPracticed)
         if(searchByCategory){
           if(ev.category==category){
         fil.push(ev) 
@@ -659,16 +691,16 @@ var i=0
           fil.push(ev)
         }
       }
-   },100)
+ 
  
   }else{
     const currDate=cDate.toString().substring(0,15)
 
-    const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
+    const startDate=new Date(ev.problem.lastPracticed.seconds*1000)
     
     var index=daysBetween(startDate,new Date())
    console.log("NUMDAYS",index)
-   setTimeout(()=>{
+   
     console.log(ev.problem.title + "RED",ev.problem.lastPracticed)
       if(index>=14){
         if(searchByCategory){
@@ -690,7 +722,7 @@ var i=0
           fil.push(ev)
         }
       }
-   },100)
+ 
 
   } 
   }
@@ -737,29 +769,18 @@ var i=0
  if(ev.problem.lastPracticed!=null){
  
     var index=1
-    if(typeof ev.problem.lastPracticed == 'string'){
-  if(ev.problem.lastPracticed.length>2){
-    var st=ev.problem.lastPracticed.split(" ")
-  
-   
-  const currDate=cDate.toString().substring(0,15)
- var mm=months.indexOf(st[1])
- console.log("\n month",mm," st"+st,"  ",monthnum[months.indexOf(st[1])-1])
- const startDate=new Date(st[3],monthnum[months.indexOf(st[1])-1],st[2])
-    
+    if(ev.problem.lastPracticed!=null){
+
+    var currDate=new Date(ev.problem.lastPracticed.seconds*1000)
+    const startDate=new Date(ev.problem.lastPracticed.seconds*1000)
    
   
-    if(!startDate instanceof Date){
-      console.log(startDate)
-      console.log("problem",st,ev.problem.lastPracticed)
-    }
-    
     var index=daysBetween(startDate,new Date());
-    console.log("\nnumDays",index)
-    console.log("ORANGESTART",startDate.toString().substring(0,15)," "+cDate.toString().substring(0,15)," ")
     
-   setTimeout(()=>{
+  
+   
       if(index<14 && index>=7){
+        console.log(ev.problem.title+"\nnumDays",index)
         console.log(ev.problem.title + "ORANGE",ev.problem.lastPracticed)
         if(searchByCategory){
           if(ev.category==category){
@@ -780,54 +801,22 @@ var i=0
           fil.push(ev)
         }
       }
-   },100)
- 
-  
- }
- }else{
-    console.log("OBJECT DATE",ev.problem.lastPracticed)
-    var currDate=new Date(ev.problem.lastPracticed.seconds/1000)
-    const startDate=new Date(parseInt(st[3]),monthnum[months.indexOf(parseInt(st[1]))-1],st[2])
-    if(startDate instanceof Date){
-      console.log("problem",st,ev.problem.lastPracticed)
-    }
-  
-    var index=daysBetween(startDate,new Date());
-    console.log("\nnumDays",index)
-  
-   setTimeout(()=>{
-      if(index<14 && index>=7){
-        console.log(ev.problem.title + "ORANGE",ev.problem.lastPracticed)
-        if(searchByCategory){
-          if(ev.category==category){
-        fil.push(ev) 
-          }
-        }else if(searchByDataStructure){
-          if(ev.dataStructure==dataStructure){
-            fil.push(ev) 
-              }
-
-        }else if(searchByDate){
-          var curr=new Date()
-          if(ev.category==curr.toString().substring(0,15)){
-            fil.push(ev) 
-              }
-
-        }else{
-          fil.push(ev)
-        }
-      }
-   },100)
+   
 
   } 
   }
   i++
   if(i>=problems.length){
+    var prob=JSON.parse(sessionStorage.getItem("problems"))
+    if(prob==null){
+    sessionStorage.setItem("problems",JSON.stringify(fil))
+    }
     console.log("FILL",fil)
     resolve(fil)
   }
 
-    }
+   
+}
   
    // resolve(fil)
   })
@@ -1185,26 +1174,18 @@ if(probs.length>=oLength-10){
   }
   if(!isLoading && problems!=null){
     sort(problems)
-
+  
     const redPX= JSON.parse(sessionStorage.getItem("red"))
     
    if(problems==null){
     
-
+  
     setProblems(JSON.parse(sessionStorage.getItem("problems")))
    }
    if(orderedByAddProblems==null){
   //  orderByAdded(problems)
    }
-   
-   /*
-<button class="p-3 w-1/2 bg-green-400" onClick={()=>{
-      sort(problems)
-    }}>
-      Click
-    </button>
-
-   */
+  
     var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
       "Aug","Sep","Oct","Nov","Dec"];
       var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
@@ -1224,7 +1205,7 @@ if(probs.length>=oLength-10){
          const data=await getDocs(problemsListCollectionRef)
      
     console.log(data)
-
+  
          data.docs.map((dod)=>{
            //var thing=doc
           var thing=dod.data()
@@ -1247,19 +1228,19 @@ if(probs.length>=oLength-10){
               date= (date==null? ndate:(ndate<date?ndate:date))
               if (date==null){
                 if(! ndate instanceof Date){
-
+  
                 }else{
                   date=ndate
                 }
               }else{
                 if(! ndate instanceof Date){
-
+  
                 }else{
                   if(ndate<date){
                   date=ndate
                   }
                 }
-
+  
               }
               i++
               if(i>=attempts.length){
@@ -1288,13 +1269,13 @@ if(probs.length>=oLength-10){
                 }
               }
             }
-
+  
            })
           }else {
             console.log(thing.title,thing.createdAt.toDate())
           }
          })
-
+  
     }}>
       <p class="text-white">Generate CreatedAt</p>
     </button>
@@ -1309,7 +1290,7 @@ if(probs.length>=oLength-10){
     </button>
       <p class="text-center font-bold text-md mt-2"> last practiced:</p>
       <div class="flex  justify-around">
-
+  
         <div class="flex-col mt-2" >
           {green?
           <button class="flex-col p-2 "  onClick={()=>{
@@ -1317,7 +1298,7 @@ if(probs.length>=oLength-10){
           }}>
            <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("green"))} color={"green"}/>
            <p  class="text-center text-sm font-bold">{" < 7 days ago"}</p>
-
+  
           </button>
           :
           <button class="flex-col p-2"onClick={()=>{
@@ -1327,7 +1308,7 @@ if(probs.length>=oLength-10){
                   resolve()
               },100)
             })
-
+  
               prom.then(()=>{
               
               setGreen(true)
@@ -1341,17 +1322,18 @@ if(probs.length>=oLength-10){
            <p  class="text-center text-sm font-bold">{` < ${user.decliningIndex.start} days ago`}</p>
            :
            <p  class="text-center text-sm font-bold">{` < 7 days ago`}</p>
-
+  
            }
            
           </button>
-
+  
           }
         </div>
         <div class="flex-col mt-2">
         {orange?
           <button class="flex-col p-2 "  onClick={()=>{
-            setGreen(false)
+            setOrange(false)
+            //setRed(false)
           }}>
            <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("orange"))} color={"orange"}/>
            <p  class="text-center text-xs font-bold">{` < ${user.criticalIndex!=null ?user.criticalIndex.start:"14"}days ago`}</p>
@@ -1365,7 +1347,7 @@ if(probs.length>=oLength-10){
                   resolve()
               },100)
             })
-
+  
               prom.then(()=>{
               
               setGreen(false)
@@ -1377,10 +1359,10 @@ if(probs.length>=oLength-10){
            <ProblemCountMeter  count={JSON.parse(sessionStorage.getItem("orange"))} color={"orange"} />
            <p  class="text-center text-xs font-bold">{" < 14 days ago"}</p>
            <p  class="text-center text-xs font-bold">{" > 7 days ago"}</p>
-
-
+  
+  
           </button>
-
+  
           }
         </div>
         <div class="mt-2 flex-col">
@@ -1390,7 +1372,7 @@ if(probs.length>=oLength-10){
           }}>
            <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("red"))} color={"red"}/>
            <p  class="text-center text-sm font-bold"> ${">14 days ago"}</p>
-
+  
           </button>
           :
           <button class="flex-col p-2"onClick={()=>{
@@ -1400,7 +1382,7 @@ if(probs.length>=oLength-10){
                   resolve()
               },100)
             })
-
+  
               prom.then(()=>{
               
               setGreen(false)
@@ -1412,7 +1394,7 @@ if(probs.length>=oLength-10){
            <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen}  count={JSON.parse(sessionStorage.getItem("red"))} color={"red"} />
            <p  class="text-center text-sm font-bold">${" >14 days ago"}</p>
           </button>
-
+  
           }
         </div>
       </div>
@@ -1453,7 +1435,7 @@ if(probs.length>=oLength-10){
       <button class="" onClick={()=>{
         const dataArr=[]
           const getProblemsList=async()=>{
-
+  
             //READ DATA
             try{
               const user=JSON.parse(sessionStorage.getItem("user"))
@@ -1489,13 +1471,13 @@ if(probs.length>=oLength-10){
              
             })
             console.log(allObjects)
-
+  
             allObjects.map((o)=>{
               console.log(o.attempts)
               console.log(o.id)
-
+  
               var washingtonRef = doc(db, "problems", o.id);
-
+  
        if(o.id=='23uxF9agDVVky2xjeFsX'){
        updateDoc(washingtonRef, {
          attempts: o.problem.attempts,
@@ -1517,7 +1499,7 @@ if(probs.length>=oLength-10){
             
             
           })
-
+  
       }}>
       </button>
    
@@ -1533,7 +1515,7 @@ if(probs.length>=oLength-10){
               resolve()
             },300)
           })
-
+  
           prom.then(()=>{
             console.log("search:"+search)
             console.log(filtered)
@@ -1561,7 +1543,7 @@ if(probs.length>=oLength-10){
             setSearchByDataStructure(false)
             setSearchByCategory(false)
             setSearchByDate(false)*/
-
+  
           }}>
            Add Date
           </button>
@@ -1579,7 +1561,7 @@ if(probs.length>=oLength-10){
             setSearchByDataStructure(!searchByDataStructure)
             setSearchByCategory(false)
             setSearchByDate(false)
-
+  
           }}>
             Data Structure
           </button>
@@ -1612,11 +1594,11 @@ if(probs.length>=oLength-10){
               Today
           </button>
           }
-
+  
         </div>
         <div class="flex flex-col mt-1 justify-center">
           {
-
+  
           }
        
           {
@@ -1683,7 +1665,7 @@ if(probs.length>=oLength-10){
            })
          }
       </div>:<div></div>
-
+  
       }
         {!search&& !searchByCategory && !searchByDataStructure&& searchByDate&&filtered!=null?
          <div class="h-screen overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3">
@@ -1703,7 +1685,7 @@ if(probs.length>=oLength-10){
            })
          }
       </div>:<div></div>
-
+  
       }
       {!search&& searchByCategory && !searchByDataStructure&&!searchByDate&& filtered!=null?
          <div class="overflow-y-scroll h-[60vh] overflow-hidden h-screen p-4 ">
@@ -1715,7 +1697,7 @@ if(probs.length>=oLength-10){
            })
          }
       </div>:<div></div>
-
+  
       }
       {search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null?
        <div class="h-[55vh] overflow-y-scroll overflow-hidden  m-4 p-3">
@@ -1741,8 +1723,8 @@ if(probs.length>=oLength-10){
       
     </div>
   )
-}if(problems!=null && red && !orange&& !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
- 
+  }if(problems!=null && red && !orange&& !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+  
     return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
     { filtered.map((p)=>{
       console.log("\n\nREDDD")
@@ -1750,61 +1732,61 @@ if(probs.length>=oLength-10){
       return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
       })
     }
- </div>)
- 
-}
-if(problems!=null && !red && orange && !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
- 
+  </div>)
+  
+  }
+  if(problems!=null && !red && orange && !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+  
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
     return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
-</div>)
-
-}
-if(problems!=null && !red && !orange && green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
- 
+  </div>)
+  
+  }
+  if(problems!=null && !red && !orange && green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+  
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
     return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
-</div>)
-
-}
-if(problems!=null && !red && !orange && !green&& !search && !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
- 
+  </div>)
+  
+  }
+  if(problems!=null && !red && !orange && !green&& !search && !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+  
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
     return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
-</div>)
-
-}
-if(problems!=null && red && !orange && !green&& search && !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
- 
+  </div>)
+  
+  }
+  if(problems!=null && red && !orange && !green&& search && !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+  
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
     return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
-</div>)
-
-}else{
+  </div>)
+  
+  }else{
   return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
   { filtered.map((p)=>{
    console.log(p)
     return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
     })
   }
-</div>)
-}
+  </div>)
+  }
  if( problems==null){
 
   console.log(problems)
@@ -1815,7 +1797,10 @@ return (
   </div>
   </div>
 )
+}else{
+  return(<p>hi</p>)
 }
+
 }
 
 

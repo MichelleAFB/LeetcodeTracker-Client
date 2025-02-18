@@ -1,98 +1,625 @@
-!search && !searchByCategory && !useDifficulty?
-<div class=" h-full overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
-  {focus.map((p)=>{
-    if(p.prompt!=null){
-    return(<AllProblemsItem problem={p}/>)
-    }
-  })}
-</div>
-:
-<div>
-{search || searchByCategory || useDifficulty?
-<div>
-  {
-    search?
-    <div class=" h-full overflow-y-scroll overflow-hidden  z-10 m-4 p-3">
-     {
-      !useDifficulty && !searchByCategory?
-      <div>
-      NO USE DIFF + NO USE CATEGORY  && SEARCH
-      </div>
-      :
-      <div>
-      {
-        useDifficulty && !searchByCategory?
-        <div>
-           USE DIFF + NO USE CATEGORY  && SEARCH
-        </div>:
-        <div>
-          {
-            !useDifficulty && searchByCategory?
-            <div>
-               NO USE DIFF +  USE CATEGORY  && SEARCH
-            </div>:
-            <div>
-               USE DIFF +  USE CATEGORY  && SEARCH
-            </div>
+if(isLoading){
+    
+  return(
+    <div class="flex w-full justify-center ">
+        <div class="flex-col justify-end  ">
+        <div class="loading-spinner"/>
+    </div>
+  
+  </div>
+  )
+}
+if(!isLoading && problems!=null){
+  sort(problems)
+
+  const redPX= JSON.parse(sessionStorage.getItem("red"))
+  
+ if(problems==null){
+  
+
+  setProblems(JSON.parse(sessionStorage.getItem("problems")))
+ }
+ if(orderedByAddProblems==null){
+//  orderByAdded(problems)
+ }
+
+  var months= ["Jan","Feb","Mar","Apr","May","Jun","Jul",
+    "Aug","Sep","Oct","Nov","Dec"];
+    var monthnum=["01","02","03","04","05","06","07","08","09","10","11","12"]
+return (
+  <div class="bg-gray-400   p-3 z-10">
+    <div class="flex w-1/2 justify-end">
+      <button class="" onClick={()=>{
+        
+      }}>
+        <IonIcon name="refresh-outline" fill="white" size="medium"/>
+      </button>
+    </div>
+    <p class="text-xl text-center font-bold">
+      Your Questions ({problems.length})
+    </p>
+  <button class="bg-green-600 p-3 " onClick={async()=>{
+       const data=await getDocs(problemsListCollectionRef)
+   
+  console.log(data)
+
+       data.docs.map((dod)=>{
+         //var thing=doc
+        var thing=dod.data()
+        const  ref=doc(db,"problems",dod.id)
+        //console.log(ref)
+        
+         var attempts=thing.attempts
+         if(thing.createdAt==null || !(thing.createdAt.toDate() instanceof Date)){
+         var date=null
+         var i=0
+         console.log("\n\nFIrst",attempts[0].date+"\n")
+         attempts.map(async(a)=>{
+          var d=a.date
+          console.log(d)
+          if(d.length>2){
+            d=d.split(" ")
+           // console.log(d)
+            var ndate=new Date(d[3],monthnum[months.indexOf(d[1])-1],d[2])
+           // console.log(ndate)
+            date= (date==null? ndate:(ndate<date?ndate:date))
+            if (date==null){
+              if(! ndate instanceof Date){
+
+              }else{
+                date=ndate
+              }
+            }else{
+              if(! ndate instanceof Date){
+
+              }else{
+                if(ndate<date){
+                date=ndate
+                }
+              }
+
+            }
+            i++
+            if(i>=attempts.length){
+              console.log("FINAL DATE:",date.toString()+" for problem "+thing.title)
+              try{
+                await updateDoc(ref,{
+                  createdAt:date
+                })
+               
+              }catch(err){
+                console.log(err)
+              }
+              
+            }
+          }else{
+            i++
+            if(i>=attempts.length){
+              console.log("FINAL DATE:",date.toString()+" for problem "+thing.title)
+              try{
+               await updateDoc(ref,{
+                  createdAt:date
+                })
+               
+              }catch(err){
+                console.log(err)
+              }
+            }
           }
-        </div>
-      }
+
+         })
+        }else {
+          console.log(thing.title,thing.createdAt.toDate())
+        }
+       })
+
+  }}>
+    <p class="text-white">Generate CreatedAt</p>
+  </button>
+  <button class="bg-pink-400 p-2" onClick={()=>{
+    const ids=[]
+    console.log(prArr)
+    axios.post("http://localhost:3022/sorted-by-added",{problems:prArr}).then((response)=>{
+      console.log(response)
+    })
+  }}>
+    <p>fire FInd</p>
+  </button>
+    <p class="text-center font-bold text-md mt-2"> last practiced:</p>
+    <div class="flex  justify-around">
+
+      <div class="flex-col mt-2" >
+        {green?
+        <button class="flex-col p-2 "  onClick={()=>{
+          setGreen(false)
+        }}>
+         <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("green"))} color={"green"}/>
+         <p  class="text-center text-sm font-bold">{" < 7 days ago"}</p>
+
+        </button>
+        :
+        <button class="flex-col p-2"onClick={()=>{
+          const prom=new Promise((resolve,reject)=>{
+            handleSearchByGreen()
+            setTimeout(()=>{
+                resolve()
+            },100)
+          })
+
+            prom.then(()=>{
+            
+            setGreen(true)
+            setRed(false)
+            setOrange(false)
+        
+           })
+          }}>
+         <ProblemCountMeter  count={JSON.parse(sessionStorage.getItem("green"))} color={"green"} />
+         {user.decliningIndex!=null?
+         <p  class="text-center text-sm font-bold">{` < ${user.decliningIndex.start} days ago`}</p>
+         :
+         <p  class="text-center text-sm font-bold">{` < 7 days ago`}</p>
+
+         }
+         
+        </button>
+
+        }
       </div>
+      <div class="flex-col mt-2">
+      {orange?
+        <button class="flex-col p-2 "  onClick={()=>{
+          setGreen(false)
+        }}>
+         <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("orange"))} color={"orange"}/>
+         <p  class="text-center text-xs font-bold">{` < ${user.criticalIndex!=null ?user.criticalIndex.start:"14"}days ago`}</p>
+         <p  class="text-center text-xs font-bold">{` > ${user.decliningIndex!=null ?user.criticalIndex.start:"14"} days ago`}</p>
+        </button>
+        :
+        <button class="flex-col p-2"onClick={()=>{
+          const prom=new Promise((resolve,reject)=>{
+            handleSearchByOrange()
+            setTimeout(()=>{
+                resolve()
+            },100)
+          })
+
+            prom.then(()=>{
+            
+            setGreen(false)
+            setRed(false)
+            setOrange(true)
+        
+           })
+          }}>
+         <ProblemCountMeter  count={JSON.parse(sessionStorage.getItem("orange"))} color={"orange"} />
+         <p  class="text-center text-xs font-bold">{" < 14 days ago"}</p>
+         <p  class="text-center text-xs font-bold">{" > 7 days ago"}</p>
+
+
+        </button>
+
+        }
+      </div>
+      <div class="mt-2 flex-col">
+      {red?
+        <button class="flex-col p-2 "  onClick={()=>{
+          setRed(false)
+        }}>
+         <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen} count={JSON.parse(sessionStorage.getItem("red"))} color={"red"}/>
+         <p  class="text-center text-sm font-bold"> ${">14 days ago"}</p>
+
+        </button>
+        :
+        <button class="flex-col p-2"onClick={()=>{
+          const prom=new Promise((resolve,reject)=>{
+            handleSearchByRed()
+            setTimeout(()=>{
+                resolve()
+            },100)
+          })
+
+            prom.then(()=>{
+            
+            setGreen(false)
+            setRed(true)
+            setOrange(false)
+        
+           })
+          }}>
+         <ProblemCountMeter setRed={setRed} setOrange={setOrange} setGreen={setGreen}  count={JSON.parse(sessionStorage.getItem("red"))} color={"red"} />
+         <p  class="text-center text-sm font-bold">${" >14 days ago"}</p>
+        </button>
+
+        }
+      </div>
+    </div>
+    {
+      oldest!=null?
+      <p class="text-center"><span class="font-semibold">Most Neglected Question</span>:{oldest.problem.title}</p>
+      :
+      <p></p>
+    }
+    <div class="flex justify-center">
+      <button class="bg-white p-2 rounded-md m-2 flex w-1/4 justify-center" onClick={()=>{
+        setFiltered(problems)
+        setGreen(false)
+        setOrange(false)
+        setRed(false)
+        setSearchByCategory(false)
+        setSearchByDataStructure(false)
+        setSearchByDate(false)
+      }}>
+         <p class="text-black text-center font-semibold">Reset</p>
+       </button>
+       <button class="bg-white p-2 rounded-md m-2 flex w-1/4 justify-center" onClick={()=>{
+        var position=Math.floor(randomNumber(0,filtered.length>0?filtered.length-1:problems.length-1))
+        console.log(problems[position])
+        if(id==null){
+          navigate("/practice/"+problems[position].id+"/"+(filtered.length>0?filtered[position].problem.index:problems[position].problem.index))
+        }else{
+          navigate("/practice/"+problems[id].id+"/"+(filtered.length>0?filtered[position].problem.index:problems[position].problem.index)+"/"+id)
+        }
+      }}>
+         <p class="text-black text-center font-semibold">Generate Random Question</p>
+       </button>
+    </div>
+    
+ 
+    
+   
+    <button class="" onClick={()=>{
+      const dataArr=[]
+        const getProblemsList=async()=>{
+
+          //READ DATA
+          try{
+            const user=JSON.parse(sessionStorage.getItem("user"))
+            const userType=JSON.parse(sessionStorage.getItem("userType"))
+  
+          const data=await getDocs(problemsListCollectionRef)
+          data.docs.map((doc)=>{
+            
+           
+            if(doc.data().userId==user.userId){
+              //console.log(doc.data())
+            //console.log(doc.id )
+              dataArr.push({problem:doc.data(),id:doc.id})
+            } 
+          })
+          }catch(err){
+            console.log(err)
+          }
+        }
+    
+        getProblemsList().then(()=>{
+          console.log(dataArr)
+          var attempts={}
+          const allObjects=[]
+          dataArr.map((m)=>{
+            if(m.problem.title.toUpperCase()=="MERGING INTERVALS"){
+              console.log("\n\n")
+              console.log(m.problem)
+            }
+            var index=0
+            var at=0
+          
+           
+          })
+          console.log(allObjects)
+
+          allObjects.map((o)=>{
+            console.log(o.attempts)
+            console.log(o.id)
+
+            var washingtonRef = doc(db, "problems", o.id);
+
+     if(o.id=='23uxF9agDVVky2xjeFsX'){
+     updateDoc(washingtonRef, {
+       attempts: o.problem.attempts,
+       title:o.problem.title,
+       dataStructure:o.problem.dataStructure,
+       category:o.problem.category,
+       lastPracticed:o.problem.problem.problem.lastPracticed,
+       hints:o.problem.hints,
+       no_attempts:o.problem.problem.no_attempts,
+       attempts:o.problem.attempts,
+       solution:o.problem.solution,
+       userId:o.problem.userId,
+       
+      });
+    }
+      
+            
+          })
+          
+          
+        })
+
+    }}>
+    </button>
+ 
+    <input type="text" class="p-3 w-full  rounded-md"onFocus={()=>{
+      setSearch(true)
+    }} onChange={(e)=>{
+      if(e.currentTarget.value!=null || e.currentTarget.value.length>0){
+        const prom=new Promise((resolve,reject)=>{
+          setSearchText(e.target.data)
+          handleSearch(e)
+         
+          setTimeout(()=>{
+            resolve()
+          },300)
+        })
+
+        prom.then(()=>{
+          console.log("search:"+search)
+          console.log(filtered)
+        })
+      }else{
+        console.log("setting search false")
+        setSearch(false)
+      }
+    }}/>
+    <div class="flex flex-col mt-2  p-3">
+      <div class="flex justify-around">
+      {
+          byAddDate?<button class="bg-green-600 border-gray-400 p-2 rounded" onClick={()=>{
+           setOrderByAddDate(!byAddDate)
+           orderByAddDate()
+            console.log(search)
+            console.log(searchByDataStructure)
+          }}>
+          <p class="text-white font-bold">Add Date</p>
+        </button>:
+        <button  class="bg-gray-200 border-gray-400 p-2 rounded"
+        onClick={()=>{
+          orderByAddDate()
+         /* setOrderByAddDate(!byAddDate)
+          setSearchByDataStructure(false)
+          setSearchByCategory(false)
+          setSearchByDate(false)*/
+
+        }}>
+         Add Date
+        </button>
+        }
+        {
+          searchByDataStructure?<button class="bg-green-600 border-gray-400 p-2 rounded" onClick={()=>{
+            setSearchByDataStructure(!searchByDataStructure)
+            console.log(search)
+            console.log(searchByDataStructure)
+          }}>
+          <p class="text-white font-bold">Data Structure</p>
+        </button>:
+        <button  class="bg-gray-200 border-gray-400 p-2 rounded"
+        onClick={()=>{
+          setSearchByDataStructure(!searchByDataStructure)
+          setSearchByCategory(false)
+          setSearchByDate(false)
+
+        }}>
+          Data Structure
+        </button>
+        }
+          {
+          searchByCategory ?<button class="bg-green-600 border-gray-400 p-2 rounded" onClick={()=>{
+            setSearchByCategory(!searchByCategory)
+          }}>
+         <p class="text-white font-bold">Category</p> 
+        </button>:
+        <button  class="bg-gray-200 border-gray-400 p-2 rounded" onClick={()=>{
+          setSearchByCategory(!searchByCategory)
+          setSearchByDataStructure(false)
+          setSearchByDate(false)
+        }}>
+            Category
+        </button>
+        }
+               {
+          searchByDate ?<button class="bg-green-600 border-gray-400 p-2 rounded" onClick={()=>{
+            setSearchByDate(!searchByDate)
+          }}>
+         <p class="text-white font-bold">Today</p> 
+        </button>:
+        <button  class="bg-gray-200 border-gray-400 p-2 rounded" onClick={()=>{
+          setSearchByDate(!searchByDate)
+          setSearchByCategory(false)
+          setSearchByDataStructure(false)
+        }}>
+            Today
+        </button>
+        }
+
+      </div>
+      <div class="flex flex-col mt-1 justify-center">
+        {
+
+        }
+     
+        {
+          searchByCategory && !searchByDataStructure?
+          <select
+          id='category'
+           class=' m-2  w-full text-gray-900 text-sm rounded-md border-l border-gray-100 p-1'
+                 onChange={(e)=>{
+                   console.log(e.target.value)
+                   setCategory(e.target.value)
+                  // handleSearchByCategory(e)
+                   console.log(filtered)
+                 }} >   
+             <option value="Display Manipulation" selected>Display Manipulation</option>
+             <option value ="Find Sub:X Inside">Find Sub:X Inside</option>
+             <option value="Sorting">Sorting</option>
+             <option value="String to Number/Number to String">String to Number/Number to String</option>
+             <option value="Sliding Window">Sliding Window</option>
+             <option value="Recursion">Recursion</option>
+             <option value="KSmallest">KSmallest/KBiggest</option>
+             <option value="Array Processing">Array Processing</option>
+             <option value="Math">Math</option>
+             <option value="Traverse">Traverse</option>    
+      </select>:
+      <div></div>
+        }
+        {
+          searchByDataStructure && !searchByCategory?
+          <select
+          id='category'
+           class=' m-2  w-full text-gray-900 text-sm rounded-md border-l border-gray-100 p-1'
+                 onChange={(e)=>{
+                   console.log(e.target.value)
+                   setDataStructure(e.target.value)
+                  // handleSearchByDataStructure(e)
+                 }} >   
+             <option value="ArrayList" selected>ArrayList</option>
+                <option value ="LinkedList">LinkedList</option>
+                <option value="Array">Array</option>
+                <option value ="Matrix">Matrix</option>
+                <option value ="Hash">Hash</option>
+                <option value ="Stack">Stack</option>
+                <option value ="Matrix">Matrix</option>
+                <option value ="BST">BST</option>
+                <option value ="Graph">Graph</option>
+                <option value="Set">Set</option>
+                <option value ="etc">etc</option>  
+      </select>:<div></div>
+        }
+      </div>
+      <div class="flex">
+        
+      </div>
+      
+      
+    </div>
+    {!search&& !searchByCategory && searchByDataStructure&& !searchByDate&&filtered!=null?
+       <div class="h-screen overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3 ">
+       { filtered.map((p)=>{
+        console.log(p)
+        if(p.problem.dataStructure==dataStructure){
+         return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
+        }
+         })
+       }
+    </div>:<div></div>
+
+    }
+      {!search&& !searchByCategory && !searchByDataStructure&& searchByDate&&filtered!=null?
+       <div class="h-screen overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3">
+       { filtered.map((p)=>{
+        console.log(p)
+        const cDate=new Date()
+        const currDate=cDate.toString().substring(0,15)
+        try{
+        if(p.problem.lastPracticed.substring(0,15)==currDate){
+         return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
+        }
+      }catch(e){
+        if(p.problem.lastPracticed==currDate){
+        return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
+        }
+      }
+         })
+       }
+    </div>:<div></div>
+
+    }
+    {!search&& searchByCategory && !searchByDataStructure&&!searchByDate&& filtered!=null?
+       <div class="overflow-y-scroll h-[60vh] overflow-hidden h-screen p-4 ">
+       { filtered.map((p)=>{
+        console.log(p)
+        if(p.problem.category==category){
+         return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+        }
+         })
+       }
+    </div>:<div></div>
+
+    }
+    {search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null?
+     <div class="h-[55vh] overflow-y-scroll overflow-hidden  m-4 p-3">
+     { filtered.map((p)=>{
+      console.log(p)
+       return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+       })
      }
   </div>:
-    <div>
-      {
-        useDifficulty && searchByCategory?
-        <div>
-          USE DIFF + USE CATEGORY  && NO SEARCH
-          {
-            focus.map((p)=>{
-              console.log("cat count"+categoryCount)
-              if(already.includes(p.title) && p.tags.includes(category) && p.level.toUpperCase()==difficulty){
-                console.log(p.title)
-                already.push(p.title)
-                fil.push(p)
-                return(<AllProblemsItem problem={p}/>)
-              }
-            })
+  <div></div>
+    }
 
-          }
-          
-        </div>
-        :
-        <div>
-          {
-            useDifficulty && !searchByCategory?
-            <div>
-              useDifficulty && NO searchByCategory  && NO SEARCH
-            </div>
-            :
-            <div>
-               {
-            !useDifficulty && searchByCategory?
-            <div>
-              NO useDifficulty && searchByCategory  && NO SEARCH
-            </div>
-            :
-            <div>
-                NO useDifficulty && NO searchByCategory && NO SEARCH
-               {focus.map((p)=>{
-                if(p.prompt!=null){
-                return(<AllProblemsItem problem={p}/>)
-                }
-              })}
+    {
+      !search && !searchByCategory && !searchByDataStructure?
+      <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
+      {filtered.map((p)=>{
+       return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+      })}
+   </div>:
+   <div></div> 
+    }
+    
+    
+  </div>
+)
+}if(problems!=null && red && !orange&& !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
 
-            </div>
-          }
-              </div>
-          }
-        </div>
-      }
-    </div>
+  return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+  { filtered.map((p)=>{
+    console.log("\n\nREDDD")
+   console.log(p)
+    return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+    })
   }
-</div>
-:
-<div>
-</div>
+</div>)
+
 }
-</div>
+if(problems!=null && !red && orange && !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+
+return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+{ filtered.map((p)=>{
+ console.log(p)
+  return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+  })
+}
+</div>)
+
+}
+if(problems!=null && !red && !orange && green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+
+return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+{ filtered.map((p)=>{
+ console.log(p)
+  return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+  })
+}
+</div>)
+
+}
+if(problems!=null && !red && !orange && !green&& !search && !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+
+return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+{ filtered.map((p)=>{
+ console.log(p)
+  return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+  })
+}
+</div>)
+
+}
+if(problems!=null && red && !orange && !green&& search && !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+
+return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+{ filtered.map((p)=>{
+ console.log(p)
+  return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+  })
+}
+</div>)
+
+}else{
+return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
+{ filtered.map((p)=>{
+ console.log(p)
+  return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
+  })
+}
+</div>)
+}

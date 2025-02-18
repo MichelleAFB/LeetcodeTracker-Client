@@ -86,7 +86,7 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
                 <div class="ul">
                     {
                         user.followers.map((m)=>{
-                            console.log(m)
+                           
                             return(
                             <div>
                                 <p>{m.username}</p>
@@ -151,7 +151,7 @@ function ShowFFModal({setFollowers,setFollowing,user,visibility}) {
                     <div class="ul">
                         {
                             user.following.map((m)=>{
-                                console.log(m)
+                               
                                 return(
                                 <div>
                                     <p>{m.username}</p>

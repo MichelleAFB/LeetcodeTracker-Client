@@ -40,7 +40,7 @@ function Auth() {
   useEffect(()=>{
     sessionStorage.clear()
     const prom=new Promise((resolve,reject)=>{
-      axios.get("https://leetcodetracker.onrender.com/allTags").then((response)=>{
+      axios.get("http://localhost:3022/allTags").then((response)=>{
         if(response.data.success){
           sessionStorage.setItem("topicTags",JSON.stringify(response.data.tags))
         dispatch(setHeaderVisibility(false))

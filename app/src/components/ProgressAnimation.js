@@ -4,33 +4,43 @@ import {useState,useEffect} from 'react'
 import axios from 'axios';
 import { connect } from 'react-redux';
 import { start } from '@cloudinary/url-gen/qualifiers/textAlignment';
+import { useDispatch } from 'react-redux';
+import { setCompletedDays, setPercent, setStartingPoint } from '../redux/streakProgress/streak-actions';
 const Progress = ({done,completedDays,labels,startingPoint}) => {
     const [style, setStyle] = useState({});
     const[isLoading,setIsLoading]=useState(true)
     const days=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
   
+   
+    const dispatch=  useDispatch()
     
-    
-    console.log("style",style)
 
     useEffect(()=>{
-        console.log("here")
+        console.log("/n\n\nPRoGRESS")
+        const user=JSON.parse(sessionStorage.getItem("user"))
+        if(user!=null){
         const prom=new Promise((resolve,reject)=>{
-            
+            try{
             var streakAnimation=JSON.parse(sessionStorage.getItem("streakAnimation"))
-            if(startingPoint!=null){
+            
             if(streakAnimation!=null){
+            if(startingPoint!=null){
                 console.log("AAA")
-            if(streakAnimation.completedDays!=completedDays){
+        if(streakAnimation.completedDays!=completedDays || startingPoint!=streakAnimation.start || done!=streakAnimation.otherPercent){
+                console.log("UPDATE")
                 console.log("ABA")
                var anim={
-                startingPoint:startingPoint,
+                start:startingPoint,
                 completedDays:completedDays,
+                otherPercent:streakAnimation.otherPercent,
                 opacity: 1,
                 width: done,
-                marginLeft:startingPoint==0?(startingPoint):(startingPoint+(((completedDays)*40)*.1))
-                }
-                sessionStorage.setItem("streakAnimation",JSON.stringify(anim))
+                marginLeft:streakAnimation.start==0? `${(streakAnimation.start)}px`:`${(streakAnimation.start+(((streakAnimation.completedDays)*40)*.1))}px`
+            }
+                //sessionStorage.setItem("streakAnimation",JSON.stringify(anim))
+                setStyle(style)
+                console.log(anim,"done",done)
+                /*
             const newStyle = {
                 opacity:1,
                 width: `${done}%`,
@@ -38,66 +48,115 @@ const Progress = ({done,completedDays,labels,startingPoint}) => {
               }
           
               setStyle(newStyle);
+              */
             }else{
-                console.log("BAA")
+                console.log("BAA",{
+                    opacity:1,
+                    width:`${streakAnimation.otherPercent*(2.3*completedDays)}px`,
+                    marginLeft:streakAnimation.start==0? `${(streakAnimation.start)}px`:`${(streakAnimation.start+(((streakAnimation.completedDays)*40)*.1))}px`
+                })
                 setStyle({
                     opacity:1,
-                    width:`${streakAnimation.width}px`,
-                    marginLeft:`${streakAnimation.marginLeft}px`
+                    width:`${streakAnimation.otherPercent*(2.3*completedDays)}px`,
+                    marginLeft:streakAnimation.start==0? `${(streakAnimation.start)}px`:`${(streakAnimation.start+(((streakAnimation.completedDays)*40)*.1))}px`
                 })
             }
+           resolve()
         }else{
             console.log("AAB")
-            const anim = {
-                startingPoint:startingPoint,
-                completedDays:completedDays,
+            axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+               console.log(response)
+               const anim = {
+                startingPoint:response.data.start,
+                completedDays:response.data.completedDays,
                 opacity: 1,
-                width: done+8,
-                marginLeft:startingPoint==0?(startingPoint):(startingPoint+(((completedDays)*40)*.1))//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
+                width: `${response.data.otherPercent*(2.3*completedDays)}px`,
+                marginLeft:response.data.starting==0?(0):(response.data.start+(((response.data.completedDays)*40)*.1))//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
               }
-              sessionStorage.setItem("streakAnimation",JSON.stringify(anim))
+            dispatch(setCompletedDays(response.data.completedDays))
+            dispatch(setPercent(response.data.otherPercent))
+            dispatch(setStartingPoint(response.data.start))
+              sessionStorage.setItem("streakAnimation",JSON.stringify(response.data.animation))
               setStyle({
                 opacity: 1,
-                width: `${done}%`,
-                marginLeft:startingPoint==0? `${(startingPoint)}px`:`${(startingPoint+(((completedDays)*40)*.1))}px`//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
+                width: `${response.data.otherPercent*(2.3*response.data.completedDays)}px`,
+                marginLeft:response.data.start==0? `${(response.data.start)}px`:`${(response.data.start+(((response.data.completedDays)*40)*.1))}px`//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
               });
+              setTimeout(() => {
+                resolve()
+                }, 200)
+            })
+           
 
         }
         }else{
+            axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+               
+                console.log(response)
                 const anim = {
-                    startingPoint:streakAnimation.startingPoint,
-                    completedDays:streakAnimation.completedDays,
+                    startingPoint:response.data.start,
+                    completedDays:response.data.completedDays,
                     opacity: 1,
-                    width: `${streakAnimation.done}%`,
-                    marginLeft:streakAnimation.startingPoint==0? `${(streakAnimation.startingPoint+((streakAnimation.completedDays)*40))}px`:`${(streakAnimation.startingPoint+((7-streakAnimation.completedDays)*40))}px`//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
+                    width: `${response.data.otherPercent*(2.3*response.data.completedDays)}px`,
+                    marginLeft:response.data.start==0?(0):(response.data.start+(((response.data.completedDays)*40)*.1))//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
                   }
-                  sessionStorage.setItem("streakAnimation",JSON.stringify(anim))
+                  sessionStorage.setItem("streakAnimation",JSON.stringify(response.data))
+                  dispatch(setCompletedDays(response.data.completedDays))
+                  dispatch(setPercent(response.data.otherPercent))
+                  dispatch(setStartingPoint(response.data.start))
                   setStyle({
                     opacity: 1,
-                    width: `${streakAnimation.done}%`,
-                    marginLeft:streakAnimation.startingPoint==0? `${(streakAnimation.startingPoint+((streakAnimation.completedDays)*40))}px`:`${(streakAnimation.startingPoint+((7-streakAnimation.completedDays)*40))}px`//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
-                  })
-
+                    width: `${response.data.otherPercent*(2.3*response.data.completedDays)}px`,
+                    marginLeft:response.data.start==0? `${(response.data.start)}px`:`${(response.data.start+(((response.data.completedDays)*40)*.1))}px`//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
+                  });
+                  setTimeout(() => {
+                    resolve()
+                    }, 200)
+             })
+             
             }
             
-            setTimeout(() => {
-              resolve()
-              }, 200)
+          
+}catch(err){
 
+    axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
+        console.log(response)
+        const anim = {
+            startingPoint:response.data.start,
+            completedDays:response.data.completedDays,
+            opacity: 1,
+            width: response.data.otherPercent+8,
+            marginLeft:response.data.start==0?(0):(response.data.start+(((response.data.completedDays)*40)*.1))//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
+          }
+          dispatch(setCompletedDays(response.data.completedDays))
+          dispatch(setPercent(response.data.otherPercent))
+          dispatch(setStartingPoint(response.data.start))
+          sessionStorage.setItem("streakAnimation",JSON.stringify(response.data))
+          setStyle({
+            opacity: 1,
+            width: `${response.data.otherPercent*(2.3*response.data.completedDays)}px`,
+            marginLeft:response.data.start==0? `${(response.data.start)}px`:`${(response.data.start+(((response.data.completedDays)*40)*.1))}px`//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
+          });
+          setTimeout(() => {
+            resolve()
+            }, 1000)
+        })
+    }
         })
         prom.then(()=>{
             setIsLoading(false)
         })
+    }
       
 
-    },[completedDays])
+    },[completedDays,done])
     if(!isLoading){
-        
+        console.log("PROGROESS",style)
     return (
           <div className="progress">
      
               <div className="progress-done" style={style}>
-                  {done}%
+                  {style.width}%
               </div>
            
            
@@ -114,6 +173,7 @@ function ProgressAnimation({reload,percent,startingPercent,completedDays,streaks
     const[ourPercent,setOurPercent]=useState()
     useEffect(()=>{
         const us=JSON.parse(sessionStorage.getItem("user"))
+        if(us!=null){
         setUser(us)
       
         const prom=new Promise((resolve,reject)=>{
@@ -123,7 +183,7 @@ function ProgressAnimation({reload,percent,startingPercent,completedDays,streaks
                 startingPoint:startingPoint,
                 completedDays:completedDays,
                 opacity:1,
-                 width: `${completedDays*(100/7)}%`,
+                 width: `${percent*(2.3*completedDays)}px`,
                 marginLeft:startingPoint==0? `0`:`${(startingPoint+(((7-completedDays)*40)*.1))}px`
             }
             sessionStorage.setItem("streakAnimation",JSON.stringify(anim))
@@ -136,6 +196,7 @@ function ProgressAnimation({reload,percent,startingPercent,completedDays,streaks
         prom.then(()=>{
             setIsLoading(false)
         })
+    }
     },[reload,completedDays,startingPercent])
 if (!isLoading){
   return (
@@ -149,7 +210,7 @@ if (!isLoading){
                <p>Fri</p>
                <p>Sat</p>
             </div>
-        <Progress done={completedDays*(100/7)} labels={days} completedDays={completedDays} startingPoint={startingPoint}/>
+        <Progress done={startingPercent} labels={days} completedDays={completedDays} startingPoint={startingPoint}/>
     </div>
   )
 }else{

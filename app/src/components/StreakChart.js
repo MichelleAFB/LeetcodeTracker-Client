@@ -58,44 +58,7 @@ function StreakChart({allStreaks,streaks}) {
     prom.then(()=>{
       setIsLoading(false)
     })
-   /* const dataArr=[]
-    const problemsListCollectionRef=collection(db,"problems")
-    const arr=[] 
-    const user=JSON.parse(sessionStorage.getItem("user"))
-    console.log(Number(user.userId))
-    console.log(typeof(user.userId))
-    console.log(typeof(parseInt(user.userId)))
-  const prom1=new Promise((resolve1,reject1)=>{
-    axios.get("https://leetcodetracker.onrender.com/current-streak/"+user.userId,{userId:parseInt(user.userId)}).then(async(response)=>{
-      const data=await response.data
-      console.log(data)
-      console.log(response.data.streaks)
-      console.log(response.data)
-      if(response.data.streaks!=null){
-      axios.get("https://leetcodetracker.onrender.com/sort-streaks/"+user.userId,{message:"hi",userId:user.userId}).then((response1)=>{
-        setAllStreaks(response1.data.streaks)
-        const str=response.data.streaks 
-        setStreaks(response.data.streaks)
-        console.log(response1)
-        setTimeout(()=>{
-         resolve1()
-        },700)
-      })
-    }else{
-      resolve1()
-    }
-      
    
-
-  })
-
-  })
-  
-  prom1.then(()=>{
-    setIsLoading(false)
-   
-   })
-   */
   },[selectedYear,selectedMonth,useSelectedMonth])
 
 
@@ -119,6 +82,7 @@ function StreakChart({allStreaks,streaks}) {
         function(key,index){
           const date=attempts[key].date
           if(date!=null){
+         
           
             if(date.includes("Mar")){
               Mar.push({problem:r.problem.title,date:date})
@@ -195,8 +159,8 @@ function StreakChart({allStreaks,streaks}) {
   
   if(!isLoading && (streaks!=null || allStreaks!=null)){
   console.log(selectedYear)
-  console.log(allStreaks)
-  console.log(streaks)
+  console.log(selectedMonth)
+  
  
    /* const data = {
       labels:problems.map((p)=> {return p.day}),
@@ -237,7 +201,8 @@ function StreakChart({allStreaks,streaks}) {
       <p class="text-5xl"></p>
   }
  */
-console.log("\n\n\n\ncurrent streaks",streaks)
+console.log("\n\n\n\nAll streaks",allStreaks)
+console.log("streaks",streaks)
  
   return (
     <div class="m-2 flex    border-gray-300 border-t-2 m p-2 "> 
@@ -301,7 +266,7 @@ console.log("\n\n\n\ncurrent streaks",streaks)
               }
               {
                 useSelectedMonth?
-              <select class="bg-gray-500 text-white p-2"  onChange={(e)=>{
+              <select class="bg-gray-500 text-white p-2" placeholder={"Feb"} value={"Feb"} onChange={(e)=>{
                 setSelectedMonth(e.target.value)
               }}>
                 <option value={"Jan"}> January</option>
@@ -333,35 +298,24 @@ console.log("\n\n\n\ncurrent streaks",streaks)
       <div class={`w-[60vw] overflow-x-scroll flex overflow-hidden `}>
     
         {allStreaks.map((st)=>{
-         
-          const validYear=st.map((s)=>{
-            if(useSelectedYear){
-            if(s.day.includes(selectedYear.toString()) && useSelectedMonth==false){
-           
-              if(useSelectedMonth && s.day.includes(selectedMonth)){
-              return true;
-              }else{
-                return true
-              }
-            }else if(s.day.includes(selectedYear.toString()) && useSelectedMonth && s.day.includes(selectedMonth)){
-              return true
-            }
-          }else {
-            if(useSelectedMonth){
-              if(s.day.includes(selectedMonth)){
-                return true
-              }
-            }else{
-              return true
-            }
-           
-          }
-          })
+         console.log(st)
+          const validYear=st.years.includes(selectedYear)
+          const validMonth=st.months.includes(selectedMonth)
+          console.log("validMonth",validMonth,"validYear",validYear)
     
-          if(validYear.includes(true) ){
+          if(useSelectedYear && useSelectedMonth && validYear && validMonth){
+            
+          return(<Streak ourYears={st.years} ourMonths={st.months} streaks={st.arr} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>)
           
-          return(<Streak streaks={st} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>)
-          
+          }else if(useSelectedYear && !useSelectedMonth && validYear){
+            return(<Streak ourYears={st.years} ourMonths={st.months}  streaks={st.arr} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>)
+
+          }else if(!useSelectedYear && useSelectedMonth && validMonth){
+            return(<Streak ourYears={st.years} ourMonths={st.months}  streaks={st.arr} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>)
+
+          }else{
+            return(<Streak ourYears={st.years} ourMonths={st.months}  streaks={st.arr} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>)
+
           }
          
         })
@@ -381,7 +335,7 @@ console.log("\n\n\n\ncurrent streaks",streaks)
       :
       <div class="flex-col w-full p-10">
           <div class="flex"> <p class="text-4xl">Your Current Streak</p> <p class="text-green-700 ml-4 font-bold text-xl">{streaks.length}</p></div>
-      <Streak streaks={streaks} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>
+      <Streak  ourYears={st.years} ourMonths={st.months}  streaks={streaks} selectedMonth={selectedMonth} useSelectedMonth={useSelectedMonth} selectedYear={selectedYear} useSelectedYear={useSelectedYear}/>
       <button class="bg-green-700 p-3 rounded-md m-2" onClick={()=>{
         setSeeAllStreaks(!seeAllStreaks)
       }}>

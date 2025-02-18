@@ -63,11 +63,11 @@ const [ourSocket,setOurSocket]=useState()
       resolve()
     } 
     }else{ 
-      console.log("socket GOOD",socket)
+      //console.log("socket GOOD",socket)
       resolve()
     }
   }else{
-    console.log("SOCKET GOOD",socket)
+   // console.log("SOCKET GOOD",socket)
     if(user!=null){
     var s=io.connect("http://localhost:3042?token="+user.email+new Date().toString().substring(0,15))
     dispatch(setSocket(s))
@@ -155,7 +155,7 @@ const mapStateToProps = (state, props) => {
   var visibility= state.user.visibility;
   var user=state.user.user
   var socket=state.socket.socket
-  console.log("visibility in APP.JS"+visibility,socket)
+ // console.log("visibility in APP.JS"+visibility,socket)
   if(user==null){
     user=JSON.parse(sessionStorage.getItem("user"))
   }

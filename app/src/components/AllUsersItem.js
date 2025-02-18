@@ -15,12 +15,12 @@ import { CloudinaryImage } from '@cloudinary/url-gen';
 import { setEditFFUser, setFFVisibility,setFFFollowers,setFFFollowing} from "../redux/editFollowersAndFollowing/editFollowersAndFollowing-actions"
 function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
     const navigate=useNavigate()
- 
-    const[user,setUser]=useState(u.data())
+    console.log(u)
+    const[user,setUser]=useState()
     const[isLoading,setIsLoading]=useState(true)
     const self=JSON.parse(sessionStorage.getItem("user"))
-    const [followers,getFollowers]=useState(u.data().followers!=null? u.data().followers.length:0)
-    const [following,getFollowing]=useState(u.data().following!=null? u.data().following.length:0)
+    const [followers,getFollowers]=useState(0)
+    const [following,getFollowing]=useState(0)
    const[avi,setAvi]=useState()
     const dispatch=useDispatch()
 

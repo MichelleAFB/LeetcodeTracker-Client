@@ -41,8 +41,8 @@ function AllProblems() {
         console.log(response)
         list=response.data.problems
         setTags(response.data.tags)
-       // setProblems(response.data.problems)
-       // setCurrentList(response.data.problems)
+        setProblems(response.data.problems)
+        setCurrentList(response.data.problems)
         fill=response.data.problems
        // setFiltered(response.data.problems)
         
@@ -56,7 +56,7 @@ function AllProblems() {
     }
 
     const prom=new Promise((resolve,reject)=>{
-      if(list==null || tagList==null){
+      if(problems==null || tags==null){
         console.log("LIST IS NULL")
         
       getProblems().then((response)=>{
@@ -66,18 +66,19 @@ function AllProblems() {
         var i=0
 
         //causes chrome overload if allowed to run
+        /*
         while(notSet && i<4){
           setTimeout(()=>{
             console.log("NOTSET:"+notSet)
             notSet=problems==null?true:false
             i++
-          if(!notSet || i>=4){
+          if(notSet==false|| i>=4){
             resolve(problems)
           }
 
           },200)
          
-      }
+      }*/
 
       
         resolve(response)
