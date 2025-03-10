@@ -82,12 +82,12 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
             userData.myTopicTags.map((t)=>{
               topictags.push(t)
             })
-            console.log(topictags)
+            
             setTags(topictags)
           }else{
             setTags(topictags)
           }
-         console.log("FROM LEET",ourProblem.tags)
+         
            
          
           setPrompt(ourProblem.prompt)
@@ -139,6 +139,7 @@ function updateTopicTags(updatedTags){
 
 }
 
+
   if(visibility && !isLoading){ 
     const problemsListCollectionRef=collection(db,"problems")
 
@@ -152,7 +153,7 @@ function updateTopicTags(updatedTags){
     }
     */
    console.log(problemData,"ourproblem:",ourProblem)
-    console.log("length:",tags,typeof(tags))
+  
     if(ourProblem!=null){
   return (
     <div class='bg-gray-200' data-testId="modal-public">
@@ -243,7 +244,7 @@ function updateTopicTags(updatedTags){
               <div class="flex-w-full">
               {tags.length>0?
                 <div>
-                  <AddQuestionTags allTags={tags} updateTopicTags={updateTopicTags} defaultTags={ourProblem.tags}/>
+                  <AddQuestionTags allTags={tags} updateTopicTags={updateTopicTags} defaultTags={ourTags}/>
                 </div>:
                 <div></div>
               }
@@ -308,31 +309,58 @@ function updateTopicTags(updatedTags){
                 data.docs.map(async(d)=>{
                   if(d.id==problemData.id){
                     console.log("match")
+                    console.log("ourProblem",ourProblem)
+                      console.log("problemData",problemData)
                     console.log(d.data())
-                    await setDoc(docRefer, {
-                      title:ourProblem.title,
+                    console.log({
+                      title:problemData.problem.title,
                       dataStructure:dataStructure,
                       category:category,
                       lastPracticed:problemData.problem.lastPracticed,
                       hints:problemData.problem.hints,
                       no_attempts:problemData.problem.no_attempts,
-                      level:ourProblem.difficulty,
+                      level:problemData.problem.difficulty,
                       tags:ourTags!=null && ourTags.length>0?ourTags:[],
-                      createdAt:problemData.createdAt!=null? problemData.createdAt:new Date(),
+                      createdAt:problemData.createdAt!=null? problemData.problem.createdAt:new Date(),
                       titleSlug:problemData.problem.titleSlug!=null? problemData.problem.titleSlug:null,
                       page:ourProblem.page!=null? ourProblem.page:1,
                       topicTags:ourTags!=null && ourTags.length>0?ourTags:[],
-                      acRate:ourProblem.acRate!=null? ourProblem.acRate:0.0,
+                      acRate:problemData.problem.acRate,
                       attempts:problemData.problem.attempts,
                       solution:problemData.problem.solution,
                       userId:problemData.problem.userId,
                       boilerCode:problemData.problem.boilerCode,
-                      link:ourProblem.link,
-                      prompt:prompt,
-                      examples:(d.data().examples==null? {0:"attempt",date:currDate}:d.data().examples),
+                      link:problemData.problem.link,
+                      prompt:problemData.problem.prompt,
+                     // examples:(d.data().examples==null? {0:"attempt",date:currDate}:d.data().examples),
+                      userId:problemData.problem.userId
+                     
+                    })
+                       await setDoc(docRefer, {
+                      title:problemData.problem.title,
+                      dataStructure:dataStructure,
+                      category:category,
+                      lastPracticed:problemData.problem.lastPracticed,
+                      hints:problemData.problem.hints,
+                      no_attempts:problemData.problem.no_attempts,
+                      level:problemData.problem.difficulty,
+                      tags:ourTags!=null && ourTags.length>0?ourTags:[],
+                      createdAt:problemData.createdAt!=null? problemData.problem.createdAt:new Date(),
+                      titleSlug:problemData.problem.titleSlug!=null? problemData.problem.titleSlug:null,
+                      page:ourProblem.page!=null? ourProblem.page:1,
+                      topicTags:ourTags!=null && ourTags.length>0?ourTags:[],
+                      acRate:problemData.problem.acRate,
+                      attempts:problemData.problem.attempts,
+                      solution:problemData.problem.solution,
                       userId:problemData.problem.userId,
+                      boilerCode:problemData.problem.boilerCode,
+                      link:problemData.problem.link,
+                      prompt:problemData.problem.prompt,
+                      examples:(d.data().examples==null? {0:"attempt",date:currDate}:d.data().examples),
+                      userId:problemData.problem.userId
                      
                     }).then((response)=>{
+                      console.log(response)
                       alert("SUCCESS:ADDED LEETCODE PROBLEM "+ourProblem.id + d.id )
                     
                       axios.post("https://leetcodetracker.onrender.com/set-firebase-id/"+problemData.id,{title:ourProblem.title}).then((response)=>{
@@ -347,7 +375,159 @@ function updateTopicTags(updatedTags){
                         dispatch(setLeetcodeProblemVisibility(false))
                     },100)
                      // setIsLoading(true)
+                    }).catch(async(e)=>{
+                      console.log("ourProblem",ourProblem)
+                      console.log("problemData",problemData)
+                      var user=JSON.parse(sessionStorage.getItem("user"))
+                      await addDoc(collection(db,"problems"),{
+                     
+                        title:problemData.problem.title,
+                        dataStructure:dataStructure,
+                        category:category,
+                        lastPracticed:new Date(),
+                        hints:"none",
+                        no_attempts:0,
+                        tags:ourTags!=null && ourTags.length>0?ourTags:[],
+                        topicTags:ourTags!=null && ourTags.length>0?ourTags:[],
+                        acRate:problemData.problem.acRate,//ourProblem.acRate!=null ? ourProblem.acRate:0.0,
+                        level:problemData.problem.difficulty!=null?problemData.problem.difficulty:problemData.problem.level!=null?problemData.problem.level:"Medium",
+                        page:ourProblem.page!=null? ourProblem.page:1,
+                        titleSlug:problemData.problem.titleSlug!=null?problemData.problem.titleSlug:null,
+                        attempts:[{attempt:"N/A",date:new Date().toString().substring(0,15)}],
+                        solution:"N/A",
+                        createdAt:new Date(),
+                        userId:user.userId,
+                        leetcodeId:(ourProblem.problemID!=null? ourProblem.questionId:-1),
+                        examples:{0:"N/A",date:currDate},
+                        boilerCode:`import java.util.*;
+                        public class Main{ 
+                        
+                            public static void main(String[] args){
+                        
+                            }
+                          }`,
+                        link:problemData.problem.link,
+                        prompt:problemData.problem.prompt,
+                        examples:{0:"attempt",date:currDate},
+                        userId:user.userId,
+                       
+                      }).then((response)=>{
+                        alert("SUCCESS:ADDED LEETCODE PROBLEM " )
+                        dispatch(setLeetcodeProblem(null))
+                        setTimeout(()=>{
+                          dispatch(addLeetcodeProblemReload())
+                          dispatch(setLeetcodeProblemVisibility(false))
+                      },100)
+                       
+  
+                    
+                        
+                        
+                        console.log(response)
+                        console.log("success")
+                       // setIsLoading(true)
+                      }).catch((e)=>{
+                        console.log(e)
+                      });
+                      
                     });
+                    /*
+                    await setDoc(docRefer, {
+                      title:problemData.problem.title,
+                      dataStructure:dataStructure,
+                      category:category,
+                      lastPracticed:problemData.problem.lastPracticed,
+                      hints:problemData.problem.hints,
+                      no_attempts:problemData.problem.no_attempts,
+                      level:problemData.problem.difficulty,
+                      tags:ourTags!=null && ourTags.length>0?ourTags:[],
+                      createdAt:problemData.createdAt!=null? problemData.problem.createdAt:new Date(),
+                      titleSlug:problemData.problem.titleSlug!=null? problemData.problem.titleSlug:null,
+                      page:ourProblem.page!=null? ourProblem.page:1,
+                      topicTags:ourTags!=null && ourTags.length>0?ourTags:[],
+                      acRate:problemData.problem.acRate,
+                      attempts:problemData.problem.attempts,
+                      solution:problemData.problem.solution,
+                      userId:problemData.problem.userId,
+                      boilerCode:problemData.problem.boilerCode,
+                      link:problemData.problem.link,
+                      prompt:problemData.problem.prompt,
+                      examples:(d.data().examples==null? {0:"attempt",date:currDate}:d.data().examples),
+                      userId:problemData.problem.userId
+                     
+                    }).then((response)=>{
+                      console.log(response)
+                      alert("SUCCESS:ADDED LEETCODE PROBLEM "+ourProblem.id + d.id )
+                    
+                      axios.post("https://leetcodetracker.onrender.com/set-firebase-id/"+problemData.id,{title:ourProblem.title}).then((response)=>{
+                        console.log(response)
+                      })
+                    
+                      console.log(response)
+                      console.log("success")
+                      dispatch(setLeetcodeProblem(null))
+                      setTimeout(()=>{
+                        dispatch(addLeetcodeProblemReload())
+                        dispatch(setLeetcodeProblemVisibility(false))
+                    },100)
+                     // setIsLoading(true)
+                    }).catch(async(e)=>{
+                      console.log("ourProblem",ourProblem)
+                      console.log("problemData",problemData)
+                      var user=JSON.parse(sessionStorage.getItem("user"))
+                      await addDoc(collection(db,"problems"),{
+                     
+                        title:problemData.problem.title,
+                        dataStructure:dataStructure,
+                        category:category,
+                        lastPracticed:new Date(),
+                        hints:"none",
+                        no_attempts:0,
+                        tags:ourTags!=null && ourTags.length>0?ourTags:[],
+                        topicTags:ourTags!=null && ourTags.length>0?ourTags:[],
+                        acRate:problemData.problem.acRate,//ourProblem.acRate!=null ? ourProblem.acRate:0.0,
+                        level:problemData.problem.difficulty!=null?problemData.problem.difficulty:problemData.problem.level!=null?problemData.problem.level:"Medium",
+                        page:ourProblem.page!=null? ourProblem.page:1,
+                        titleSlug:problemData.problem.titleSlug!=null?problemData.problem.titleSlug:null,
+                        attempts:[{attempt:"N/A",date:new Date().toString().substring(0,15)}],
+                        solution:"N/A",
+                        createdAt:new Date(),
+                        userId:user.userId,
+                        leetcodeId:(ourProblem.problemID!=null? ourProblem.questionId:-1),
+                        examples:{0:"N/A",date:currDate},
+                        boilerCode:`import java.util.*;
+                        public class Main{ 
+                        
+                            public static void main(String[] args){
+                        
+                            }
+                          }`,
+                        link:problemData.problem.link,
+                        prompt:problemData.problem.prompt,
+                        examples:{0:"attempt",date:currDate},
+                        userId:user.userId,
+                       
+                      }).then((response)=>{
+                        alert("SUCCESS:ADDED LEETCODE PROBLEM " )
+                        dispatch(setLeetcodeProblem(null))
+                        setTimeout(()=>{
+                          dispatch(addLeetcodeProblemReload())
+                          dispatch(setLeetcodeProblemVisibility(false))
+                      },100)
+                       
+  
+                    
+                        
+                        
+                        console.log(response)
+                        console.log("success")
+                       // setIsLoading(true)
+                      }).catch((e)=>{
+                        console.log(e)
+                      });
+                      
+                    });
+                    */
                   }
                 })
                
@@ -374,8 +554,8 @@ function updateTopicTags(updatedTags){
                 
                   
                     console.log("match")
-                    
-                    await addDoc(collection(db,"problems"),{
+                    console.log({
+                     
                       title:ourProblem.title,
                       dataStructure:dataStructure,
                       category:category,
@@ -388,7 +568,7 @@ function updateTopicTags(updatedTags){
                       level:ourProblem.difficulty,
                       page:ourProblem.page!=null? ourProblem.page:1,
                       titleSlug:ourProblem.titleSlug!=null?ourProblem.titleSlug:null,
-                      attempts:[{attempt:"N/A",date:currDate}],
+                      attempts:[{attempt:"N/A",date:new Date()}],
                       solution:"N/A",
                       createdAt:new Date(),
                       userId:user.userId,
@@ -406,6 +586,39 @@ function updateTopicTags(updatedTags){
                       examples:{0:"attempt",date:currDate},
                       userId:user.userId,
                      
+                    })
+                    
+                    await addDoc(collection(db,"problems"),{
+                     
+                      title:ourProblem.title,
+                      dataStructure:dataStructure,
+                      category:category,
+                      lastPracticed:currDate,
+                      hints:"none",
+                      no_attempts:0,
+                      tags:ourTags!=null && ourTags.length>0?ourTags:[],
+                      topicTags:ourTags!=null && ourTags.length>0?ourTags:[],
+                      acRate:ourProblem.acRate!=null ? ourProblem.acRate:0.0,
+                      level:ourProblem.difficulty,
+                      page:ourProblem.page!=null? ourProblem.page:1,
+                      titleSlug:ourProblem.titleSlug!=null?ourProblem.titleSlug:null,
+                      attempts:[{attempt:"N/A",date:new Date()}],
+                      solution:"N/A",
+                      createdAt:new Date(),
+                      userId:user.userId,
+                      leetcodeId:(ourProblem.problemID!=null? ourProblem.questionId:-1),
+                      examples:{0:"N/A",date:currDate},
+                      boilerCode:`import java.util.*;
+                      public class Main{ 
+                      
+                          public static void main(String[] args){
+                      
+                          }
+                        }`,
+                      link:ourProblem.link,
+                      prompt:ourProblem.prompt,
+                      examples:{0:"attempt",date:currDate},
+                      userId:user.userId,
                     }).then((response)=>{
                       alert("SUCCESS:ADDED LEETCODE PROBLEM " )
                       dispatch(setLeetcodeProblem(null))
@@ -421,6 +634,8 @@ function updateTopicTags(updatedTags){
                       console.log(response)
                       console.log("success")
                      // setIsLoading(true)
+                    }).catch((e)=>{
+                      console.log(e)
                     });
                   
                 

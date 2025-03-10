@@ -324,9 +324,12 @@ if(prevSearch!=null){
         
           fil.push(p)
           already.push(p.title)
+          
+          if(prevList!=null){
           if(!prevList.includes(p.title) && refreshList==false){
             refreshList=true
           }
+        }
         
 
           catIndex++
@@ -643,8 +646,7 @@ if(prevSearch!=null){
     </div>
   )
   }else{
-    console.log("null problems",problems)
-    console.log("isLoading",isLoading)
+  
     return(
       <div>...problems</div>
     )

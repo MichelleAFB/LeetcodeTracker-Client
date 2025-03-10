@@ -9,7 +9,8 @@ startingPercent:null,
  uponLogin:null,
  days:null,
  completedDays:null,
- startingPoint:null
+ startingPoint:null,
+ lastDate:null,
 };
 
 export const streakReducer = (state = initialState, action) => {
@@ -30,7 +31,7 @@ export const streakReducer = (state = initialState, action) => {
        fireOff:!state.fireOff
       };
       case actionTypes.UPON_LOGIN:
-        console.log("UPON LOGIN",action.payload)
+      
         return{
           ...state,
           uponLogin:action.payload.uponLogin,
@@ -39,22 +40,28 @@ export const streakReducer = (state = initialState, action) => {
           startingPercent:action.payload.percent
         }
         case actionTypes.SET_STARTING_POINT:
-          //console.log("UPON LOGIN",action.payload)
+          
           return{
             ...state,
             startingPoint:action.payload.start
           }
         case actionTypes.SET_DAYS:
-          console.log("SETDAYS",action.payload)
+        
           return{
             ...state,
           days:action.payload.days
           }
           case actionTypes.SET_COMPLETED_DAYS:
-          console.log("SETDAYS",action.payload)
+         
           return{
             ...state,
           completedDays:action.payload.completedDays
+          }
+          case actionTypes.SET_LASTDATE:
+        
+          return{
+            ...state,
+            lastDate:action.payload.lastDate
           }
    
 

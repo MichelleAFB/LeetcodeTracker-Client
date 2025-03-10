@@ -2,6 +2,7 @@ import React from 'react'
 import { useState,useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import AddQuestionTags from './smallerComponents/Modals/AddQuestionTags'
 //assets
 import { IconButton } from '@chakra-ui/react'
 
@@ -13,6 +14,7 @@ import { addLeetcodeProblemReload } from '../redux/addLeetcodeProblem.js/addLeec
 function AddProblem() {
 
   const[title,setTitle]=useState()
+  const[ourTags,setOurTags]=useState([])
   const[link,setLink]=useState("https://leetcode.com/problemset/all/")
   const[category,setCategory]=useState()
   const[userId,setUserId]=useState()
@@ -25,15 +27,24 @@ function AddProblem() {
   const[currentExample,setCurrentExample]=useState()
   const[isLoading,setIsLoading]=useState(true)
   const[acRate,setAcRate]=useState()
- const[tags,setTags]=useState()
+
 
   const[show,setShow]=useState(false)
+  const[allTags,setAllTags]=useState(JSON.parse(sessionStorage.getItem("topicTags")))
   const dispatch=useDispatch()
   useEffect(()=>{
+    var v=allTags.map((t)=>{
+      return t.name
+    })
     const prom=new Promise((resolve,reject)=>{
+      var v=allTags.map((t)=>{
+        return t.name
+      })
+      
 
   
     axios.get("http://localhost:3022/allTags").then(async(response)=>{
+      setAllTags(v)
       var topictags=response.data.tags
       const user=JSON.parse(sessionStorage.getItem("user"))
       const userRef= doc(db,"users",user.userId)
@@ -45,12 +56,12 @@ function AddProblem() {
         userData.myTopicTags.map((t)=>{
           topictags.push(t)
         })
-        setTags(topictags)
+       // setOurTags(topictags)
         setTimeout(()=>{
           resolve()
        },100)
       }else{
-        setTags(topictags)
+        //setOurTags(topictags)
        setTimeout(()=>{
           resolve()
        },100)
@@ -72,8 +83,14 @@ function AddProblem() {
 
   const navigate=useNavigate()
 
+  function updateTopicTags(updatedTags){
+    setOurTags(updatedTags)
+  
+  }
 //TODO:ADD LINK INPUT
 if(!isLoading){
+  console.log("ourTags",ourTags)
+  try{
   return (
     <div class="flex-col bg-inherit w-full m-2  p-3 rounded-md w-1/2">
         <button class="bg-green-500 p-3 rounded-md flex w-full justify-center" onClick={()=>{
@@ -104,10 +121,37 @@ if(!isLoading){
             }}/>
           </div>
           <div class="flex p-3 m2">
-            <label>Level:</label>
-            <input type="text" class="p-2 rounded-sm w-full ml-2" onChange={(e)=>{
-              setLevel(e.target.value)
-            }}/>
+          <div class="flex justify-apart w-full">
+      
+      <label text="Easy"  class="text-green-600 m-2 font-bold">
+        Easy
+        <input type="radio" name="question" onChange={()=>{
+          setLevel("EASY")
+          
+        }}/>
+         
+      </label>
+        <label text="Medium" class="text-orange-600 m-2 font-bold">
+          Medium
+        <input type="radio" name="question" class="text-orange-600" onChange={()=>{
+          setLevel("MEDIUM")
+          
+
+        }}/>
+           
+        </label>
+        <label text="Hard" class="text-red-600 m-2 font-bold">
+          Hard
+          <input type="radio" name="question" onChange={()=>{
+          setLevel("HARD")
+         
+
+        }}/>
+         
+        </label>
+  
+    
+  </div>
           </div>
      
           <div class="flex p-3 m2">
@@ -134,23 +178,11 @@ if(!isLoading){
           </div>
 
           <div class="flex p-3 m2">
-            <label>Category: </label>
-            <input type="text" list="category" class="m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1"/>
-          <datalist
-               id='category'
-                class=' m-2  w-full text-gray-900 text-sm rounded-md border-l border-gray-100 p-1'
-                      onChange={(e)=>{
-                        console.log(e.target.value)
-                        setCategory(e.target.value)
-                      }} >   
-               {
-                tags.map((t)=>{
-                  return(<option value={t}>{t}</option>)
-                })
-               }
-                 
-                  
-           </datalist>
+            <label>{`Category (tags):`} </label>
+          
+             
+
+<AddQuestionTags allTags={allTags} updateTopicTags={updateTopicTags} defaultTags={ourTags}/>
           </div>
           <div class="flex p-3 m2">
             <label>Data Structure: </label>
@@ -158,11 +190,11 @@ if(!isLoading){
                id='category'
                 class=' m-2  w-full text-gray-900 text-sm rounded-md border-l border-gray-100 p-1'
                 onChange={(e)=>{
-                  console.log(e.target.value)
-                  console.log(typeof(e.target.value))
+               
                   setDataStructure(e.target.value)
                 }}  >
-                        
+                  <option value="String">String</option>
+                  <option value="StringBuilder">StringBuilder</option>
                   <option value="ArrayList" selected>ArrayList</option>
                   <option value ="LinkedList">LinkedList</option>
                   <option value="Array">Array</option>
@@ -187,22 +219,48 @@ if(!isLoading){
 
               var exampleObj={}
               var index=0;
+              if(examples.length>0){
               while(index<examples.length){
                 const ex=examples[index].replace("\n"," ")
                 exampleObj[index]={id:index,example:ex}
                 index++
               }
+            }
 
               console.log(sessionStorage.getItem("signInType"))
               if(sessionStorage.getItem("signInType")=="signIn"){
                 const user=JSON.parse(sessionStorage.getItem('user'))
-                const cDate=new Date()
-                const currDate=cDate.toString().substring(0,15)
+             
+                const currDate=new Date()
+                console.log( { title:title,
+                  dataStructure:dataStructure,
+               
+                  topicTags:ourTags,
+                  tags:ourTags,
+                  lastPracticed:currDate,
+                  no_attempts:0,
+                  attempts:[{attempt:"N/A",date:currDate}],
+                  hints:hints!=null? hints:"",
+                  link,link,
+                  prompt:prompt,
+                  examples:examples,
+                  level:level,
+                  diffculty:level,
+                  solution:"solution",
+                  userId:user.userId,
+                  boilerCode:`public class Main{
+                    public static void main(String[]args){
+
+                    }
+                  }`})
                 const added=await addDoc(collection(db,"problems"),{
                   title:title,
                   dataStructure:dataStructure,
-                  category:category,
-                  lastPracticed:currentDate.toString(),
+                  category:ourTags,
+                  topicTags:ourTags,
+                  tags:ourTags,
+                 diffculty:level,
+                  lastPracticed:currDate,
                   no_attempts:0,
                   attempts:[{attempt:"N/A",date:currDate}],
                   hints:hints!=null? hints:"",
@@ -212,10 +270,6 @@ if(!isLoading){
                   level:level,
                   solution:"solution",
                   userId:user.userId,
-
-             
-            
-
                   boilerCode:`public class Main{
                     public static void main(String[]args){
 
@@ -226,6 +280,9 @@ if(!isLoading){
                 
                 alert("SUCCESS")
                 dispatch(addLeetcodeProblemReload())
+                setTimeout(()=>{
+                  setShow(false)
+                },400)
               })
 
               }
@@ -241,9 +298,30 @@ if(!isLoading){
       }
     </div>
   )
+}catch(e){
+  console.log(e)
+  return(<div></div>)
+}
     }else{
       return(<div></div>)
     }
 }
-
+/*
+<datalist
+               id='category'
+                class=' m-2  w-full text-gray-900 text-sm rounded-md border-l border-gray-100 p-1'
+                      onBlur={(e)=>{
+                        console.log(e.target.value)
+                        setCategory((prev)=>[...prev,e.target.value])
+                      }} >   
+               {
+                allTags.map((t)=>{
+                  console.log(t)
+                  return(<option value={t.name}>{t.name}</option>)
+                })
+               }
+                 
+                  
+           </datalist>
+*/
 export default AddProblem

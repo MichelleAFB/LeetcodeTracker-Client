@@ -15,7 +15,10 @@ function AllProblemsItem({problem}) {
       <button class="bg-green-400 rounded-md p-2 m-2 justify-end"><p class="text-white" onClick={()=>{
         const prom=new Promise((resolve,reject)=>{
           dispatch(setLeetcodeProblem(problem))
-          resolve()
+          setTimeout(()=>{
+            resolve()
+          },100)
+        
         })
 
         prom.then(()=>{
@@ -46,7 +49,9 @@ function AllProblemsItem({problem}) {
         <button class="bg-gray-400 rounded-md p-2 m-2 justify-end"><p class="text-white" onClick={()=>{
           const prom=new Promise((resolve,reject)=>{
             dispatch(setLeetcodeProblem(problem))
-            resolve()
+            setTimeout(()=>{
+              resolve()
+            },100)
           })
   
           prom.then(()=>{

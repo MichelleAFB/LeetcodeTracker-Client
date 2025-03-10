@@ -156,7 +156,7 @@ function Home({problem,visibility,leetCodeVisiblity}) {
 const mapStateToProps = (state, props) => {
   var visibility= state.editProblem.visibility;
   var problem=state.editProblem.problem
-  console.log("visibility"+visibility)
+ 
   var leetCodeVisiblity=state.leetcodeProblem.visibility
 
   return {

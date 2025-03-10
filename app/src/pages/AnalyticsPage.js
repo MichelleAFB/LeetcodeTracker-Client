@@ -143,7 +143,11 @@ function AnalyticsPage() {
               streaks:response.data.streaks,
               allStreaks:response1.data.streaks
             }
+            try{
             sessionStorage.setItem("streaksObject",JSON.stringify(streaksObject))
+            }catch(e){
+              console.log(e)
+            }
             setAllStreaks(response1.data.streaks)
             const str=response.data.streaks 
             setStreaks(response.data.streaks)

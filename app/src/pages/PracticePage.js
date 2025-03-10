@@ -36,7 +36,7 @@ import DeleteBoilerTemplateComponents from '../components/components/DeleteBoile
 import IonIcon from '@reacticons/ionicons'
 
 import { setGroupChallenges } from '../redux/socket/socket-actions'
-import { fireOff, setCompletedDays, setDays,setPercent,setStartingPoint } from '../redux/streakProgress/streak-actions'
+import { fireOff, setCompletedDays, setDays,setLastDate,setPercent,setStartingPoint } from '../redux/streakProgress/streak-actions'
 const javascriptDefault = `// some comment`;
 
 function PracticePage({socket,percent}) {
@@ -1003,6 +1003,8 @@ dispatch(setGroupChallenges(data.groupChallenge))
                             axios.get("http://localhost:3022/streak-animation/"+user.userId).then((response)=>{
                               console.log("RESPONSE STREAK ANIMATION",response)
                               if(response.data.streakExists){
+                                
+                                dispatch(setLastDate(new Date(response.data.lastDate)))
                                 dispatch(setPercent(response.data.percent))
                                 dispatch(setDays(response.data.days))
                                 dispatch(setCompletedDays(response.data.completedDays))

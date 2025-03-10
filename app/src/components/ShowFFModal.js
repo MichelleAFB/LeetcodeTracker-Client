@@ -182,8 +182,7 @@ const mapStateToProps = (state, props) => {
     var setFolllowing=state.editFollowersAndFollowing.setFollowing
     const user=state.editFollowersAndFollowing.user
 
-    console.log("visibility"+visibility)
-  
+   
     return {
      visibility:visibility,
      setFollowers:setFollowers,

@@ -587,7 +587,7 @@ function EditProblemModal({ourProblem,visibility}) {
 const mapStateToProps = (state, props) => {
   var visibility= state.editProblem.visibility;
   var problem=state.editProblem.problem
-  console.log("visibility"+visibility)
+ // console.log("visibility"+visibility)
 
   return {
    visibility:visibility,

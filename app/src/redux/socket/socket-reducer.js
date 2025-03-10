@@ -8,10 +8,10 @@ const initialState = {
 };
 
 export const socketReducer = (state = initialState, action) => {
-  console.log("socket",state.socket)
+
   switch (action.type) {
     case actionTypes.SET_SOCKET:
-      console.log("SETTING SOCKET",action.payload);
+    
       return {
         ...state,
        socket:action.payload.socket

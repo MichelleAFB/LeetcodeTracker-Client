@@ -104,12 +104,13 @@ function ProblemList({id,reload}) {
             date=new Date(year,month,day)
             console.log(date)
             console.log(date.getTime())
-           /* const problemRef=doc(db,"problems",d.id)
+         
+            const problemRef=doc(db,"problems",d.id)
             await updateDoc(problemRef,{
              lastPracticed:date
             }).then(()=>{
               console.log(doc(db,"problems",d.id))
-            })*/
+            })
 
 
             console.log("STRING DATE")
@@ -165,50 +166,11 @@ function ProblemList({id,reload}) {
               nextDate=new Date(nextnext)
               index++
            }
-           /*setTimeout(()=>{
-        
-            if(use.healthyIndex==null){
-            if(index<7){
-              GREEN=GREEN+1
-              sessionStorage.setItem("green",GREEN)
-             
-
-            }
-            if(index>=7 && index<14){
-              ORANGE=ORANGE+1
-              sessionStorage.setItem("orange",ORANGE)
-
-            }
-            if(index>=14){
-              RED=RED+1
-              sessionStorage.setItem("red",RED)
-
-            }
-            }else{
-              
-              if(index<=use.healthyIndex.end){
-                GREEN=GREEN+1
-                sessionStorage.setItem("green",GREEN)
-               
-  
-              }
-              if(index>=use.decliningIndex.start && index<use.decliningIndex.end){
-                ORANGE=ORANGE+1
-                sessionStorage.setItem("orange",ORANGE)
-  
-              }
-              if(index>=use.criticalIndex.start){
-                RED=RED+1
-                sessionStorage.setItem("red",RED)
-  
-              }
-
-            }
-           },120)*/
-         
-         
           
             dataArr.push({problem:d.data(),id:d.id})
+          }else if(d.data().title=="Longest Common Subsequence"){
+            console.log("\n\n\nPROBLEM with "+thing.title+ " "+d.data().userId)
+            console.log(d.data(),"\n\n")
           } 
         })
         }catch(err){
@@ -245,7 +207,10 @@ setTimeout(()=>{
       setProbArr(pbs)
       setFiltered(dataArr)
       setProblems(dataArr)
-      resolve1()
+      setTimeout(()=>{
+        resolve1()
+      },200)
+      
      })
 
      prom1.then(()=>{
@@ -259,7 +224,7 @@ setTimeout(()=>{
       prom2.then(()=>{
         setTimeout(()=>{
           setIsLoading(false)
-        },1000)
+        },500)
       })
 
      })
@@ -364,7 +329,7 @@ setTimeout(()=>{
     }
 
     const fil=[]
-
+    const already=[]
     const prom = new Promise((resolve,reject) => {
       
     setFiltered([])
@@ -376,20 +341,28 @@ setTimeout(()=>{
       var evie=ev.problem.title.toUpperCase()
       evie=evie.replace(/ /g,"")
       str=str.replace(/ /g,"")
-      console.log(evie)
-      console.log(str)
+      //console.log(evie)
+      //console.log(str)
       const evieSplit=evie.split(" ")
       
       
       const eve=ev.problem.title
-      console.log("\n\n")
-      console.log(eve)
+      //console.log("\n\n")
       //console.log(eve)
-      console.log(evie.includes(str))
+      //console.log(eve)
+      //console.log(evie.includes(str))
       if(evie.includes(str)){ 
         evieSplit.map((o) => {
           if(o.includes(str)){
-            if(red){
+            if(!already.includes(eve)){
+              console.log("ADD "+eve)
+              already.push(eve)
+              fil.push(ev)
+            }
+            /*
+            console.log("MATCH",ev.problem.title)
+            if(red && !orange && !green){
+              console.log("RED")
             console.log("MATCHHHH",ev)
             //console.log(evie.includes(str))
             if(ev.problem.index!=null){
@@ -398,7 +371,7 @@ setTimeout(()=>{
                  fil.push(ev)
               }
             }
-            }else if(green){
+            }else if(green && !red && !orange){
               if(ev.problem.index!=null){
                 if(ev.problem.index<7){
                   if(!fil.includes(ev))
@@ -406,7 +379,7 @@ setTimeout(()=>{
                 }
               }
 
-            }else if(orange){
+            }else if(orange && !green && !red){
               if(ev.problem.index!=null){
                 if(ev.problem.index<=7 && ev.problem.index<14){
                   if(!fil.includes(ev))
@@ -423,11 +396,12 @@ setTimeout(()=>{
               }
 
             }else if(!red && !green && !orange){
-              if(!fil.includes(ev)){
+              if(!already.includes(eve)){
+                console.log("ADD "+eve)
                 fil.push(ev)
               }
 
-            }
+            }*/
           
          }
         })
@@ -1446,7 +1420,7 @@ if(probs.length>=oLength-10){
               
              
               if(doc.data().userId==user.userId){
-                //console.log(doc.data())
+                console.log(doc.data().userId,doc.data().title)
               //console.log(doc.id )
                 dataArr.push({problem:doc.data(),id:doc.id})
               } 
@@ -1461,10 +1435,7 @@ if(probs.length>=oLength-10){
             var attempts={}
             const allObjects=[]
             dataArr.map((m)=>{
-              if(m.problem.title.toUpperCase()=="MERGING INTERVALS"){
-                console.log("\n\n")
-                console.log(m.problem)
-              }
+             
               var index=0
               var at=0
             
@@ -1473,33 +1444,15 @@ if(probs.length>=oLength-10){
             console.log(allObjects)
   
             allObjects.map((o)=>{
-              console.log(o.attempts)
-              console.log(o.id)
+     
   
               var washingtonRef = doc(db, "problems", o.id);
   
-       if(o.id=='23uxF9agDVVky2xjeFsX'){
-       updateDoc(washingtonRef, {
-         attempts: o.problem.attempts,
-         title:o.problem.title,
-         dataStructure:o.problem.dataStructure,
-         category:o.problem.category,
-         lastPracticed:o.problem.problem.problem.lastPracticed,
-         hints:o.problem.hints,
-         no_attempts:o.problem.problem.no_attempts,
-         attempts:o.problem.attempts,
-         solution:o.problem.solution,
-         userId:o.problem.userId,
-         
-        });
-      }
+       
         
               
-            })
-            
-            
+            }) 
           })
-  
       }}>
       </button>
    
@@ -1656,7 +1609,7 @@ if(probs.length>=oLength-10){
         
       </div>
       {!search&& !searchByCategory && searchByDataStructure&& !searchByDate&&filtered!=null?
-         <div class="h-screen overflow-y-scroll overflow-hidden bg-gray-400 m-2 p-3 ">
+         <div class="h-screen overflow-y-scroll overflow-hidden bg-purple-400 m-2 p-3 ">
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.dataStructure==dataStructure){
@@ -1678,9 +1631,15 @@ if(probs.length>=oLength-10){
            return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
           }
         }catch(e){
-          if(p.problem.lastPracticed==currDate){
+          try{
+          console.log(Object.keys(p.problem.lastPracticed))
+         var last=new Date(p.problem.lastPracticed.seconds*1000)
+          if(last.toString().substring(0,15)==currDate.toString().substring(0,15)){
           return(<ProblemListItem problem={p} handleOldest={handleOldest} id={id==null?null:id}/>)
           }
+        }catch(e){
+          console.log("TODAY FILTER ERR",e)
+        }
         }
            })
          }
@@ -1688,7 +1647,7 @@ if(probs.length>=oLength-10){
   
       }
       {!search&& searchByCategory && !searchByDataStructure&&!searchByDate&& filtered!=null?
-         <div class="overflow-y-scroll h-[60vh] overflow-hidden h-screen p-4 ">
+         <div class="overflow-y-scroll h-[60vh] overflow-hidden bg-pink-400 h-screen p-4 ">
          { filtered.map((p)=>{
           console.log(p)
           if(p.problem.category==category){
@@ -1700,7 +1659,7 @@ if(probs.length>=oLength-10){
   
       }
       {search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null?
-       <div class="h-[55vh] overflow-y-scroll overflow-hidden  m-4 p-3">
+       <div class="h-[55vh] overflow-y-scroll overflow-hidden bg-orange-400  m-4 p-3">
        { filtered.map((p)=>{
         console.log(p)
          return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
@@ -1711,8 +1670,8 @@ if(probs.length>=oLength-10){
       }
   
       {
-        !search && !searchByCategory && !searchByDataStructure?
-        <div class="overflow-y-scroll overflow-hidden h-[60vh] p-4 ">
+        !search && !searchByCategory && !searchByDataStructure && !searchByDate?
+        <div class="overflow-y-scroll overflow-hidden  h-[60vh] p-4 ">
         {filtered.map((p)=>{
          return(<ProblemListItem id={id==null?null:id} problem={p} green={green} orange={orange} red={red} setRed={setRed} setGreen={setGreen} setOrange={setOrange} handleOldest={handleOldest}/>)
         })}
@@ -1723,7 +1682,8 @@ if(probs.length>=oLength-10){
       
     </div>
   )
-  }if(problems!=null && red && !orange&& !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
+  
+  }/*if(problems!=null && red && !orange&& !green&& !search&& !searchByCategory && !searchByDataStructure&& !searchByDate&& filtered!=null){
   
     return(<div class="h-[55vh] overflow-y-scroll overflow-hidden bg-gray-400 m-4 p-3">
     { filtered.map((p)=>{
@@ -1786,7 +1746,7 @@ if(probs.length>=oLength-10){
     })
   }
   </div>)
-  }
+  }*/
  if( problems==null){
 
   console.log(problems)

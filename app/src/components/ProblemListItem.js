@@ -71,6 +71,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
     
   var last
   var d
+  try{
     const prom=new Promise(async(resolve,reject)=>{
     // console.log("\n\n",problem.problem.lastPracticed.seconds)
       const dd = typeof problem.problem.lastPracticed =='string'? problem.problem.lastPracticed:new Date(problem.problem.lastPracticed.seconds*1000)
@@ -92,7 +93,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
     setTimeout(()=>{
       resolve()
     },400)
-     if(problemIndexes==null){
+    /* if(problemIndexes==null){
       
       const problemRef=doc(db,"problems",problem.id)
       if(problemIndexes==null){
@@ -131,13 +132,16 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
       }
 
     }else{
+     
       sessionStorage.setItem("timeLastUpdatedIndex",new Date().toString().substring(0,15))
       needsRefresh=true
-    }
+      resolve()
+    }*/
 
      if(problem.problem.link==null || problem.problem.acRate==null || problem.problem.difficulty==null || problem.problem.level==null || problem.problem.testCases==null ){
-      
+  
       setHasTestCases(true)
+      resolve()
       
       
      /* axios.post("http://localhost:3022/getProblemByTitle",{title:problem.problem.title}).then(async(response)=>{
@@ -176,6 +180,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
     }
       })*/
     }else{
+     
       last=d
       setDateLast(d)
       setHasTestCases(true)
@@ -203,6 +208,9 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
         setIsLoading(false)
       })
     })
+  }catch(e){
+    console.log(problem.problem.title,e)
+  }
 
   },[])
   
@@ -219,11 +227,11 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
    // console.log(prob.length)
    // console.log(green+red+orange)
     var total=green+red+orange
-    if(daysDiff<7 && green<prob.length() && total<prob.length){
+    if(daysDiff<7 ){
       handleGreen()
-    }else if(daysDiff>=7 && daysDiff<14 && orange<prob.length && total<prob.length){
+    }else if(daysDiff>=7 && daysDiff<14 ){
       handleOrange()
-    }else if(daysDiff>=14 && red< prob.length && total<prob.length){
+    }else if(daysDiff>=14 ){
       handleRed()
     }
     return daysDiff;
@@ -359,6 +367,7 @@ function ProblemListItem({id,problem,green,red,orange,setRed,setGreen,setOrange,
   }
    try{
   if(!isLoading ){
+    
 
     
   
@@ -775,6 +784,139 @@ if(user.criticalIndex!=null ? (user.criticalIndex.start <=index ): (index>=14 ))
   </div>
       )
     }
+  }else{
+    
+    return (
+      <div className='p-5 bg-white rounded shadow m-3'>
+        <div class="flex w-full justify-end">
+          <div class="flex w-1/3"><p class="font-semibold text-end text-sm">Practiced {index} days ago</p></div>
+        </div>
+      <div className="flex  items-center mb-4">
+      
+        <div className="flex w-full">
+          <p class="font-bold text-xl">{problem.problem.title.toUpperCase()}</p>
+         
+        </div>
+        
+        
+        <div
+          className="m-2 flex justify-center items-center bg-blue-lighter rounded-full w-8 h-8"
+          role="img"
+        >
+           {
+        testCases!=null?
+        <div>
+          <p class="font-bold">HAS TEST CASES</p>
+        </div>
+        :
+        <div>
+        </div>
+      }
+        </div>
+        <div class="flex justify-end w-full">
+        {id==null?<button class="bg-red-600 rounded-md p-2 justify-self-end m-2" onClick={()=>{
+              
+              deleteProblem(problem).then((response)=>{
+                alert("SUCCESS: deleted problem:"+problem.problem.title)
+                dispatch(addLeetcodeProblemReload())
+              })
+              }}>
+                <p class="text-end text-white">Remove</p>
+              </button>
+              :
+              <div></div>
+      }
+       {id==null? <button class="bg-gray-300 rounded-md p-2 justify-self-end" onClick={()=>{
+          
+          setEdit(!edit)
+          const prom=new Promise((resolve,reject)=>{
+            console.log("dispatching")
+              dispatch(setProblem(problem))
+              sessionStorage.setItem('editProblem',JSON.stringify(problem))
+              resolve()
+          })
+
+          prom.then(()=>{
+            dispatch(setEditProblemVisibility(true))
+          })
+        }}>
+          <p class="text-end">Edit</p>
+        </button>
+        :
+        <div></div>
+      }
+       {id!=null? <button class="bg-green-700 rounded-md p-2 justify-self-end" onClick={()=>{
+          
+        
+          const prom=new Promise(async(resolve,reject)=>{
+           
+              dispatch(setOtherUsersProblem(problem))
+            
+              const snap = await getDocs(collection(db, "users"))
+              snap.forEach((d) => {
+                const currentUser=JSON.parse(sessionStorage.getItem("user"))
+                if(d.id==currentUser.userId){
+                  console.log("MATCH")
+                  dispatch(setCurrentUser(d.data()))
+                  
+                }
+                if(d.id==problem.problem.userId){
+                  dispatch(setOtherUser(d.data()))
+                }
+              })
+              setTimeout(()=>{
+                resolve()
+              },1000)
+          })
+
+          prom.then(()=>{
+            dispatch(setOtherUsersProblemVisibility(true))
+          })
+        }}>
+          <p class="text-end text-white font-bold">Add</p>
+        </button>
+        :
+        <div></div>
+      }
+          </div>
+      </div>
+     
+      <div className="flex-col text-4x1 text-grey-darkest mb-4  border-gray-400 border-2 p-3">
+      <div class="flex">
+        <p className="text-green font-bold mr-1">Last Practiced:</p>
+        <p>{new Date(problem.problem.lastPracticed.seconds*1000).toString().substring(0,15)}</p>
+          
+        
+           
+        </div>
+        <div class="flex">
+        <span className="text-green mr-1">
+        <p class="font-bold text-sm">Attempts:<span class="font-normal ml-2">{problem.problem.attempts.length>1 && problem.problem.attempts[0].attempt=='N/A'? problem.problem.attempts.length-1:problem.problem.attempts.length>0 && problem.problem.attempts[0].attempt!='N/A'&& problem.problem.attempts[0].attempt!='' && problem.problem.attempts[0].attempt!=null? problem.problem.attempts.length:"0"}</span></p>
+           
+        </span>
+        </div>
+        <div class="flex">
+        <span className="text-green mr-1">
+           <p class="font-bold text-sm ">Category:<span class="font-normal ml-2">{problem.problem.category}</span></p>
+           
+        </span>
+        </div>
+      </div>
+     
+  
+        <button class="bg-gray-300 p-3 rounded-sm w-full" onClick={()=>{
+          const userId=id
+          if(id==null){
+            navigate("/practice/"+problem.id+"/"+index)
+          }else{
+            navigate("/practice/"+problem.id+"/"+index+"/"+id)
+          }
+        }}>
+          Practice
+        </button>
+      
+    </div>
+        )
   }
 }catch(err){
   console.log(err)

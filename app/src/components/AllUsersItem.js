@@ -15,7 +15,7 @@ import { CloudinaryImage } from '@cloudinary/url-gen';
 import { setEditFFUser, setFFVisibility,setFFFollowers,setFFFollowing} from "../redux/editFollowersAndFollowing/editFollowersAndFollowing-actions"
 function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
     const navigate=useNavigate()
-    console.log(u)
+
     const[user,setUser]=useState()
     const[isLoading,setIsLoading]=useState(true)
     const self=JSON.parse(sessionStorage.getItem("user"))
@@ -31,15 +31,17 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
           apiSecret:'NBk67NDZKIxpnGE06FUDFLSisp8'
         }
       })
-      console.log(u)
+     
     useEffect(()=>{
         if(checkUser!=null){
+            console.log("CHECKUSER NOT NULL")
             if(checkUser.userId==u.userId){
+                console.log(u)
               const prom=new Promise(async(resolve,reject)=>{
                 const ref=collection(db,"users")
                 const docu=await getDocs(ref)
                 docu.docs.map((d)=>{
-                    if(d.data().userId==u.data().userId){
+                    if(d.data().userId==u.userId){
                         
                         setUser(d.data())
                        
@@ -71,7 +73,7 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
                     const ref=collection(db,"users")
                     const docu=await getDocs(ref)
                     docu.docs.map((d)=>{
-                        if(d.data().userId==u.data().userId){
+                        if(d.data().userId!=u.userId){
                             setUser(d.data())
 
                             if(d.data().profilePicUrl!=null && d.data().userId==u.data().userId ){
@@ -99,15 +101,16 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
 
             }
         }else{
+            console.log("HERE")
             const prom=new Promise(async(resolve,reject)=>{
                 const ref=collection(db,"users")
                 const docu=await getDocs(ref)
                 docu.docs.map((d)=>{
-                    if(d.data().userId==u.data().userId){
+                    if(d.data().userId==u.userId){
                         setUser(d.data())
 
                       
-                        if(d.data().profilePicUrl!=null && d.data().userId==u.data().userId){
+                        if(d.data().profilePicUrl!=null && d.data().userId==d.data().userId){
                            var arr=d.data().profilePicUrl.split("/")
                          var url=arr[0]+"/"+arr[1]+"/"+arr[2]+"/"+arr[3]+"/"+arr[4]+"/"+arr[5]+"/s--rL26fQoJ--/t_profile-small/"+arr[6]+"/"+arr[7]
        
@@ -135,7 +138,7 @@ function AllUsersItem({u,refreshFollowers,refreshFollowing,checkUser}){
     },[refreshFollowers,refreshFollowing,checkUser])
     if(!isLoading && user!=null){
     
-    
+   
     return(
         <div class="p-2 flex-col">
             <div class="flex-col">

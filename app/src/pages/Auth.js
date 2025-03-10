@@ -10,7 +10,7 @@ import { db } from '../firebase/firebase'
 import {getDocs,collection,setDoc,addDoc, getDoc, updateDoc} from 'firebase/firestore'
 import {signInWithEmailAndPassword,getAuth} from 'firebase/auth'
 import { doc } from 'firebase/firestore'
-import { setCompletedDays, setStartingPoint } from '../redux/streakProgress/streak-actions'
+import { setCompletedDays, setLastDate, setStartingPoint } from '../redux/streakProgress/streak-actions'
 
 //routing
 import { useNavigate } from 'react-router-dom'
@@ -18,6 +18,7 @@ import Cookies from 'js-cookie'
 import {useDispatch,connect} from 'react-redux'
 import { setUser,setHeaderVisibility } from '../redux/user/editUser-actions'
 import { setDays, setPercent, uponLogin } from '../redux/streakProgress/streak-actions'
+import { setUserSessionStatusLoggedIn } from '../redux/userSession/userSession-actions'
 function Auth() {
 
   const[isLoading,setIsLoading]=useState(true)
@@ -67,6 +68,20 @@ function Auth() {
   },[])
  const dispatch=useDispatch()
 
+ const widths={
+  "Sun":75,
+  "Mon":130,
+  "Tue":170,
+  "Wed":190,
+  "Thu":230,
+  "Fri":270,
+  "Sat":310
+}
+function getWidth(day){
+  var w=widths[Object.keys(widths)[(day.getDay())]]
+  console.log(w)
+  return w
+}
 
   const signIn=async()=>{
 
@@ -118,6 +133,7 @@ function Auth() {
           if(found){
             console.log("FOUND")
             dispatch(setHeaderVisibility(true))
+            dispatch(setUserSessionStatusLoggedIn())
             sessionStorage.setItem("headerVisibility","true")
 
             setTimeout(()=>{
@@ -131,17 +147,32 @@ function Auth() {
               console.log("STREAKOBJECT",response.data.group)
                 if(response.data.streakExists){
                   console.log("EXIST")
+                  /*
+                   startingPoint:response.data.start,
+                completedDays:response.data.completedDays,
+                opacity: 1,
+                done:response.data.otherPercent,
+                percent:response.data.otherPercent,
+                width: `${width}px`,
+                marginLeft:response.data.starting==0?(0):(response.data.start+(((response.data.completedDays)*40)*.1))//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
+                  */
                  var streakAnimation={
-                  percent:response.data.percent,
+                  percent:response.data.otherPercent,
+                  width:getWidth(new Date(response.data.lastDate)),
+                  done:getWidth(new Date(response.data.lastDate)),
                   start:response.data.start,
+                  lastDate:response.data.lastDate,
                   completedDays:response.data.completedDays,
-                  days:response.data.days
+                  days:response.data.days,
+                  marginLeft:response.data.start==0?(0):(response.data.start+(((response.data.completedDays)*40)*.1))//${(startingPoint)+((7-(completedDays))*40)}px`:${(startingPoint)+((completedDays)*40)}px`
                  }
                  sessionStorage.setItem("streakAnimation",JSON.stringify(streakAnimation))
+                 dispatch(setLastDate(new Date(response.data.lastDate)))
                   dispatch(setPercent(response.data.percent))
                   dispatch(setDays(response.data.days))
                   dispatch(setCompletedDays(response.data.completedDays))
                   dispatch(setStartingPoint(response.data.start))
+                 
                  // dispatch(setPercent({percent:response.data.animation.percent,streaksObject:response.data.group,lastChecked:response.data.animation.lastCheckeds}))
                   setTimeout(()=>{
                     navigate("/home")

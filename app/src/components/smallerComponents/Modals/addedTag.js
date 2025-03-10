@@ -3,7 +3,7 @@ import React from 'react'
 function AddedTag({addedTags,tag,updateTags}) {
 
    
- 
+  
   
     return(<div class="p-1 m-1 bg-cyan-600 flex">
         <button onClick={()=>{
