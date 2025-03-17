@@ -3,12 +3,29 @@ import AddedTag from "./addedTag"
 
 
 function AddQuestionTags({updateTopicTags,allTags,defaultTags}) {
-    const [added,setAdded]=useState(defaultTags)
+    const [added,setAdded]=useState(defaultTags!=null?defaultTags:[])
+    const[tagNames,setTagNames]=useState()
     const [isLoading,setIsLoading]=useState(true)
 
     useEffect(()=>{
-        console.log(defaultTags)
-        setIsLoading(false)
+        console.log("ALLTAGS",allTags)
+        var i=0
+        const tagnames=[]
+        while(i<allTags.length){
+            var t=allTags[i]
+            tagnames.push(t.name)
+            i++
+            if(i>=allTags.length){
+                setTagNames(tagnames)
+                setTimeout(()=>{
+                    setIsLoading(false)
+
+                },200)
+                //setIsLoading(false)
+
+            }
+        }
+       // setIsLoading(false)
 
     },[])
     function handleRemoveTag(t){
@@ -18,15 +35,15 @@ function AddQuestionTags({updateTopicTags,allTags,defaultTags}) {
     }
     if(!isLoading){
         console.log(defaultTags)
+        console.log("added:",added)
         if(defaultTags!=null){
   return (
     <div class={`w-full ${defaultTags.length>4?'over-flow-hidden overflow-x-scroll':'w-full'}`}>
     <input type="text" list="categories" class="m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1" onChange={(e)=>{
-         // console.log(e.target.value)
-         
-         // console.log(e.target.type,e.target.list,e.target.class)
-          if(allTags.includes(e.target.value) && !added.includes(e.target.value) ){
-          setAdded((prev)=>[...prev,e.target.value])
+                                     console.log("curr added",added)
+                                     console.log("allTags includes",tagNames.includes(e.target.value), " e",e.target.value)
+          if(tagNames.includes(e.target.value) && !added.includes(e.target.value) ){
+         // setAdded((prev)=>[...prev,e.target.value])
           setTimeout(()=>{
             e.target.value=null
           },100)
@@ -37,15 +54,22 @@ function AddQuestionTags({updateTopicTags,allTags,defaultTags}) {
                 
                    class=' m-2  w-full text-white text-sm rounded-md border-l bg-gray-900 p-1'
                          onChange={(e)=>{
-                            if(!added.includes(e.target.value) && allTags.includes(e.target.value)){
-                               // setAdded((prev)=>[...prev,e.target.value])
+                            console.log("curr added",added," tagNames",tagNames)
+                            var tag=e.target.value
+                            console.log("allTags includes",tagNames.includes(e.target.value), " e",e.target.value)
+                            if(!added.includes(tag) && tagNames.includes(tag)){
+                                setAdded((prev)=>[...prev,tag])
+                                e.target.value=null
                                 }
                          }} >   
                        {
                         allTags.map((t)=>{
                           
+
                             var val=t.name!=null?t.name:t
-                            return(<option value={val}>value={val}</option>)
+                         
+
+                            return(<option value={val}>{val}</option>)
                         })
                        }
                 </datalist>
@@ -63,30 +87,28 @@ function AddQuestionTags({updateTopicTags,allTags,defaultTags}) {
     return(
         <div class={`w-full ${'w-full'}`}>
         <input type="text" list="categories" class="m-2  w-full text-gray-900 text-sm rounded-md border-l bg-gray-300 p-1" onChange={(e)=>{
-             // console.log(e.target.value)
-             
-             // console.log(e.target.type,e.target.list,e.target.class)
-              if(allTags.includes(e.target.value) && !added.includes(e.target.value) ){
-              setAdded((prev)=>[...prev,e.target.value])
-              setTimeout(()=>{
-                e.target.value=null
-              },100)
-             
-              }
+                  console.log("curr added",added," tagNames",tagNames)
+                  var tag=e.target.value
+                  console.log("allTags includes",tagNames.includes(e.target.value), " e",e.target.value)
+                  if(!added.includes(tag) && tagNames.includes(tag)){
+                      setAdded((prev)=>[...prev,tag])
+                      e.target.value=null
+                      }
         }} />
                         <datalist id="categories"
                     
                        class=' m-2  w-full text-white text-sm rounded-md border-l bg-gray-900 p-1'
                              onChange={(e)=>{
+                                console.log("curr added",added)
+                            console.log("allTags includes",allTags.includes(e.target.value), " e",e.target.value)
                                 if(!added.includes(e.target.value) && allTags.includes(e.target.value)){
-                                   // setAdded((prev)=>[...prev,e.target.value])
+                                   setAdded((prev)=>[...prev,e.target.value])
                                     }
                              }} >   
                            {
                             allTags.map((t)=>{
-                            
                                 var val=t.name!=null?t.name:t
-                              return(<option value={val}>value={val}</option>)
+                              return(<option value={val}>{val}</option>)
                             })
                            }
                     </datalist>

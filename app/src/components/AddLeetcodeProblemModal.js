@@ -95,12 +95,14 @@ function AddLeetcodeProblemModal({visibility,ourProblem}) {
           setCategory(problemData.problem.category)
           setAcRate(problemData.problem.acRate!=null? problemData.problem.acRate:0)
           setTestCases(problemData.problem.testCases!=null?problemData.problem.testCases:ourProblem.testCases)
+          console.log("ourPrboem:",ourProblem," problemdata:",problemData)
           setOurTags(ourProblem.tags!=null && ourProblem.tags.length>0?ourProblem.tags:problemData.problems.tags)
           if(ourProblem.tags==null || ourProblem.tags.length==0){
             //setOurTags()
           }
         }else{
-          
+          setOurTags(ourProblem.tags!=null? ourProblem.tags:[])
+
           var topictags=response.data.tags
           const user=JSON.parse(sessionStorage.getItem("user"))
           const userRef= doc(db,"users",user.userId)

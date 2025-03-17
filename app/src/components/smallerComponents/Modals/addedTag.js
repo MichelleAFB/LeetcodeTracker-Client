@@ -15,7 +15,7 @@ function AddedTag({addedTags,tag,updateTags}) {
         }}>
             <p class="text-red-600">x</p>
         </button>
-        <p class="text-white text-xs">{tag.toString()}</p>
+        <p class="text-white text-xs">{tag}</p>
         </div>)
 
   

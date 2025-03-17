@@ -25,6 +25,7 @@ function AllProblems() {
   const[searchString,setSearchString]=useState("")
   const[currentList,setCurrentList]=useState()
   const[prevList,setPrevList]=useState()
+  const[problemTitles,setProblemTitles]=useState()
   useEffect(()=>{
     var fill
    var list=JSON.parse(sessionStorage.getItem("allProblems"))
@@ -101,6 +102,33 @@ function AllProblems() {
     })
 
   },[])
+
+  function findSharedEntries(arr1, arr2,index) {
+    var i=0
+    var el = arr1.map((a)=> {
+      arr2.indexOf(a)
+    })
+    var el1 = arr2.map(a =>{
+      arr1.indexOf((a))});
+    console.log(el,el1)
+    
+    
+    
+    var found1=arr1.map(element => arr2.includes(element) ? element : undefined)
+    console.log(found1)
+    var found2=found1.filter((element )=> {
+      console.log("element",element)
+      if(element !== undefined){
+       
+        return true
+      }else{
+        return false
+      }
+    })
+    console.log("found2:",found2)
+      return {index:index+1, found:(el>-1 || el1>-1)? true:false};
+  
+  }
 const handleSearch1=(e,input)=>{
   
   
@@ -305,20 +333,180 @@ if(prevSearch!=null){
     console.log("USE CATEGORY",input+ " "+category,' search'+ search+ " "+searchString+ " searchDifficulty"+ useDifficulty)
 
     var inp=input.toUpperCase() 
+   
     
       while(catIndex<focus.length){
         var p=focus[catIndex]
         var values=p.title.toUpperCase().split(" ")
-        var found=false
-        found=p.title.toUpperCase().includes(inp) ? true :false    
-           inp=inp.toUpperCase()
-        values.map((v)=>{
+        var found
+        if(!inp.includes(" ")){
+        values=p.title
+        if(values.toUpperCase().includes(inp)){
+          found=true
+        }
+      }else{
+        var searchIndex=0
+       var inputString=input.toUpperCase().split(" ")
+       /*
+       while(searchIndex<problems.length){
+       var located=findSharedEntries(inputString,values,searchIndex)
+       if(located.found){
+        console.log("found multi earch",p.title, ' inp',inputString, ' found',found)
+        found=true
+       }
+       searchIndex=located.found? searchIndex+3000:located.index
+      
+       if(searchIndex>problems.length){
+        if(!searchByCategory && !useDifficulty){
+            
+          fil.push(p)
+          already.push(p.title)
+          
+          if(prevList!=null){
+          if(!prevList.includes(p.title) && refreshList==false){
+            refreshList=true
+          }
+        }
+        
+
+          catIndex++
+        }else if(useDifficulty &&!searchByCategory){
+       
+          try{
+            if(p.level.toUpperCase()==difficulty.toUpperCase() || p.level==inp.toUpperCase()){
+              console.log(p.title, p.level)
+              fil.push(p)
+              if(!prevList.includes(p.title) && refreshList==false){
+                refreshList=true
+              }
+              already.push(p.title)
+              catIndex++
+            }else{
+              catIndex++
+            }
+
+          }catch(e){
+            catIndex++
+          }
+          
+        }else if(searchByCategory && useDifficulty){
+          if(p.tags!=null){
+            if(p.tags.includes(category)){
+              if(p.level!=null){
+                if(p.level.toUpperCase()==difficulty.toUpperCase() || p.level.toUpperCase()==input.toUpperCase()){
+                  console.log("ADD",p.title)
+                  already.push(p.title)
+                  if(!prevList.includes(p.title) && refreshList==false){
+                    refreshList=true
+                  }
+                  fil.push(p)
+                }
+              }
+
+            }
+
+          }
+          catIndex++
+        }else if(p.tags!=null){
+          if(p.tags.includes(category)){
+          console.log("ADD "+p.title)
+          already.push(p.title)
+          if(!prevList.includes(p.title) && refreshList==false){
+            refreshList=true
+          }
+          fil.push(p)
+          catIndex++
+          }
+        }else{
+          catIndex++
+        }
+       }
+      }*/
+       //console.log("found multi earch",p.title, ' inp',inputString, ' found',found)
+       // const hasCommonItem = inputString.some(item => values.includes(item));
+       // console.log("hasCommon:"+hasCommonItem)
+      }
+        
+      
+          if((values.includes(inp.toUpperCase()) || found==true) && !already.includes(p.title)){
+        
+            if(!searchByCategory && !useDifficulty){
+            
+              fil.push(p)
+              already.push(p.title)
+              
+              if(prevList!=null){
+              if(!prevList.includes(p.title) && refreshList==false){
+                refreshList=true
+              }
+            }
+            
+    
+              catIndex++
+            }else if(useDifficulty &&!searchByCategory){
+           
+              try{
+                if(p.level.toUpperCase()==difficulty.toUpperCase() || p.level==inp.toUpperCase()){
+                  console.log(p.title, p.level)
+                  fil.push(p)
+                  if(!prevList.includes(p.title) && refreshList==false){
+                    refreshList=true
+                  }
+                  already.push(p.title)
+                  catIndex++
+                }else{
+                  catIndex++
+                }
+    
+              }catch(e){
+                catIndex++
+              }
+              
+            }else if(searchByCategory && useDifficulty){
+              if(p.tags!=null){
+                if(p.tags.includes(category)){
+                  if(p.level!=null){
+                    if(p.level.toUpperCase()==difficulty.toUpperCase() || p.level.toUpperCase()==input.toUpperCase()){
+                      console.log("ADD",p.title)
+                      already.push(p.title)
+                      if(!prevList.includes(p.title) && refreshList==false){
+                        refreshList=true
+                      }
+                      fil.push(p)
+                    }
+                  }
+    
+                }
+    
+              }
+              catIndex++
+            }else if(p.tags!=null){
+              if(p.tags.includes(category)){
+              console.log("ADD "+p.title)
+              already.push(p.title)
+              if(!prevList.includes(p.title) && refreshList==false){
+                refreshList=true
+              }
+              fil.push(p)
+              catIndex++
+              }
+            }else{
+              catIndex++
+            }
+          }else{
+            catIndex++
+          }
+        
+        //found=p.title.toUpperCase().includes(inp) ? true :false    
+          // inp=input.toUpperCase()
+          
+       /* values.map((v)=>{
           if(v.includes(inp)){
             found=true
           }
-        })
+        })*/
    
-        if((values.includes(inp) || found==true) && !already.includes(p.title)){
+      /*  if((values.includes(inp) || found==true) && !already.includes(p.title)){
         
         if(!searchByCategory && !useDifficulty){
         
@@ -385,7 +573,7 @@ if(prevSearch!=null){
         }
       }else{
         catIndex++
-      }
+      }*/
        // catIndex++
         if(catIndex>=focus.length){
           resolve(fil)
